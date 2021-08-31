@@ -57,3 +57,17 @@ def journal_title(text: str, remove_words=JOURNAL_TITLE_SPECIAL_WORDS, keep_pare
 
     return text
 
+
+def journal_issn(text: str):
+    """
+    Procedimento que padroniza ISSN de periódico
+
+    :param text: caracteres que representam um código ISSN de um periódico
+    :return: código ISSN padronizado ou nada
+    """
+    if text.isdigit():
+        if len(text) == 8:
+            return '-'.join([text[:4]] + [text[4:]]).upper()
+    elif len(text) == 9:
+        if '-' in text and text[:4].isdigit():
+            return text.upper()
