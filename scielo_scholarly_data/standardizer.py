@@ -83,3 +83,18 @@ def document_doi(text: str):
         matched_doi = pattern_doi.search(text)
         if matched_doi:
             return matched_doi.group()
+def document_author(text: str):
+    """
+    Procedimento para padroniza nome de autor de acordo com os seguintes métodos, por ordem
+        1. Remove acentos
+        2. Mantém letras e espaços
+        3. Remove espaços duplos
+
+    :param text: nome do autor a ser tratado
+    :return: nome tratado do autor
+    """
+    text = remove_accents(text)
+    text = convert_to_alpha_space(text)
+    text = remove_double_spaces(text)
+
+    return text
