@@ -78,3 +78,12 @@ def remove_non_printable_chars(text, replace_with=''):
         else:
             new_text.append(replace_with)
     return ''.join(new_text)
+
+
+def unescape(text):
+    """
+    https://docs.python.org/3/library/html.html
+
+    Convert all named and numeric character references (e.g. &gt;, &#62;, &#x3e;) in the string s to the corresponding Unicode characters
+    """
+    return html.unescape(text)
