@@ -72,6 +72,17 @@ def journal_issn(text: str):
         if '-' in text and text[:4].isdigit():
             return text.upper()
 
+
+def journal_volume(text: str):
+    # ToDo
+    pass
+
+
+def journal_number(text: str):
+    # ToDo
+    pass
+
+
 def document_doi(text: str):
     """
     Procedimento que padroniza DOI de documento
@@ -83,6 +94,28 @@ def document_doi(text: str):
         matched_doi = pattern_doi.search(text)
         if matched_doi:
             return matched_doi.group()
+
+
+def document_title(text: str):
+    pass
+
+
+def document_first_page(text: str):
+    pass
+
+
+def document_last_page(text: str):
+    pass
+
+
+def document_elocation(text: str):
+    pass
+
+
+def document_publication_date(text: str):
+    pass
+
+
 def document_author(text: str):
     """
     Procedimento para padroniza nome de autor de acordo com os seguintes métodos, por ordem
@@ -98,3 +131,20 @@ def document_author(text: str):
     text = remove_double_spaces(text)
 
     return text
+
+
+def book_title(text: str):
+    pass
+
+
+def book_editor_name(text: str):
+    pass
+
+
+def book_editor_address(text: str):
+    pass
+
+
+def chapter_title(text: str):
+    pass
+
