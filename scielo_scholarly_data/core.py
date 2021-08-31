@@ -60,3 +60,21 @@ def remove_double_spaces(text):
     while '  ' in text:
         text = text.replace('  ', ' ')
     return text.strip()
+
+
+def remove_non_printable_chars(text, replace_with=''):
+    """
+    Remove de text os caracteres non pritable, isto é, que possuem código ASCII de 0 a 31
+    Também remove caractere de código ASCII 127, que representa a ação DELETE
+
+    :param text: texto a ser tratada
+    :param replace_with: caracte a ser inserido quando for non printable
+    :return: texto com caracteres ASCII de 0 a 31 e 127 removidos
+    """
+    new_text = []
+    for t in text:
+        if ord(t) >= 32 and ord(t) != 127:
+            new_text.append(t)
+        else:
+            new_text.append(replace_with)
+    return ''.join(new_text)
