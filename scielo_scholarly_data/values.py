@@ -17,3 +17,17 @@ PATTERNS_ISSN = [re.compile(pi) for pi in [
     r'^[0-9]{4}-[0-9]{3}[0-9xX]$']
 ]
 
+JOURNAL_TITLE_SPECIAL_CHARS = {
+    '@',
+    '&'
+}
+
+JOURNAL_TITLE_SPECIAL_WORDS = {
+    'impresso',
+    'print',
+    'impreso',
+    'online',
+    'eletronico',
+    'electronico',
+    'cdrom'
+}
