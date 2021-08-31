@@ -71,3 +71,15 @@ def journal_issn(text: str):
     elif len(text) == 9:
         if '-' in text and text[:4].isdigit():
             return text.upper()
+
+def document_doi(text: str):
+    """
+    Procedimento que padroniza DOI de documento
+
+    :param text: caracteres que representam um código DOI de um documento
+    :return: código DOI padronizado ou nada
+    """
+    for pattern_doi in PATTERNS_DOI:
+        matched_doi = pattern_doi.search(text)
+        if matched_doi:
+            return matched_doi.group()
