@@ -38,3 +38,14 @@ def convert_to_alpha_space(text, keep_chars={}, replace_with=' '):
         else:
             new_text.append(replace_with)
     return ''.join(new_text)
+
+
+def remove_accents(text):
+    """
+    Transforma caracteres acentuados de text em caracteres sem acento.
+
+    :param text: texto a ser tratado
+    :return: texto sem caracteres acentuados
+    """
+    return unicodedata.normalize('NFKD', text).encode('ASCII', 'ignore').decode('ASCII')
+
