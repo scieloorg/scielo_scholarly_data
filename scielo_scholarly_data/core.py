@@ -49,3 +49,14 @@ def remove_accents(text):
     """
     return unicodedata.normalize('NFKD', text).encode('ASCII', 'ignore').decode('ASCII')
 
+
+def remove_double_spaces(text):
+    """
+    Remove de text os espaços duplos
+
+    :param text: texto a ser tratado
+    :return: texto sem espaços duplos
+    """
+    while '  ' in text:
+        text = text.replace('  ', ' ')
+    return text.strip()
