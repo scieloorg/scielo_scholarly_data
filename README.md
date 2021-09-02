@@ -1,5 +1,5 @@
-# Scielo Scholarly Data
-This repository contains a set of tools responsive for processing scientific publication data (also knows, in part, as **scholarly data**). The methods we develop comprise standardization, normalization, and deduplication processes.
+# SciELO Scholarly Data
+This repository contains a set of tools responsible for processing scientific publication data (also known, in part, as **scholarly data**). The methods we develop cover standardization, normalization, and deduplication processes.
 
 ## Installation
 
