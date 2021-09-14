@@ -79,8 +79,14 @@ def journal_volume(text: str):
 
 
 def journal_number(text: str):
-    # ToDo
-    pass
+    """
+    Procedimento que padroniza número de periódico
+    
+    :param text: caracteres que representam número de periódico
+    :return: número de periódico padronizado
+    """
+    
+    return convert_to_alpha_num_space(text, replace_with='')
 
 
 def document_doi(text: str):

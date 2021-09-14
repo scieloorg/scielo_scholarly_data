@@ -1,4 +1,10 @@
-from scielo_scholarly_data.standardizer import document_author, document_doi, journal_issn, journal_title
+from scielo_scholarly_data.standardizer import (
+    document_author,
+    document_doi,
+    journal_issn,
+    journal_title,
+    journal_number
+)
 
 import unittest
 
@@ -74,3 +80,9 @@ class TestStandardizer(unittest.TestCase):
         obtained_values = [document_author(da) for da in authors]
 
         self.assertListEqual(expected_values, obtained_values)
+
+    def test_journal_number(self):
+        original_journal_number = "(32d)"
+        expected_journal_number = "32d"
+        obtained_journal_number = journal_number(original_journal_number)
+        self.assertEqual(expected_journal_number, obtained_journal_number)
