@@ -1,5 +1,7 @@
 import html
 import unicodedata
+import re
+from scielo_scholarly_data.values import PATTERN_PARENTHESIS
 
 
 def convert_to_alpha_num_space(text, keep_chars={}, replace_with=' '):
@@ -87,3 +89,17 @@ def unescape(text):
     Convert all named and numeric character references (e.g. &gt;, &#62;, &#x3e;) in the string s to the corresponding Unicode characters
     """
     return html.unescape(text)
+
+def remove_parenthesis(text):
+    """
+    Função para remoção de parenteses e respectivo conteúdo
+
+    :param text: texto no qual os parenteses e o respectivo conteúdo serão removidos
+    :return: texto sem parenteses e sem o respectivo conteúdo
+    """
+    parenthesis_search = re.search(PATTERN_PARENTHESIS, text)
+    while parenthesis_search is not None:
+        text = text[:parenthesis_search.start()] + text[parenthesis_search.end():]
+        parenthesis_search = re.search(PATTERN_PARENTHESIS, text)
+    text = remove_double_spaces(text)
+    return text

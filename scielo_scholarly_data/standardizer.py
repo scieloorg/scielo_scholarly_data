@@ -6,13 +6,13 @@ from scielo_scholarly_data.core import (
     remove_accents,
     remove_double_spaces,
     remove_non_printable_chars,
+    remove_parenthesis,
     unescape
 )
 
 from scielo_scholarly_data.values import (
     JOURNAL_TITLE_SPECIAL_CHARS,
     JOURNAL_TITLE_SPECIAL_WORDS,
-    PATTERN_PARENTHESIS,
     PATTERNS_DOI
 )
 
@@ -35,13 +35,8 @@ def journal_title(text: str, remove_words=JOURNAL_TITLE_SPECIAL_WORDS, keep_pare
     """
     text = unescape(text)
     text = remove_non_printable_chars(text)
-
     if not keep_parenthesis_content:
-        parenthesis_search = re.search(PATTERN_PARENTHESIS, text)
-        while parenthesis_search is not None:
-            text = text[:parenthesis_search.start()] + text[parenthesis_search.end():]
-            parenthesis_search = re.search(PATTERN_PARENTHESIS, text)
-
+        text = remove_parenthesis(text)
     text = remove_accents(text)
     text = convert_to_alpha_num_space(text, JOURNAL_TITLE_SPECIAL_CHARS)
     text = remove_double_spaces(text)

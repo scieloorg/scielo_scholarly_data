@@ -1,4 +1,11 @@
-from scielo_scholarly_data.core import convert_to_alpha_num_space, remove_accents, remove_double_spaces, remove_non_printable_chars, unescape
+from scielo_scholarly_data.core import (
+    convert_to_alpha_num_space,
+    remove_accents,
+    remove_double_spaces,
+    remove_non_printable_chars,
+    remove_parenthesis,
+    unescape
+)
 
 import unittest
 
@@ -55,3 +62,9 @@ class TestCore(unittest.TestCase):
                 unescape(i[0]), 
                 i[1]
             )
+
+    def test_remove_parenthesis(self):
+        self.assertEqual(
+            remove_parenthesis('This is a text with (parenthesis) to remove'),
+            'This is a text with to remove'
+        )
