@@ -32,19 +32,64 @@ class TestStandardizer(unittest.TestCase):
             'Anagramas Rumbos y sentidos de la comunicacion'
         )
 
-    def test_journal_issn(self):
+    def test_journal_issn_without_hyphen(self):
         issns = {
             '15856280': '1585-6280',
-            '8585-6281': '8585-6281',
-            '8585x6282': None,
-            '8685-6283a': None,
-            '85856282': '8585-6282',
-            '  8085-6285': None,
-            '8-85-6286': None,
-            '85856287': '8585-6287',
-            '8x85-6288': None,
-            '8m85-6289': None,
-            '858628X': None
+            '85856281': '8585-6281'
+        }
+
+        expected_values = list(issns.values())
+        obtained_values = [journal_issn(i) for i in issns]
+
+        self.assertListEqual(expected_values, obtained_values)
+
+    def test_journal_issn_correct(self):
+        issns = {
+            '1585-6280': '1585-6280',
+            '8585-6281': '8585-6281'
+        }
+
+        expected_values = list(issns.values())
+        obtained_values = [journal_issn(i) for i in issns]
+
+        self.assertListEqual(expected_values, obtained_values)
+
+    def test_journal_issn_with_char(self):
+        issns = {
+            '1585x6280': None,
+            '85856281a': None,
+            '8585-62s81': None,
+            'x8585-6281': None,
+            '85X856281': None
+        }
+
+        expected_values = list(issns.values())
+        obtained_values = [journal_issn(i) for i in issns]
+
+        self.assertListEqual(expected_values, obtained_values)
+
+    def test_journal_issn_with_space(self):
+        issns = {
+            '1585 6280': None,
+            '85856281 ': None,
+            ' 8585-6281': None,
+            '85 85-6281': None,
+            '8585 6281 ': None
+        }
+
+        expected_values = list(issns.values())
+        obtained_values = [journal_issn(i) for i in issns]
+
+        self.assertListEqual(expected_values, obtained_values)
+
+    def test_journal_issn_with_less_or_more_positions(self):
+        issns = {
+            '185-6280': None,
+            '8585-281': None,
+            '8585-628': None,
+            '8685-62833': None,
+            '85835-6282': None,
+            '808-63286': None
         }
 
         expected_values = list(issns.values())
