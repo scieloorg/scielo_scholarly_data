@@ -1,6 +1,7 @@
 import html
 import unicodedata
 import re
+from datetime import datetime
 from scielo_scholarly_data.values import PATTERN_PARENTHESIS
 
 
@@ -90,6 +91,7 @@ def unescape(text):
     """
     return html.unescape(text)
 
+
 def remove_parenthesis(text):
     """
     Função para remoção de parenteses e respectivo conteúdo
@@ -103,3 +105,56 @@ def remove_parenthesis(text):
         parenthesis_search = re.search(PATTERN_PARENTHESIS, text)
     text = remove_double_spaces(text)
     return text
+
+
+def checkYear(text: str):
+    """
+    Função para verificar um ano válido (1000 <= year <= ano atual)
+    :param text: string que, supostamente, representa um ano válido
+    :return: True, caso seja um ano válido, False, caso contrário
+    """
+    if '1000' <= text <= datetime.today().strftime('%Y'):
+        return True
+    else:
+        return False
+
+
+def checkMonth(text: str):
+    """
+        Função para verificar um mês válido (1 <= month <= 12)
+        :param text: string que, supostamente, representa um mês válido
+        :return: True, caso seja um mês válido, False, caso contrário
+        """
+    if 1 <= (int)(text) <= 12:
+        return True
+    else:
+        return False
+
+
+def checkDay(text: str):
+    """
+        Função para verificar um dia válido (1 <= day <= 31)
+        :param text: string que, supostamente, representa um dia válido
+        :return: True, caso seja um dia válido, False, caso contrário
+        """
+    if 1 <= (int)(text) <= 31:
+        return True
+    else:
+        return False
+
+
+def global_date(text: str):
+    text = text.replace('-','')
+    if text.isdigit():
+        if len(text) == 4 and checkYear(text):
+            return "{}-{}-{}".format(text, '06', '15')
+        elif len(text) == 6:
+            if checkDay(text[:2]) and checkMonth(text[2:4]) and checkYear('20'+text[4:]):
+                return "{}-{}-{}".format('20'+text[4:], text[2:4], text[:2])
+            elif checkYear('20'+text[:2]) and checkMonth(text[2:4]) and checkDay(text[4:]):
+                return "{}-{}-{}".format('20'+text[:2], text[2:4], text[4:])
+        elif len(text) == 8:
+            if checkDay(text[:2]) and checkMonth(text[2:4]) and checkYear(text[4:]):
+                return "{}-{}-{}".format(text[4:], text[2:4], text[:2])
+            elif checkYear(text[:4]) and checkMonth(text[4:6]) and checkDay(text[6:]):
+                return "{}-{}-{}".format(text[:4], text[4:6], text[6:])
