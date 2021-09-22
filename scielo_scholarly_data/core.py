@@ -1,11 +1,12 @@
 import html
 import unicodedata
 import re
-from datetime import datetime
+from dateutil.parser import *
+from datetime import *
 from scielo_scholarly_data.values import PATTERN_PARENTHESIS
 
 
-def convert_to_alpha_num_space(text, keep_chars={}, replace_with=' '):
+def convert_to_alpha_num_space(text, keep_chars=None, replace_with=' '):
     """
     Mantém em text apenas caracteres alfanuméricos (letras latinas e algarismos arábicos) e espaços
     Possibilita manter em text caracteres especiais na lista keep_chars
@@ -15,6 +16,8 @@ def convert_to_alpha_num_space(text, keep_chars={}, replace_with=' '):
     :param replace_with: caracte a ser inserido quando não for alfanumérico ou não estiver em keep_chars
     :return: texto com apenas caracteres alphanuméricos e espaço mantidos (e especiais, caso indicado)
     """
+    if keep_chars is None:
+        keep_chars = []
     new_text = []
     for character in text:
         if character.isalnum() or character.isspace() or (character in keep_chars):
@@ -24,7 +27,7 @@ def convert_to_alpha_num_space(text, keep_chars={}, replace_with=' '):
     return ''.join(new_text)
 
 
-def convert_to_alpha_space(text, keep_chars={}, replace_with=' '):
+def convert_to_alpha_space(text, keep_chars=None, replace_with=' '):
     """
     Mantém em text apenas caracteres alfa (letras latinas) e espaços
     Possibilita manter em text caracteres especiais na lista keep_chars
@@ -34,6 +37,8 @@ def convert_to_alpha_space(text, keep_chars={}, replace_with=' '):
     :param replace_with: caracte a ser inserido quando não for alfa ou não estiver em keep_chars
     :return: texto com apenas caracteres alpha e espaço mantidos (e especiais, caso indicado)
     """
+    if keep_chars is None:
+        keep_chars = []
     new_text = []
     for character in text:
         if character.isalpha() or character.isspace() or (character in keep_chars):
@@ -107,54 +112,15 @@ def remove_parenthesis(text):
     return text
 
 
-def checkYear(text: str):
+def global_date(text):
     """
-    Função para verificar um ano válido (1000 <= year <= ano atual)
-    :param text: string que, supostamente, representa um ano válido
-    :return: True, caso seja um ano válido, False, caso contrário
+    Função para a padronização de datas no formato ISO YYYY-MM-DD
+
+    :param text: data a ser padronizada
+    :return: data padronizada
     """
-    if '1000' <= text <= datetime.today().strftime('%Y'):
-        return True
+    text = convert_to_alpha_num_space(text, keep_chars=['-', '/', '.'], replace_with='')
+    if len(text) == 4 and '1000' <= text <= date.today().strftime("%Y"):
+        return parse(text + '-06-15').date()
     else:
-        return False
-
-
-def checkMonth(text: str):
-    """
-        Função para verificar um mês válido (1 <= month <= 12)
-        :param text: string que, supostamente, representa um mês válido
-        :return: True, caso seja um mês válido, False, caso contrário
-        """
-    if 1 <= (int)(text) <= 12:
-        return True
-    else:
-        return False
-
-
-def checkDay(text: str):
-    """
-        Função para verificar um dia válido (1 <= day <= 31)
-        :param text: string que, supostamente, representa um dia válido
-        :return: True, caso seja um dia válido, False, caso contrário
-        """
-    if 1 <= (int)(text) <= 31:
-        return True
-    else:
-        return False
-
-
-def global_date(text: str):
-    text = text.replace('-','')
-    if text.isdigit():
-        if len(text) == 4 and checkYear(text):
-            return "{}-{}-{}".format(text, '06', '15')
-        elif len(text) == 6:
-            if checkDay(text[:2]) and checkMonth(text[2:4]) and checkYear('20'+text[4:]):
-                return "{}-{}-{}".format('20'+text[4:], text[2:4], text[:2])
-            elif checkYear('20'+text[:2]) and checkMonth(text[2:4]) and checkDay(text[4:]):
-                return "{}-{}-{}".format('20'+text[:2], text[2:4], text[4:])
-        elif len(text) == 8:
-            if checkDay(text[:2]) and checkMonth(text[2:4]) and checkYear(text[4:]):
-                return "{}-{}-{}".format(text[4:], text[2:4], text[:2])
-            elif checkYear(text[:4]) and checkMonth(text[4:6]) and checkDay(text[6:]):
-                return "{}-{}-{}".format(text[:4], text[4:6], text[6:])
+        return parse(text).date()
