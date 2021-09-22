@@ -31,3 +31,7 @@ JOURNAL_TITLE_SPECIAL_WORDS = {
     'electronico',
     'cdrom'
 }
+
+DOCUMENT_TITLE_SPECIAL_CHARS = {
+
+}

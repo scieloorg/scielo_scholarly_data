@@ -1,4 +1,11 @@
-from scielo_scholarly_data.standardizer import document_author, document_doi, journal_issn, journal_title
+from scielo_scholarly_data.standardizer import (
+    document_author,
+    document_doi,
+    document_title,
+    journal_issn,
+    journal_title,
+    issue_number
+)
 
 import unittest
 
@@ -26,19 +33,64 @@ class TestStandardizer(unittest.TestCase):
             'Anagramas Rumbos y sentidos de la comunicacion'
         )
 
-    def test_journal_issn(self):
+    def test_journal_issn_without_hyphen(self):
         issns = {
             '15856280': '1585-6280',
-            '8585-6281': '8585-6281',
-            '8585x6282': None,
-            '8685-6283a': None,
-            '85856282': '8585-6282',
-            '  8085-6285': None,
-            '8-85-6286': None,
-            '85856287': '8585-6287',
-            '8x85-6288': None,
-            '8m85-6289': None,
-            '858628X': None
+            '85856281': '8585-6281'
+        }
+
+        expected_values = list(issns.values())
+        obtained_values = [journal_issn(i) for i in issns]
+
+        self.assertListEqual(expected_values, obtained_values)
+
+    def test_journal_issn_correct(self):
+        issns = {
+            '1585-6280': '1585-6280',
+            '8585-6281': '8585-6281'
+        }
+
+        expected_values = list(issns.values())
+        obtained_values = [journal_issn(i) for i in issns]
+
+        self.assertListEqual(expected_values, obtained_values)
+
+    def test_journal_issn_with_char(self):
+        issns = {
+            '1585x6280': None,
+            '85856281a': None,
+            '8585-62s81': None,
+            'x8585-6281': None,
+            '85X856281': None
+        }
+
+        expected_values = list(issns.values())
+        obtained_values = [journal_issn(i) for i in issns]
+
+        self.assertListEqual(expected_values, obtained_values)
+
+    def test_journal_issn_with_space(self):
+        issns = {
+            '1585 6280': None,
+            '85856281 ': None,
+            ' 8585-6281': None,
+            '85 85-6281': None,
+            '8585 6281 ': None
+        }
+
+        expected_values = list(issns.values())
+        obtained_values = [journal_issn(i) for i in issns]
+
+        self.assertListEqual(expected_values, obtained_values)
+
+    def test_journal_issn_with_less_or_more_positions(self):
+        issns = {
+            '185-6280': None,
+            '8585-281': None,
+            '8585-628': None,
+            '8685-62833': None,
+            '85835-6282': None,
+            '808-63286': None
         }
 
         expected_values = list(issns.values())
@@ -72,5 +124,123 @@ class TestStandardizer(unittest.TestCase):
 
         expected_values = list(authors.values())
         obtained_values = [document_author(da) for da in authors]
+
+        self.assertListEqual(expected_values, obtained_values)
+
+    def test_issue_number_special_char(self):
+        issues = {
+            '&96':'96',
+            '$96':'96',
+            '@96a':'96a',
+            '!96a':'96a'
+        }
+        expected_values = list(issues.values())
+        obtained_values = [issue_number(num) for num in issues]
+
+        self.assertListEqual(expected_values, obtained_values)
+
+    def test_issue_number_non_printable(self):
+        issues = {
+            '\n96':'96',
+            '96\t':'96',
+            '96\aa':'96a',
+            '9\n6a':'96a'
+        }
+        expected_values = list(issues.values())
+        obtained_values = [issue_number(num) for num in issues]
+
+        self.assertListEqual(expected_values, obtained_values)
+
+    def test_issue_number_with_spaces(self):
+        issues = {
+            '96':'96',
+            '96  ':'96',
+            '96a ':'96a',
+            ' 96 a':'96a'
+        }
+        expected_values = list(issues.values())
+        obtained_values = [issue_number(num) for num in issues]
+
+        self.assertListEqual(expected_values, obtained_values)
+
+    def test_issue_number_with_parenthesis(self):
+        issues = {
+            '(96)':'96',
+            '9(6)':'96',
+            '96(a)':'96a',
+            '(96)a':'96a'
+        }
+        expected_values = list(issues.values())
+        obtained_values = [issue_number(num) for num in issues]
+
+        self.assertListEqual(expected_values, obtained_values)
+
+    def test_document_title_references(self):
+        titles = {
+            'INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DE &#38; PROBLEMÁTICAS':
+                'INNOVACION TECNOLOGICA EN LA RESOLUCION DE PROBLEMATICAS',
+            'INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DE &#338; PROBLEMÁTICAS':
+                'INNOVACION TECNOLOGICA EN LA RESOLUCION DE PROBLEMATICAS',
+            'INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DE &#x2030; PROBLEMÁTICAS':
+                'INNOVACION TECNOLOGICA EN LA RESOLUCION DE PROBLEMATICAS'
+        }
+        expected_values = list(titles.values())
+        obtained_values = [document_title(dt) for dt in titles]
+
+        self.assertListEqual(expected_values, obtained_values)
+
+    def test_document_title_non_printable(self):
+        titles = {
+            'INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DE \n PROBLEMÁTICAS':
+                'INNOVACION TECNOLOGICA EN LA RESOLUCION DE PROBLEMATICAS',
+            'INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DE \t PROBLEMÁTICAS':
+                'INNOVACION TECNOLOGICA EN LA RESOLUCION DE PROBLEMATICAS',
+            'INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DE \a PROBLEMÁTICAS':
+                'INNOVACION TECNOLOGICA EN LA RESOLUCION DE PROBLEMATICAS'
+        }
+        expected_values = list(titles.values())
+        obtained_values = [document_title(dt) for dt in titles]
+
+        self.assertListEqual(expected_values, obtained_values)
+
+    def test_document_title_accents(self):
+        titles = {
+            'INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DÊ PROBLEMÁTICAS':
+                'INNOVACION TECNOLOGICA EN LA RESOLUCION DE PROBLEMATICAS',
+            'INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DẼ PROBLEMÁTICAS':
+                'INNOVACION TECNOLOGICA EN LA RESOLUCION DE PROBLEMATICAS',
+            'INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DÈ PROBLEMÁTICAS':
+                'INNOVACION TECNOLOGICA EN LA RESOLUCION DE PROBLEMATICAS'
+        }
+        expected_values = list(titles.values())
+        obtained_values = [document_title(dt) for dt in titles]
+
+        self.assertListEqual(expected_values, obtained_values)
+
+    def test_document_title_alpha_num_spaces(self):
+        titles = {
+            'INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DÊ: PROBLEMÁTICAS':
+                'INNOVACION TECNOLOGICA EN LA RESOLUCION DE PROBLEMATICAS',
+            'INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DẼ* PROBLEMÁTICAS':
+                'INNOVACION TECNOLOGICA EN LA RESOLUCION DE PROBLEMATICAS',
+            'INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DÈ& PROBLEMÁTICAS':
+                'INNOVACION TECNOLOGICA EN LA RESOLUCION DE PROBLEMATICAS'
+        }
+        expected_values = list(titles.values())
+        obtained_values = [document_title(dt) for dt in titles]
+
+        self.assertListEqual(expected_values, obtained_values)
+
+    def test_document_title_double_spaces(self):
+        titles = {
+            'INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DÊ  PROBLEMÁTICAS':
+                'INNOVACION TECNOLOGICA EN LA RESOLUCION DE PROBLEMATICAS',
+            'INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DẼ   PROBLEMÁTICAS':
+                'INNOVACION TECNOLOGICA EN LA RESOLUCION DE PROBLEMATICAS',
+            'INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DÈ    PROBLEMÁTICAS':
+                'INNOVACION TECNOLOGICA EN LA RESOLUCION DE PROBLEMATICAS'
+        }
+        expected_values = list(titles.values())
+        obtained_values = [document_title(dt) for dt in titles]
 
         self.assertListEqual(expected_values, obtained_values)

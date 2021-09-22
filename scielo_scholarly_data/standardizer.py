@@ -6,13 +6,14 @@ from scielo_scholarly_data.core import (
     remove_accents,
     remove_double_spaces,
     remove_non_printable_chars,
+    remove_parenthesis,
     unescape
 )
 
 from scielo_scholarly_data.values import (
+    DOCUMENT_TITLE_SPECIAL_CHARS,
     JOURNAL_TITLE_SPECIAL_CHARS,
     JOURNAL_TITLE_SPECIAL_WORDS,
-    PATTERN_PARENTHESIS,
     PATTERNS_DOI
 )
 
@@ -35,13 +36,8 @@ def journal_title(text: str, remove_words=JOURNAL_TITLE_SPECIAL_WORDS, keep_pare
     """
     text = unescape(text)
     text = remove_non_printable_chars(text)
-
     if not keep_parenthesis_content:
-        parenthesis_search = re.search(PATTERN_PARENTHESIS, text)
-        while parenthesis_search is not None:
-            text = text[:parenthesis_search.start()] + text[parenthesis_search.end():]
-            parenthesis_search = re.search(PATTERN_PARENTHESIS, text)
-
+        text = remove_parenthesis(text)
     text = remove_accents(text)
     text = convert_to_alpha_num_space(text, JOURNAL_TITLE_SPECIAL_CHARS)
     text = remove_double_spaces(text)
@@ -73,14 +69,23 @@ def journal_issn(text: str):
             return text.upper()
 
 
-def journal_volume(text: str):
+def issue_volume(text: str):
     # ToDo
     pass
 
 
-def journal_number(text: str):
-    # ToDo
-    pass
+def issue_number(text: str):
+    """
+    Procedimento que padroniza número da edição do periódico
+    
+    :param text: caracteres que representam número da edição
+    :return: número de periódico padronizado
+    """
+
+    text = remove_non_printable_chars(text)
+    text = convert_to_alpha_num_space(text, replace_with='')
+    text = text.replace(' ','')
+    return text
 
 
 def document_doi(text: str):
@@ -97,8 +102,26 @@ def document_doi(text: str):
 
 
 def document_title(text: str):
-    pass
+    """
+    Função para padronizar titulos de documentos de acordo com os seguintes métodos, por ordem
+        1. Converte códigos HTML para caracteres Unicode
+        2. Remove caracteres non printable
+        3. Remove acentuação
+        4. Mantém caracteres alfanuméricos e espaço
+        5. Remove espaços duplos
 
+    :param text: título do documento a ser tratado
+    :param remove_words: conjunto de palavras a serem removidas
+    :return: título tratado do documento
+    """
+
+    text = unescape(text)
+    text = remove_non_printable_chars(text)
+    text = remove_accents(text)
+    text = convert_to_alpha_num_space(text, DOCUMENT_TITLE_SPECIAL_CHARS)
+    text = remove_double_spaces(text)
+
+    return text
 
 def document_first_page(text: str):
     pass
