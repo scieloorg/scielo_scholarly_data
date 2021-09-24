@@ -124,3 +124,15 @@ def global_date(text):
         return parse(text + '-06-15').date()
     else:
         return parse(text).date()
+
+def remove_words(text, words_to_remove=[]):
+    """
+
+    """
+    text_words = text.split(' ')
+
+    for sw in words_to_remove:
+        if sw in text_words:
+            text_words.remove(sw)
+
+    return ' '.join(text_words)
