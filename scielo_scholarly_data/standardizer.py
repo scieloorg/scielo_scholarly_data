@@ -15,7 +15,8 @@ from scielo_scholarly_data.values import (
     DOCUMENT_TITLE_SPECIAL_CHARS,
     JOURNAL_TITLE_SPECIAL_CHARS,
     JOURNAL_TITLE_SPECIAL_WORDS,
-    PATTERNS_DOI
+    PATTERNS_DOI,
+    POINTING_TO_REMOVE_FROM_TITLE_VISUALIZATION
 )
 
 
@@ -44,6 +45,28 @@ def journal_title_for_deduplication(text: str, words_to_remove=JOURNAL_TITLE_SPE
     text = convert_to_alpha_num_space(text, JOURNAL_TITLE_SPECIAL_CHARS)
     text = remove_double_spaces(text)
     text = remove_words(text, words_to_remove)
+
+    return text.lower()
+
+
+def journal_title_for_visualization(text: str, pointing_to_remove=POINTING_TO_REMOVE_FROM_TITLE_VISUALIZATION):
+    """
+    Procedimento para padronizar título de periódico de acordo com os seguintes métodos, por ordem
+        1. Converte códigos HTML para caracteres Unicode
+        2. Remove caracteres non printable
+        3. Remove espaços duplos
+        4. Remove pontuação no final do título
+        5. Transforma para caracteres minúsculos
+
+    :param text: título do periódico a ser tratado
+    :param pointing_to_remove: set de pontuação a ser removida do final do título
+    :return: título tratado do periódico
+    """
+    text = unescape(text)
+    text = remove_non_printable_chars(text)
+    text = remove_double_spaces(text)
+    while True in [text.endswith(x) for x in pointing_to_remove]:
+        text = text[:-1]
 
     return text.lower()
 
