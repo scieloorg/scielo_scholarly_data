@@ -127,7 +127,11 @@ def global_date(text):
 
 def remove_words(text, words_to_remove=[]):
     """
+    Função para a remoção de palavras, pré-definidas em uma lista, em um dado texto
 
+    :param text: texto no qual será realizada a remoção das palavras
+    :param words_to_remove: lista de palavras a serem removidas
+    :return: texto com as palavras removidas
     """
     text_words = text.split(' ')
 
