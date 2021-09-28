@@ -214,8 +214,8 @@ class TestStandardizer(unittest.TestCase):
         issues = {
             '96':'96',
             '96  ':'96',
-            '96a ':'96a',
-            ' 96 a':'96a'
+            '96 a ':'96 a',
+            ' 96 a':'96 a'
         }
         expected_values = list(issues.values())
         obtained_values = [issue_number(num) for num in issues]
