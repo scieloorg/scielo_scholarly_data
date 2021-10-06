@@ -1,5 +1,5 @@
 from scielo_scholarly_data.core import (
-    convert_to_alpha_num_space,
+    keep_alpha_num_space,
     global_date,
     remove_accents,
     remove_double_spaces,
@@ -15,17 +15,17 @@ class TestCore(unittest.TestCase):
 
     def test_convert_to_alpha_num_space(self):
         self.assertEqual(
-            convert_to_alpha_num_space('This$ ° [is]+- a´ (sentence) that contains numbers 1, 2, 3'), 
+            keep_alpha_num_space('This$ ° [is]+- a´ (sentence) that contains numbers 1, 2, 3'),
             'This     is    a   sentence  that contains numbers 1  2  3'
         )
 
         self.assertEqual(
-            convert_to_alpha_num_space('This$ ° [is]+- a´ (sentence) that contains numbers 1, 2, 3', replace_with='?'),
+            keep_alpha_num_space('This$ ° [is]+- a´ (sentence) that contains numbers 1, 2, 3', replace_with='?'),
             'This? ? ?is??? a? ?sentence? that contains numbers 1? 2? 3'
         )
 
         self.assertEqual(
-            convert_to_alpha_num_space('This$ ° [is]+- a´ (sentence) that contains numbers 1, 2, 3', replace_with=''),
+            keep_alpha_num_space('This$ ° [is]+- a´ (sentence) that contains numbers 1, 2, 3', replace_with=''),
             'This  is a sentence that contains numbers 1 2 3'
         )
 
