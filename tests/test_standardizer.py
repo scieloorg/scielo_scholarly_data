@@ -1,7 +1,7 @@
 from scielo_scholarly_data.standardizer import (
     document_author,
     document_doi,
-    document_title,
+    document_title_for_visualization,
     journal_issn,
     journal_title_for_deduplication,
     journal_title_for_visualization,
