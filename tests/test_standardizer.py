@@ -234,17 +234,17 @@ class TestStandardizer(unittest.TestCase):
 
         self.assertListEqual(expected_values, obtained_values)
 
-    def test_document_title_references(self):
+    def test_document_title_for_visualization_html_entities_remove(self):
         titles = {
             'INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DE &#38; PROBLEMÁTICAS':
-                'INNOVACION TECNOLOGICA EN LA RESOLUCION DE PROBLEMATICAS',
+                'INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DE PROBLEMÁTICAS',
             'INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DE &#338; PROBLEMÁTICAS':
-                'INNOVACION TECNOLOGICA EN LA RESOLUCION DE PROBLEMATICAS',
+                'INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DE PROBLEMÁTICAS',
             'INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DE &#x2030; PROBLEMÁTICAS':
-                'INNOVACION TECNOLOGICA EN LA RESOLUCION DE PROBLEMATICAS'
+                'INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DE PROBLEMÁTICAS'
         }
         expected_values = list(titles.values())
-        obtained_values = [document_title(dt) for dt in titles]
+        obtained_values = [document_title_for_visualization(dt) for dt in titles]
 
         self.assertListEqual(expected_values, obtained_values)
 
