@@ -118,17 +118,17 @@ def document_doi(text: str):
             return matched_doi.group()
 
 
-def document_title(text: str):
+def document_title_for_visualization(text: str, remove_special_char=True, pointing_to_remove=POINTING_TO_REMOVE_FROM_TITLE_VISUALIZATION):
     """
     Função para padronizar titulos de documentos de acordo com os seguintes métodos, por ordem
-        1. Converte códigos HTML para caracteres Unicode
+        1. Converte códigos HTML para caracteres Unicode ou remove (default)
         2. Remove caracteres non printable
-        3. Remove acentuação
-        4. Mantém caracteres alfanuméricos e espaço
-        5. Remove espaços duplos
+        3. Mantém caracteres alfanuméricos e espaço ou remove (default)
+        4. Remove espaços duplos
+        5. Remove pontuação no final do título
 
     :param text: título do documento a ser tratado
-    :param remove_words: conjunto de palavras a serem removidas
+    :param remove_char: booleano que indica se as entidades HTML e os caracteres especiais devem ser mantidos ou retirados (default)
     :return: título tratado do documento
     """
 
