@@ -132,10 +132,13 @@ def document_title_for_visualization(text: str, remove_special_char=True, pointi
     :return: título tratado do documento
     """
 
-    text = unescape(text)
+    if remove_special_char:
+        while '&' in text and ';' in text:
+            text = text[:text.find('&')] + text[text.find(';')+1:]
+        text = convert_to_alpha_num_space(text, DOCUMENT_TITLE_SPECIAL_CHARS)
+    else:
+        text = unescape(text)
     text = remove_non_printable_chars(text)
-    text = remove_accents(text)
-    text = convert_to_alpha_num_space(text, DOCUMENT_TITLE_SPECIAL_CHARS)
     text = remove_double_spaces(text)
 
     return text
