@@ -274,19 +274,6 @@ class TestStandardizer(unittest.TestCase):
 
         self.assertListEqual(expected_values, obtained_values)
 
-    def test_document_title_accents(self):
-        titles = {
-            'INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DÊ PROBLEMÁTICAS':
-                'INNOVACION TECNOLOGICA EN LA RESOLUCION DE PROBLEMATICAS',
-            'INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DẼ PROBLEMÁTICAS':
-                'INNOVACION TECNOLOGICA EN LA RESOLUCION DE PROBLEMATICAS',
-            'INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DÈ PROBLEMÁTICAS':
-                'INNOVACION TECNOLOGICA EN LA RESOLUCION DE PROBLEMATICAS'
-        }
-        expected_values = list(titles.values())
-        obtained_values = [document_title(dt) for dt in titles]
-
-        self.assertListEqual(expected_values, obtained_values)
 
     def test_document_title_alpha_num_spaces(self):
         titles = {
