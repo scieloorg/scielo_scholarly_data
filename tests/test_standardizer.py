@@ -301,3 +301,17 @@ class TestStandardizer(unittest.TestCase):
         obtained_values = [document_title_for_visualization(dt) for dt in titles]
 
         self.assertListEqual(expected_values, obtained_values)
+
+    def test_document_title_for_visualization_remove_pointing_at_end(self):
+        titles = {
+            'INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DÊ PROBLEMÁTICAS..':
+                'INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DÊ PROBLEMÁTICAS',
+            'INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DẼ PROBLEMÁTICAS.,;':
+                'INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DẼ PROBLEMÁTICAS',
+            'INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DÈ PROBLEMÁTICAS,,,,':
+                'INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DÈ PROBLEMÁTICAS'
+        }
+        expected_values = list(titles.values())
+        obtained_values = [document_title_for_visualization(dt) for dt in titles]
+
+        self.assertListEqual(expected_values, obtained_values)
