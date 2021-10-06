@@ -6,7 +6,7 @@ from datetime import *
 from scielo_scholarly_data.values import PATTERN_PARENTHESIS
 
 
-def convert_to_alpha_num_space(text, keep_chars=None, replace_with=' '):
+def keep_alpha_num_space(text, keep_chars=None, replace_with=' '):
     """
     Mantém em text apenas caracteres alfanuméricos (letras latinas e algarismos arábicos) e espaços
     Possibilita manter em text caracteres especiais na lista keep_chars
@@ -65,9 +65,7 @@ def remove_double_spaces(text):
     :param text: texto a ser tratado
     :return: texto sem espaços duplos
     """
-    while '  ' in text:
-        text = text.replace('  ', ' ')
-    return text.strip()
+    return " ".join([w for w in text.split() if w])
 
 
 def remove_non_printable_chars(text, replace_with=''):
@@ -119,7 +117,7 @@ def global_date(text):
     :param text: data a ser padronizada
     :return: data padronizada
     """
-    text = convert_to_alpha_num_space(text, keep_chars=['-', '/', '.'], replace_with='')
+    text = keep_alpha_num_space(text, keep_chars=['-', '/', '.'], replace_with='')
     if len(text) == 4 and '1000' <= text <= date.today().strftime("%Y"):
         return parse(text + '-06-15').date()
     else:
