@@ -1,7 +1,7 @@
 import re
 
 from scielo_scholarly_data.core import (
-    convert_to_alpha_num_space,
+    keep_alpha_num_space,
     convert_to_alpha_space,
     remove_accents,
     remove_double_spaces,
@@ -16,7 +16,7 @@ from scielo_scholarly_data.values import (
     JOURNAL_TITLE_SPECIAL_CHARS,
     JOURNAL_TITLE_SPECIAL_WORDS,
     PATTERNS_DOI,
-    POINTING_TO_REMOVE_FROM_TITLE_VISUALIZATION
+    PUNCTUATION_TO_REMOVE_FROM_TITLE_VISUALIZATION
 )
 
 
@@ -42,14 +42,16 @@ def journal_title_for_deduplication(text: str, words_to_remove=JOURNAL_TITLE_SPE
     if not keep_parenthesis_content:
         text = remove_parenthesis(text)
     text = remove_accents(text)
-    text = convert_to_alpha_num_space(text, JOURNAL_TITLE_SPECIAL_CHARS)
+    text = keep_alpha_num_space(text, JOURNAL_TITLE_SPECIAL_CHARS)
+    #O procedimento keep_alpha_num_space() remove de text caracteres que não são alfanuméricos, mantendo somente
+    #letras latinas, algarismos arábicos, espaços e outros caracteres indicados em JOURNAL_TITLE_SPECIAL_CHARS.
     text = remove_double_spaces(text)
     text = remove_words(text, words_to_remove)
 
     return text.lower()
 
 
-def journal_title_for_visualization(text: str, pointing_to_remove=POINTING_TO_REMOVE_FROM_TITLE_VISUALIZATION):
+def journal_title_for_visualization(text: str, punctuation_to_remove=PUNCTUATION_TO_REMOVE_FROM_TITLE_VISUALIZATION):
     """
     Procedimento para padronizar título de periódico de acordo com os seguintes métodos, por ordem
         1. Converte códigos HTML para caracteres Unicode
@@ -59,16 +61,16 @@ def journal_title_for_visualization(text: str, pointing_to_remove=POINTING_TO_RE
         5. Transforma para caracteres minúsculos
 
     :param text: título do periódico a ser tratado
-    :param pointing_to_remove: set de pontuação a ser removida do final do título
+    :param punctuation_to_remove: set de pontuação a ser removida do final do título
     :return: título tratado do periódico
     """
     text = unescape(text)
     text = remove_non_printable_chars(text)
     text = remove_double_spaces(text)
-    while True in [text.endswith(x) for x in pointing_to_remove]:
+    while True in [text.endswith(x) for x in punctuation_to_remove]:
         text = text[:-1]
 
-    return text.lower()
+    return text
 
 
 def journal_issn(text: str):
@@ -100,7 +102,7 @@ def issue_number(text: str):
     """
 
     text = remove_non_printable_chars(text)
-    text = convert_to_alpha_num_space(text, replace_with='')
+    text = keep_alpha_num_space(text, replace_with='')
     text = text.strip()
     return text
 
@@ -118,7 +120,7 @@ def document_doi(text: str):
             return matched_doi.group()
 
 
-def document_title_for_visualization(text: str, remove_special_char=True, pointing_to_remove=POINTING_TO_REMOVE_FROM_TITLE_VISUALIZATION):
+def document_title_for_visualization(text: str, remove_special_char=True, punctuation_to_remove=PUNCTUATION_TO_REMOVE_FROM_TITLE_VISUALIZATION):
     """
     Função para padronizar titulos de documentos de acordo com os seguintes métodos, por ordem
         1. Converte códigos HTML para caracteres Unicode ou remove (default)
@@ -135,7 +137,7 @@ def document_title_for_visualization(text: str, remove_special_char=True, pointi
     if remove_special_char:
         while '&' in text and ';' in text:
             text = text[:text.find('&')] + text[text.find(';')+1:]
-        text = convert_to_alpha_num_space(text, DOCUMENT_TITLE_SPECIAL_CHARS)
+        text = keep_alpha_num_space(text, DOCUMENT_TITLE_SPECIAL_CHARS)
     else:
         text = unescape(text)
     text = remove_non_printable_chars(text)
