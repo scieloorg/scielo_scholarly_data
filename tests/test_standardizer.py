@@ -248,17 +248,29 @@ class TestStandardizer(unittest.TestCase):
 
         self.assertListEqual(expected_values, obtained_values)
 
-    def test_document_title_non_printable(self):
+    def test_document_title_for_visualization_html_entities_keeps(self):
         titles = {
-            'INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DE \n PROBLEMÁTICAS':
-                'INNOVACION TECNOLOGICA EN LA RESOLUCION DE PROBLEMATICAS',
-            'INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DE \t PROBLEMÁTICAS':
-                'INNOVACION TECNOLOGICA EN LA RESOLUCION DE PROBLEMATICAS',
-            'INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DE \a PROBLEMÁTICAS':
-                'INNOVACION TECNOLOGICA EN LA RESOLUCION DE PROBLEMATICAS'
+            'INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DE &#60; PROBLEMÁTICAS':
+                'INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DE < PROBLEMÁTICAS',
+            'INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DE &#163; PROBLEMÁTICAS':
+                'INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DE £ PROBLEMÁTICAS'
         }
         expected_values = list(titles.values())
-        obtained_values = [document_title(dt) for dt in titles]
+        obtained_values = [document_title_for_visualization(dt, remove_special_char=False) for dt in titles]
+
+        self.assertListEqual(expected_values, obtained_values)
+
+    def test_document_title_for_visualization_non_printable(self):
+        titles = {
+            'INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DE \n PROBLEMÁTICAS':
+                'INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DE PROBLEMÁTICAS',
+            'INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DE \t PROBLEMÁTICAS':
+                'INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DE PROBLEMÁTICAS',
+            'INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DE \a PROBLEMÁTICAS':
+                'INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DE PROBLEMÁTICAS'
+        }
+        expected_values = list(titles.values())
+        obtained_values = [document_title_for_visualization(dt) for dt in titles]
 
         self.assertListEqual(expected_values, obtained_values)
 
