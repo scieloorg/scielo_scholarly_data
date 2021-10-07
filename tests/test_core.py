@@ -1,10 +1,12 @@
 from scielo_scholarly_data.core import (
-    keep_alpha_num_space,
     global_date,
+    keep_alpha_num_space,
     remove_accents,
     remove_double_spaces,
+    remove_html_entities,
     remove_non_printable_chars,
     remove_parenthesis,
+    remove_end_punctuation_chars,
     unescape
 )
 
@@ -13,7 +15,7 @@ import unittest
 
 class TestCore(unittest.TestCase):
 
-    def test_convert_to_alpha_num_space(self):
+    def test_keep_alpha_num_space(self):
         self.assertEqual(
             keep_alpha_num_space('This$ ° [is]+- a´ (sentence) that contains numbers 1, 2, 3'),
             'This     is    a   sentence  that contains numbers 1  2  3'
@@ -39,6 +41,18 @@ class TestCore(unittest.TestCase):
         self.assertEqual(
             remove_double_spaces('This is  a  sentence'), 
             'This is a sentence'
+        )
+
+    def test_remove_end_punctuation_chars(self):
+        self.assertEqual(
+            remove_end_punctuation_chars('Ciência e Mundo .'),
+            'Ciência e Mundo'
+        )
+
+    def test_remove_html_entities(self):
+        self.assertEqual(
+            remove_html_entities('Law &#38; Order'),
+            'Law  Order'
         )
 
     def test_remove_non_printable_chars(self):
