@@ -44,5 +44,6 @@ PUNCTUATION_TO_REMOVE_FROM_TITLE_VISUALIZATION = {
     ',',
     '.',
     ';',
-    ':'
+    ':',
+    ' '
 }
