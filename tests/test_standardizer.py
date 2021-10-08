@@ -3,7 +3,8 @@ from scielo_scholarly_data.standardizer import (
     document_doi,
     document_title,
     journal_issn,
-    journal_title,
+    journal_title_for_deduplication,
+    journal_title_for_visualization,
     issue_number
 )
 
@@ -12,25 +13,83 @@ import unittest
 
 class TestStandardizer(unittest.TestCase):
 
-    def test_journal_title(self):
+    def test_journal_title_for_deduplication_html_code_to_unicode(self):
         self.assertEqual(
-            journal_title('Agrociencia (Uruguay)', keep_parenthesis_content=False), 
-            'Agrociencia'
+            journal_title_for_deduplication('Agrociencia &amp; (Uruguay)'),
+            'agrociencia & uruguay'
         )
 
+
+    def test_journal_title_for_deduplication_remove_nonprintable_char(self):
         self.assertEqual(
-            journal_title('Agrociencia (Uruguay)'), 
-            'Agrociencia Uruguay'
+            journal_title_for_deduplication('Agrociencia (Uruguay)\n'),
+            'agrociencia uruguay'
         )
 
+    def test_journal_title_for_deduplication_remove_parentheses_and_content(self):
         self.assertEqual(
-            journal_title('African Journal of Disability (Online)', keep_parenthesis_content=False),
-            'African Journal of Disability'
-            )
+            journal_title_for_deduplication('Agrociencia (Uruguay)', keep_parenthesis_content=False),
+            'agrociencia'
+        )
 
+    def test_journal_title_for_deduplication_remove_accentuation(self):
         self.assertEqual(
-            journal_title('Anagramas -Rumbos y sentidos de la comunicación-'), 
-            'Anagramas Rumbos y sentidos de la comunicacion'
+            journal_title_for_deduplication('Agrociência (Uruguay)'),
+            'agrociencia uruguay'
+        )
+
+    def test_journal_title_for_deduplication_convert_to_alphanumeric_char(self):
+        self.assertEqual(
+            journal_title_for_deduplication('Agrociencia + (Uruguay)'),
+            'agrociencia uruguay'
+        )
+
+    def test_journal_title_for_deduplication_remove_double_space(self):
+        self.assertEqual(
+            journal_title_for_deduplication('Agrociencia    (Uruguay)'),
+            'agrociencia uruguay'
+        )
+
+    def test_journal_title_for_deduplication_remove_special_words(self):
+        self.assertEqual(
+            journal_title_for_deduplication('Agrociencia (Uruguay) online'),
+            'agrociencia uruguay'
+        )
+
+    def test_journal_title_for_deduplication_to_lowercase_char(self):
+        self.assertEqual(
+            journal_title_for_deduplication('Agrociencia (URUGUAY)'),
+            'agrociencia uruguay'
+        )
+
+    def test_journal_title_for_visualization_html_code_to_unicode(self):
+        self.assertEqual(
+            journal_title_for_visualization('Agrociencia &amp; (Uruguay)'),
+            'agrociencia & (uruguay)'
+        )
+
+    def test_journal_title_for_visualization_remove_nonprintable_char(self):
+        self.assertEqual(
+            journal_title_for_visualization('Agrociencia (Uruguay)\n'),
+            'agrociencia (uruguay)'
+        )
+
+    def test_journal_title_for_visualization_remove_double_space(self):
+        self.assertEqual(
+            journal_title_for_visualization('Agrociencia    (Uruguay)'),
+            'agrociencia (uruguay)'
+        )
+
+    def test_journal_title_for_visualization_remove_pointing_at_end(self):
+        self.assertEqual(
+            journal_title_for_visualization('Agrociencia (Uruguay).,;'),
+            'agrociencia (uruguay)'
+        )
+
+    def test_journal_title_for_visualization_to_lowercase_char(self):
+        self.assertEqual(
+            journal_title_for_visualization('Agrociencia (URUGUAY)'),
+            'agrociencia (uruguay)'
         )
 
     def test_journal_issn_without_hyphen(self):

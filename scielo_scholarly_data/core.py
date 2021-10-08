@@ -124,3 +124,19 @@ def global_date(text):
         return parse(text + '-06-15').date()
     else:
         return parse(text).date()
+
+def remove_words(text, words_to_remove=[]):
+    """
+    Função para a remoção de palavras, pré-definidas em uma lista, em um dado texto
+
+    :param text: texto no qual será realizada a remoção das palavras
+    :param words_to_remove: lista de palavras a serem removidas
+    :return: texto com as palavras removidas
+    """
+    text_words = text.split(' ')
+
+    for sw in words_to_remove:
+        if sw in text_words:
+            text_words.remove(sw)
+
+    return ' '.join(text_words)
