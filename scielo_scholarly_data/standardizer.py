@@ -101,7 +101,7 @@ def issue_number(text: str):
 
     text = remove_non_printable_chars(text)
     text = convert_to_alpha_num_space(text, replace_with='')
-    text = text.replace(' ','')
+    text = text.strip()
     return text
 
 
