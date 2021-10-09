@@ -1,6 +1,7 @@
 from scielo_scholarly_data.standardizer import (
     document_author,
     document_doi,
+    document_title_for_deduplication,
     document_title_for_visualization,
     journal_issn,
     journal_title_for_deduplication,
@@ -228,6 +229,11 @@ class TestStandardizer(unittest.TestCase):
 
         self.assertListEqual(expected_values, obtained_values)
 
+    def test_document_title_for_deduplication(self):
+        self.assertEqual(
+            document_title_for_deduplication('INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DE PROBLEMÁTICAS'),
+            'innovacion tecnologica en la resolucion de problematicas'
+        )
 
     def test_document_title_for_visualization_html_entities_keeps(self):
         titles = {
