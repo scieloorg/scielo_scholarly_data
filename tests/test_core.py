@@ -78,11 +78,12 @@ class TestCore(unittest.TestCase):
         )
 
     def test_defaults_date_to_ISO_format_with_separators(self):
+        test_date = parse('2021-09-21').date()
         dates = {
-            '2021-09-21': parse('2021-09-21').date(),
-            '2021/09/21': parse('2021-09-21').date(),
-            '2021.09.21': parse('2021-09-21').date(),
-            '2021 09 21': parse('2021-09-21').date()
+            '2021-09-21': test_date,
+            '2021/09/21': test_date,
+            '2021.09.21': test_date,
+            '2021 09 21': test_date
         }
         expected_values = list(dates.values())
         obtained_values = [defaults_date_to_ISO_format(dt) for dt in dates]
@@ -90,11 +91,12 @@ class TestCore(unittest.TestCase):
         self.assertListEqual(expected_values, obtained_values)
 
     def test_defaults_date_to_ISO_format_with_separators_different_orderings(self):
+        test_date = parse('2021-09-21').date()
         dates = {
-            '21-09-2021': parse('2021-09-21').date(),
-            '21/09/2021': parse('2021-09-21').date(),
-            '21.09.2021': parse('2021-09-21').date(),
-            '21 09 2021': parse('2021-09-21').date()
+            '21-09-2021': test_date,
+            '21/09/2021': test_date,
+            '21.09.2021': test_date,
+            '21 09 2021': test_date
         }
         expected_values = list(dates.values())
         obtained_values = [defaults_date_to_ISO_format(dt) for dt in dates]
