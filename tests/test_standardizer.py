@@ -65,31 +65,25 @@ class TestStandardizer(unittest.TestCase):
     def test_journal_title_for_visualization_html_code_to_unicode(self):
         self.assertEqual(
             journal_title_for_visualization('Agrociencia &amp; (Uruguay)'),
-            'agrociencia & (uruguay)'
+            'Agrociencia & (Uruguay)'
         )
 
     def test_journal_title_for_visualization_remove_nonprintable_char(self):
         self.assertEqual(
             journal_title_for_visualization('Agrociencia (Uruguay)\n'),
-            'agrociencia (uruguay)'
+            'Agrociencia (Uruguay)'
         )
 
     def test_journal_title_for_visualization_remove_double_space(self):
         self.assertEqual(
             journal_title_for_visualization('Agrociencia    (Uruguay)'),
-            'agrociencia (uruguay)'
+            'Agrociencia (Uruguay)'
         )
 
     def test_journal_title_for_visualization_remove_pointing_at_end(self):
         self.assertEqual(
             journal_title_for_visualization('Agrociencia (Uruguay).,;'),
-            'agrociencia (uruguay)'
-        )
-
-    def test_journal_title_for_visualization_to_lowercase_char(self):
-        self.assertEqual(
-            journal_title_for_visualization('Agrociencia (URUGUAY)'),
-            'agrociencia (uruguay)'
+            'Agrociencia (Uruguay)'
         )
 
     def test_journal_issn_without_hyphen(self):
@@ -234,19 +228,6 @@ class TestStandardizer(unittest.TestCase):
 
         self.assertListEqual(expected_values, obtained_values)
 
-    def test_document_title_for_visualization_html_entities_remove(self):
-        titles = {
-            'INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DE &#38; PROBLEMÁTICAS':
-                'INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DE PROBLEMÁTICAS',
-            'INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DE &#338; PROBLEMÁTICAS':
-                'INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DE PROBLEMÁTICAS',
-            'INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DE &#x2030; PROBLEMÁTICAS':
-                'INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DE PROBLEMÁTICAS'
-        }
-        expected_values = list(titles.values())
-        obtained_values = [document_title_for_visualization(dt) for dt in titles]
-
-        self.assertListEqual(expected_values, obtained_values)
 
     def test_document_title_for_visualization_html_entities_keeps(self):
         titles = {

@@ -1,10 +1,11 @@
 from scielo_scholarly_data.core import (
-    convert_to_alpha_num_space,
-    defaults_date_to_ISO_format,
+    global_date,
+    keep_alpha_num_space,
     remove_accents,
     remove_double_spaces,
     remove_non_printable_chars,
     remove_parenthesis,
+    remove_end_punctuation_chars,
     unescape
 )
 
@@ -14,19 +15,19 @@ from dateutil.parser import parse
 
 class TestCore(unittest.TestCase):
 
-    def test_convert_to_alpha_num_space(self):
+    def test_keep_alpha_num_space(self):
         self.assertEqual(
-            convert_to_alpha_num_space('This$ ° [is]+- a´ (sentence) that contains numbers 1, 2, 3'), 
+            keep_alpha_num_space('This$ ° [is]+- a´ (sentence) that contains numbers 1, 2, 3'),
             'This     is    a   sentence  that contains numbers 1  2  3'
         )
 
         self.assertEqual(
-            convert_to_alpha_num_space('This$ ° [is]+- a´ (sentence) that contains numbers 1, 2, 3', replace_with='?'),
+            keep_alpha_num_space('This$ ° [is]+- a´ (sentence) that contains numbers 1, 2, 3', replace_with='?'),
             'This? ? ?is??? a? ?sentence? that contains numbers 1? 2? 3'
         )
 
         self.assertEqual(
-            convert_to_alpha_num_space('This$ ° [is]+- a´ (sentence) that contains numbers 1, 2, 3', replace_with=''),
+            keep_alpha_num_space('This$ ° [is]+- a´ (sentence) that contains numbers 1, 2, 3', replace_with=''),
             'This  is a sentence that contains numbers 1 2 3'
         )
 
@@ -40,6 +41,12 @@ class TestCore(unittest.TestCase):
         self.assertEqual(
             remove_double_spaces('This is  a  sentence'), 
             'This is a sentence'
+        )
+
+    def test_remove_end_punctuation_chars(self):
+        self.assertEqual(
+            remove_end_punctuation_chars('Ciência e Mundo .'),
+            'Ciência e Mundo'
         )
 
     def test_remove_non_printable_chars(self):
