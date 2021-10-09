@@ -5,8 +5,11 @@ from dateutil.parser import *
 from datetime import *
 from scielo_scholarly_data.values import PATTERN_PARENTHESIS
 
+from scielo_scholarly_data.values import (
+    PUNCTUATION_TO_REMOVE_FROM_TITLE_VISUALIZATION
+)
 
-def convert_to_alpha_num_space(text, keep_chars=None, replace_with=' '):
+def keep_alpha_num_space(text, keep_chars=None, replace_with=' '):
     """
     Mantém em text apenas caracteres alfanuméricos (letras latinas e algarismos arábicos) e espaços
     Possibilita manter em text caracteres especiais na lista keep_chars
@@ -65,9 +68,7 @@ def remove_double_spaces(text):
     :param text: texto a ser tratado
     :return: texto sem espaços duplos
     """
-    while '  ' in text:
-        text = text.replace('  ', ' ')
-    return text.strip()
+    return " ".join([w for w in text.split() if w])
 
 
 def remove_non_printable_chars(text, replace_with=''):
@@ -86,6 +87,18 @@ def remove_non_printable_chars(text, replace_with=''):
         else:
             new_text.append(replace_with)
     return ''.join(new_text)
+
+
+def remove_end_punctuation_chars(text, end_punctuation_chars_to_remove=PUNCTUATION_TO_REMOVE_FROM_TITLE_VISUALIZATION):
+    """
+    Remove pontuação no final de text, os caracteres que serão removidos devem constar em values.PUNCTUATION_TO_REMOVE_FROM_TITLE_VISUALIZATION
+
+    :param text: text a ser tratado
+    :end_punctuation_chars_to_remove: conjunto de caracteres (pontuação) a serem removidos do final de text
+    """
+    while True in [text.endswith(x) for x in end_punctuation_chars_to_remove]:
+        text = text[:-1]
+    return text
 
 
 def unescape(text):
@@ -119,7 +132,7 @@ def global_date(text):
     :param text: data a ser padronizada
     :return: data padronizada
     """
-    text = convert_to_alpha_num_space(text, keep_chars=['-', '/', '.'], replace_with='')
+    text = keep_alpha_num_space(text, keep_chars=['-', '/', '.'], replace_with='')
     if len(text) == 4 and '1000' <= text <= date.today().strftime("%Y"):
         return parse(text + '-06-15').date()
     else:

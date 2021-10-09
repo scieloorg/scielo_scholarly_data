@@ -1,7 +1,7 @@
 from scielo_scholarly_data.standardizer import (
     document_author,
     document_doi,
-    document_title,
+    document_title_for_visualization,
     journal_issn,
     journal_title_for_deduplication,
     journal_title_for_visualization,
@@ -65,31 +65,25 @@ class TestStandardizer(unittest.TestCase):
     def test_journal_title_for_visualization_html_code_to_unicode(self):
         self.assertEqual(
             journal_title_for_visualization('Agrociencia &amp; (Uruguay)'),
-            'agrociencia & (uruguay)'
+            'Agrociencia & (Uruguay)'
         )
 
     def test_journal_title_for_visualization_remove_nonprintable_char(self):
         self.assertEqual(
             journal_title_for_visualization('Agrociencia (Uruguay)\n'),
-            'agrociencia (uruguay)'
+            'Agrociencia (Uruguay)'
         )
 
     def test_journal_title_for_visualization_remove_double_space(self):
         self.assertEqual(
             journal_title_for_visualization('Agrociencia    (Uruguay)'),
-            'agrociencia (uruguay)'
+            'Agrociencia (Uruguay)'
         )
 
     def test_journal_title_for_visualization_remove_pointing_at_end(self):
         self.assertEqual(
             journal_title_for_visualization('Agrociencia (Uruguay).,;'),
-            'agrociencia (uruguay)'
-        )
-
-    def test_journal_title_for_visualization_to_lowercase_char(self):
-        self.assertEqual(
-            journal_title_for_visualization('Agrociencia (URUGUAY)'),
-            'agrociencia (uruguay)'
+            'Agrociencia (Uruguay)'
         )
 
     def test_journal_issn_without_hyphen(self):
@@ -234,72 +228,71 @@ class TestStandardizer(unittest.TestCase):
 
         self.assertListEqual(expected_values, obtained_values)
 
-    def test_document_title_references(self):
+
+    def test_document_title_for_visualization_html_entities_keeps(self):
         titles = {
-            'INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DE &#38; PROBLEMÁTICAS':
-                'INNOVACION TECNOLOGICA EN LA RESOLUCION DE PROBLEMATICAS',
-            'INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DE &#338; PROBLEMÁTICAS':
-                'INNOVACION TECNOLOGICA EN LA RESOLUCION DE PROBLEMATICAS',
-            'INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DE &#x2030; PROBLEMÁTICAS':
-                'INNOVACION TECNOLOGICA EN LA RESOLUCION DE PROBLEMATICAS'
+            'INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DE &#60; PROBLEMÁTICAS':
+                'INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DE < PROBLEMÁTICAS',
+            'INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DE &#163; PROBLEMÁTICAS':
+                'INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DE £ PROBLEMÁTICAS'
         }
         expected_values = list(titles.values())
-        obtained_values = [document_title(dt) for dt in titles]
+        obtained_values = [document_title_for_visualization(dt, remove_special_char=False) for dt in titles]
 
         self.assertListEqual(expected_values, obtained_values)
 
-    def test_document_title_non_printable(self):
+    def test_document_title_for_visualization_non_printable(self):
         titles = {
             'INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DE \n PROBLEMÁTICAS':
-                'INNOVACION TECNOLOGICA EN LA RESOLUCION DE PROBLEMATICAS',
+                'INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DE PROBLEMÁTICAS',
             'INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DE \t PROBLEMÁTICAS':
-                'INNOVACION TECNOLOGICA EN LA RESOLUCION DE PROBLEMATICAS',
+                'INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DE PROBLEMÁTICAS',
             'INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DE \a PROBLEMÁTICAS':
-                'INNOVACION TECNOLOGICA EN LA RESOLUCION DE PROBLEMATICAS'
+                'INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DE PROBLEMÁTICAS'
         }
         expected_values = list(titles.values())
-        obtained_values = [document_title(dt) for dt in titles]
+        obtained_values = [document_title_for_visualization(dt) for dt in titles]
 
         self.assertListEqual(expected_values, obtained_values)
 
-    def test_document_title_accents(self):
-        titles = {
-            'INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DÊ PROBLEMÁTICAS':
-                'INNOVACION TECNOLOGICA EN LA RESOLUCION DE PROBLEMATICAS',
-            'INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DẼ PROBLEMÁTICAS':
-                'INNOVACION TECNOLOGICA EN LA RESOLUCION DE PROBLEMATICAS',
-            'INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DÈ PROBLEMÁTICAS':
-                'INNOVACION TECNOLOGICA EN LA RESOLUCION DE PROBLEMATICAS'
-        }
-        expected_values = list(titles.values())
-        obtained_values = [document_title(dt) for dt in titles]
-
-        self.assertListEqual(expected_values, obtained_values)
-
-    def test_document_title_alpha_num_spaces(self):
+    def test_document_title_for_visualization_alpha_num_spaces(self):
         titles = {
             'INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DÊ: PROBLEMÁTICAS':
-                'INNOVACION TECNOLOGICA EN LA RESOLUCION DE PROBLEMATICAS',
+                'INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DÊ PROBLEMÁTICAS',
             'INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DẼ* PROBLEMÁTICAS':
-                'INNOVACION TECNOLOGICA EN LA RESOLUCION DE PROBLEMATICAS',
+                'INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DẼ PROBLEMÁTICAS',
             'INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DÈ& PROBLEMÁTICAS':
-                'INNOVACION TECNOLOGICA EN LA RESOLUCION DE PROBLEMATICAS'
+                'INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DÈ PROBLEMÁTICAS'
         }
         expected_values = list(titles.values())
-        obtained_values = [document_title(dt) for dt in titles]
+        obtained_values = [document_title_for_visualization(dt) for dt in titles]
 
         self.assertListEqual(expected_values, obtained_values)
 
-    def test_document_title_double_spaces(self):
+    def test_document_title_for_visualization_double_spaces(self):
         titles = {
             'INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DÊ  PROBLEMÁTICAS':
-                'INNOVACION TECNOLOGICA EN LA RESOLUCION DE PROBLEMATICAS',
+                'INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DÊ PROBLEMÁTICAS',
             'INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DẼ   PROBLEMÁTICAS':
-                'INNOVACION TECNOLOGICA EN LA RESOLUCION DE PROBLEMATICAS',
+                'INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DẼ PROBLEMÁTICAS',
             'INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DÈ    PROBLEMÁTICAS':
-                'INNOVACION TECNOLOGICA EN LA RESOLUCION DE PROBLEMATICAS'
+                'INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DÈ PROBLEMÁTICAS'
         }
         expected_values = list(titles.values())
-        obtained_values = [document_title(dt) for dt in titles]
+        obtained_values = [document_title_for_visualization(dt) for dt in titles]
+
+        self.assertListEqual(expected_values, obtained_values)
+
+    def test_document_title_for_visualization_remove_pointing_at_end(self):
+        titles = {
+            'INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DÊ PROBLEMÁTICAS..':
+                'INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DÊ PROBLEMÁTICAS',
+            'INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DẼ PROBLEMÁTICAS.,;':
+                'INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DẼ PROBLEMÁTICAS',
+            'INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DÈ PROBLEMÁTICAS,,,,':
+                'INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DÈ PROBLEMÁTICAS'
+        }
+        expected_values = list(titles.values())
+        obtained_values = [document_title_for_visualization(dt) for dt in titles]
 
         self.assertListEqual(expected_values, obtained_values)
