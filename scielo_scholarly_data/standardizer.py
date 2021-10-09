@@ -5,7 +5,6 @@ from scielo_scholarly_data.core import (
     keep_alpha_num_space,
     remove_accents,
     remove_double_spaces,
-    remove_html_entities,
     remove_non_printable_chars,
     remove_parenthesis,
     remove_end_punctuation_chars,
@@ -121,24 +120,37 @@ def document_title_for_visualization(text: str, remove_special_char=True):
     """
     Função para padronizar titulos de documentos de acordo com os seguintes métodos, por ordem
         1. Converte códigos HTML para caracteres Unicode ou remove (default)
-        2. Remove caracteres non printable
-        3. Mantém caracteres alfanuméricos e espaço ou remove (default)
+        2. Mantém caracteres alfanuméricos e espaço ou remove (default)
+        3. Remove caracteres non printable
         4. Remove espaços duplos
         5. Remove pontuação no final do título
+        6. Remove espaços nas extremidades do título
 
     :param text: título do documento a ser tratado
     :param remove_char: booleano que indica se as entidades HTML e os caracteres especiais devem ser mantidos ou retirados (default)
     :return: título tratado do documento
     """
+    # o método unescape converte códigos no formato &#38; para seus caracteres correspondentes
+    text = unescape(text)
 
     if remove_special_char:
-        text = remove_html_entities(text)
-        text = keep_alpha_num_space(text, DOCUMENT_TITLE_SPECIAL_CHARS)
-    else:
-        text = unescape(text)
+        # se a pessoa optar por remover caracteres especiais, os removemos através do keep_alpha_num_space
+        text = keep_alpha_num_space(text)
+
+    # remove caracteres non printable
     text = remove_non_printable_chars(text)
+
+    # remove espaços duplos
     text = remove_double_spaces(text)
+
+    # remove ponto final
+    text = remove_end_punctuation_chars(text)
+
+    # remove espaços das bordas
+    text = text.strip()
+
     return text
+
 
 def document_first_page(text: str):
     pass
