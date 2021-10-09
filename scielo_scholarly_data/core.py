@@ -1,8 +1,8 @@
 import html
 import unicodedata
 import re
-from dateutil.parser import *
-from datetime import *
+from dateutil.parser import parse
+from datetime import date
 from scielo_scholarly_data.values import PATTERN_PARENTHESIS
 
 from scielo_scholarly_data.values import (
@@ -125,18 +125,35 @@ def remove_parenthesis(text):
     return text
 
 
-def global_date(text):
+def defaults_date_to_ISO_format(text, day='15', month='06', just_year=False):
     """
     Função para a padronização de datas no formato ISO YYYY-MM-DD
 
     :param text: data a ser padronizada
+    :param day: valor para dia no caso de data composta somente pelo ano
+    :param month: valor para mês no caso de data composta somente pelo ano
+    :param just_year: valor lógico para retornar a data completa (default) ou apenas o ano
     :return: data padronizada
     """
-    text = keep_alpha_num_space(text, keep_chars=['-', '/', '.'], replace_with='')
-    if len(text) == 4 and '1000' <= text <= date.today().strftime("%Y"):
-        return parse(text + '-06-15').date()
+
+    if len(text) <= 4:
+        try:
+            text = parse(text + '-' + month + '-' + day).date()
+        except ValueError:
+            return None
     else:
-        return parse(text).date()
+        try:
+            text = parse(text).date()
+        except ValueError:
+            try:
+                text = convert_to_alpha_num_space(text, keep_chars=['-', '/', '.'], replace_with='')
+                text = parse(text).date()
+            except ValueError:
+                return None
+    if just_year:
+        return text.year
+    else:
+        return text
 
 def remove_words(text, words_to_remove=[]):
     """

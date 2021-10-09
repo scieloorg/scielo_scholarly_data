@@ -10,6 +10,7 @@ from scielo_scholarly_data.core import (
 )
 
 import unittest
+from dateutil.parser import parse
 
 
 class TestCore(unittest.TestCase):
@@ -77,38 +78,76 @@ class TestCore(unittest.TestCase):
             'This is a text with to remove'
         )
 
-    def test_global_date_without_separators(self):
+    def test_defaults_date_to_ISO_format_without_separators(self):
         self.assertEqual(
-            global_date('20210921').strftime("%Y-%m-%d"),
-            '2021-09-21'
+            defaults_date_to_ISO_format('20210921'),
+            parse('2021-09-21').date()
         )
 
-    def test_global_date_with_separators(self):
+    def test_defaults_date_to_ISO_format_with_separators(self):
+        test_date = parse('2021-09-21').date()
         dates = {
-            '2021-09-21': '2021-09-21',
-            '2021/09/21': '2021-09-21',
-            '2021.09.21': '2021-09-21',
-            '2021 09 21': '2021-09-21'
+            '2021-09-21': test_date,
+            '2021/09/21': test_date,
+            '2021.09.21': test_date,
+            '2021 09 21': test_date
         }
         expected_values = list(dates.values())
-        obtained_values = [global_date(dt).strftime("%Y-%m-%d") for dt in dates]
+        obtained_values = [defaults_date_to_ISO_format(dt) for dt in dates]
 
         self.assertListEqual(expected_values, obtained_values)
 
-    def test_global_date_with_separators_different_orderings(self):
+    def test_defaults_date_to_ISO_format_with_separators_different_orderings(self):
+        test_date = parse('2021-09-21').date()
         dates = {
-            '21-09-2021': '2021-09-21',
-            '21/09/2021': '2021-09-21',
-            '21.09.2021': '2021-09-21',
-            '21 09 2021': '2021-09-21'
+            '21-09-2021': test_date,
+            '21/09/2021': test_date,
+            '21.09.2021': test_date,
+            '21 09 2021': test_date
         }
         expected_values = list(dates.values())
-        obtained_values = [global_date(dt).strftime("%Y-%m-%d") for dt in dates]
+        obtained_values = [defaults_date_to_ISO_format(dt) for dt in dates]
 
         self.assertListEqual(expected_values, obtained_values)
 
-    def test_global_date_just_year(self):
+    def test_defaults_date_to_ISO_format_just_year_received(self):
         self.assertEqual(
-            global_date('2021').strftime("%Y-%m-%d"),
-            '2021-06-15'
+            defaults_date_to_ISO_format('2021'),
+            parse('2021-06-15').date()
+        )
+
+    def test_defaults_date_to_ISO_format_just_year_delivered(self):
+        self.assertEqual(
+            defaults_date_to_ISO_format('2021-06-15', just_year=True ),
+            parse('2021').date().year
+        )
+
+    def test_defaults_date_to_ISO_format_just_year_user_decision(self):
+        self.assertEqual(
+            defaults_date_to_ISO_format('2021', day='1', month='1'),
+            parse('2021-01-01').date()
+        )
+
+    def test_defaults_date_to_ISO_format_invalid_month(self):
+        self.assertEqual(
+            defaults_date_to_ISO_format('2021-13-09'),
+            None
+        )
+
+    def test_defaults_date_to_ISO_format_invalid_day(self):
+        self.assertEqual(
+            defaults_date_to_ISO_format('2021-12-35'),
+            None
+        )
+
+    def test_defaults_date_to_ISO_format_invalid_date(self):
+        self.assertEqual(
+            defaults_date_to_ISO_format('2021-02-31'),
+            None
+        )
+
+    def test_defaults_date_to_ISO_format_invalid_char(self):
+        self.assertEqual(
+            defaults_date_to_ISO_format('20*21)10(19'),
+            parse('2021-10-19').date()
         )
