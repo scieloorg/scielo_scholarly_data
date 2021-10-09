@@ -89,19 +89,6 @@ def remove_non_printable_chars(text, replace_with=''):
     return ''.join(new_text)
 
 
-def remove_html_entities(text):
-    """
-    Remove de text as entidades HTML, note que a função unescape() converte as entidades HTML para o caractere Unicode
-    correspondente, no caso da função remove_html_entities() estes caracteres são removidos por opção do usuário.
-
-    :param text: texto a ser tratado
-    :return: texto com entidades HTML removidas
-    """
-    while '&' in text and ';' in text:
-        text = text[:text.find('&')] + text[text.find(';') + 1:]
-    return text
-
-
 def remove_end_punctuation_chars(text, end_punctuation_chars_to_remove=PUNCTUATION_TO_REMOVE_FROM_TITLE_VISUALIZATION):
     """
     Remove pontuação no final de text, os caracteres que serão removidos devem constar em values.PUNCTUATION_TO_REMOVE_FROM_TITLE_VISUALIZATION
