@@ -228,14 +228,22 @@ def document_first_page(text: str):
     # remove ponto final
     text = remove_end_punctuation_chars(text)
 
-    # remove espaços das bordas
-    text = text.strip()
+    # remove espaços
+    text = text.replace(' ','')
 
     return text
 
 
 def document_last_page(text: str):
-    pass
+    """
+    Função para normalizar o número da página final de um documento, considerando os mesmo métodos da função document_first_page
+    :param text: número da página final de um documento a ser normalizado
+    :return: número da página final de um documento normalizado
+    """
+    # aplica os mesmos métodos considerados por document_first_page
+    text = document_first_page(text)
+
+    return text
 
 
 def document_elocation(text: str):
