@@ -229,7 +229,7 @@ def document_first_page(text: str):
     text = remove_end_punctuation_chars(text)
 
     # remove espaços das bordas
-    text = text.strip()
+    text = text.replace(' ','')
 
     return text
 
