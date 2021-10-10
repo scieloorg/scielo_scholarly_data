@@ -195,19 +195,19 @@ class TestStandardizer(unittest.TestCase):
             '128'
         )
 
-    def test_document_first_alpha_num_space(self):
+    def test_document_first_page_alpha_num_space(self):
         self.assertEqual(
             document_first_page('12&8'),
             '128'
         )
 
-    def test_document_first_double_spaces(self):
+    def test_document_first_page_double_spaces(self):
         self.assertEqual(
             document_first_page('  12  8'),
             '128'
         )
 
-    def test_document_first_end_punctuation_chars(self):
+    def test_document_first_page_end_punctuation_chars(self):
         self.assertEqual(
             document_first_page('128.,; .'),
             '128'
