@@ -1,6 +1,7 @@
 from scielo_scholarly_data.standardizer import (
     document_author,
     document_doi,
+    document_elocation,
     document_first_page,
     document_title_for_deduplication,
     document_title_for_visualization,
@@ -182,6 +183,30 @@ class TestStandardizer(unittest.TestCase):
         obtained_values = [document_author(da) for da in authors]
 
         self.assertListEqual(expected_values, obtained_values)
+
+    def test_document_elocation_non_printable_chars(self):
+        self.assertEqual(
+            document_elocation('e\n277\t21'),
+            'e27721'
+        )
+
+    def test_document_elocation_alpha_num_space(self):
+        self.assertEqual(
+            document_elocation('e*277$2%1@'),
+            'e27721'
+        )
+
+    def test_document_elocation_double_spaces(self):
+        self.assertEqual(
+            document_elocation('e  27721  '),
+            'e27721'
+        )
+
+    def test_document_elocation_end_punctuation_chars(self):
+        self.assertEqual(
+            document_elocation('e27721.,; '),
+            'e27721'
+        )
 
     def test_document_first_page_unescape(self):
         self.assertEqual(
