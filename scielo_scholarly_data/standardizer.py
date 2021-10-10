@@ -202,7 +202,36 @@ def document_title_for_visualization(text: str, remove_special_char=True):
 
 
 def document_first_page(text: str):
-    pass
+    """
+    Função para normalizar o número da página inicial de um documento, considerando os seguintes métodos em ordem:
+    1. Converter entidades HTML para caracteres unicode
+    2. Remover caracteres não imprimíveis
+    3. Remover caracteres especiais, mantendo apenas caracteres alfanuméricos e espaço
+    4. Remover espaços duplos
+    5. Remover pontuação no final do número
+    6. Remover espaços brancos nas extremidades
+    :param text: número da página inicial de um documento a ser normalizado
+    :return: número da página inicial de um documento normalizado
+    """
+    # o método unescape converte códigos no formato &#38; para seus caracteres correspondentes
+    text = unescape(text)
+
+    # remove caracteres non printable
+    text = remove_non_printable_chars(text)
+
+    # remove caracteres especiais
+    text = keep_alpha_num_space(text)
+
+    # remove espaços duplos
+    text = remove_double_spaces(text)
+
+    # remove ponto final
+    text = remove_end_punctuation_chars(text)
+
+    # remove espaços das bordas
+    text = text.strip()
+
+    return text
 
 
 def document_last_page(text: str):
