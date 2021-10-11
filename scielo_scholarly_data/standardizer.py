@@ -290,19 +290,35 @@ def document_publication_date(text: str):
     return text
 
 
-def document_author(text: str):
+def document_author_for_visualization(text: str):
     """
-    Procedimento para padroniza nome de autor de acordo com os seguintes métodos, por ordem
-        1. Remove acentos
-        2. Mantém letras e espaços
-        3. Remove espaços duplos
-
+    Procedimento para padronizar nome de autor de documento.
     :param text: nome do autor a ser tratado
     :return: nome tratado do autor
     """
-    text = remove_accents(text)
+    # Mantém letras e espaços
     text = convert_to_alpha_space(text)
+
+    # Remove espaços duplos
     text = remove_double_spaces(text)
+
+    return text
+
+
+def document_author_for_deduplication(text: str):
+    """
+    Procedimento para padronizar nome de autor de documento.
+    :param text: nome do autor a ser tratado
+    :return: nome tratado do autor
+    """
+    # Mantém letras e espaços e remove espaços duplos
+    text = document_author_for_visualization(text)
+
+    # Remove acentuação
+    text = remove_accents(text)
+
+    # Transforma para caixa baixa
+    text = text.lower()
 
     return text
 
