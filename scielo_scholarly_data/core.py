@@ -137,7 +137,8 @@ def defaults_date_to_ISO_format(text, day='01', month='01', just_year=False):
     :param just_year: valor lógico para retornar a data completa (default) ou apenas o ano
     :return: data padronizada
     """
-    if len(text) <= 4:
+    #Verifica se a data é composta apenas pelo ano retornando 'dia' e 'mês' da acordo com os valores recebidos como parâmetros
+    if text.isdigit and len(text) <= 4:
         try:
             text = parse(text + '-' + month + '-' + day).date()
         except ValueError:
