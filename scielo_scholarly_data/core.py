@@ -145,11 +145,16 @@ def defaults_date_to_ISO_format(text, day='01', month='01', just_year=False):
             return None
     else:
         try:
+            #Tenta converter a data sem nenhum tratamento prévio
             text = parse(text).date()
         except ValueError:
             try:
-                text = keep_alpha_num_space(text, keep_chars=['-', '/', '.'], replace_with='')
-                text = parse(text).date()
+                #Tenta separar 'dia', 'mês' e 'ano' a partir dos separadores de data
+                for s in DATE_SEPARATORS:
+                    text = text.replace(s,'-')
+                year = text.split('-')[0]
+                month = text.split('-')[1]
+                day = text.split('-')[2]
             except ValueError:
                 return None
     if just_year:
