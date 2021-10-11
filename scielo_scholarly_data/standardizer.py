@@ -13,6 +13,7 @@ from scielo_scholarly_data.core import (
 )
 
 from scielo_scholarly_data.values import (
+    DATE_SEPARATORS,
     DOCUMENT_TITLE_SPECIAL_CHARS,
     JOURNAL_TITLE_SPECIAL_CHARS,
     JOURNAL_TITLE_SPECIAL_WORDS,
@@ -272,7 +273,21 @@ def document_elocation(text: str):
     return text
 
 def document_publication_date(text: str):
-    pass
+    """
+    Função para padronizar a data da publicação de um documento para o formato ISO
+    :param text: data da publicação a ser padronizada
+    :return: data da publicação padronizada
+    """
+    # remove caracteres non printable
+    text = remove_non_printable_chars(text)
+
+    # remove caracteres especiais
+    text = keep_alpha_num_space(text, keep_chars=DATE_SEPARATORS, replace_with='')
+
+    # remove espaços duplos
+    text = remove_double_spaces(text)
+
+    return text
 
 
 def document_author(text: str):
