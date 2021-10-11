@@ -113,7 +113,7 @@ class TestCore(unittest.TestCase):
     def test_defaults_date_to_ISO_format_just_year_received(self):
         self.assertEqual(
             defaults_date_to_ISO_format('2021'),
-            parse('2021-06-15').date()
+            parse('2021-01-01').date()
         )
 
     def test_defaults_date_to_ISO_format_just_year_delivered(self):
@@ -146,8 +146,3 @@ class TestCore(unittest.TestCase):
             None
         )
 
-    def test_defaults_date_to_ISO_format_invalid_char(self):
-        self.assertEqual(
-            defaults_date_to_ISO_format('20*21)10(19'),
-            parse('2021-10-19').date()
-        )
