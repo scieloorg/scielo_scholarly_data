@@ -185,7 +185,7 @@ class TestStandardizer(unittest.TestCase):
 
     def test_document_first_page_unescape(self):
         self.assertEqual(
-            document_first_page('12&#38;8'),
+            document_first_page('12&#60;8'),
             '128'
         )
 
@@ -195,23 +195,37 @@ class TestStandardizer(unittest.TestCase):
             '128'
         )
 
-    def test_document_first_alpha_num_space(self):
+    def test_document_first_page_alpha_num_space(self):
         self.assertEqual(
             document_first_page('12&8'),
             '128'
         )
 
-    def test_document_first_double_spaces(self):
+    def test_document_first_page_double_spaces(self):
         self.assertEqual(
             document_first_page('  12  8'),
             '128'
         )
 
-    def test_document_first_end_punctuation_chars(self):
+    def test_document_first_page_end_punctuation_chars(self):
         self.assertEqual(
             document_first_page('128.,; .'),
             '128'
         )
+
+    def test_document_first_page_range(self):
+        range = {
+            '128-140': '128',
+            '128_140': '128',
+            '128:140': '128',
+            '128;140': '128',
+            '128,140': '128',
+            '128.140': '128'
+        }
+        expected_values = list(range.values())
+        obtained_values = [document_first_page(page) for page in range]
+
+        self.assertListEqual(expected_values, obtained_values)
 
     def test_issue_number_special_char(self):
         issues = {
