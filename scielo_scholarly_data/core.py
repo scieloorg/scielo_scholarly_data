@@ -127,7 +127,7 @@ def remove_parenthesis(text):
     return text
 
 
-def defaults_date_to_ISO_format(text, day='15', month='06', just_year=False):
+def defaults_date_to_ISO_format(text, day='01', month='01', just_year=False):
     """
     Função para a padronização de datas no formato ISO YYYY-MM-DD
 
@@ -137,7 +137,6 @@ def defaults_date_to_ISO_format(text, day='15', month='06', just_year=False):
     :param just_year: valor lógico para retornar a data completa (default) ou apenas o ano
     :return: data padronizada
     """
-
     if len(text) <= 4:
         try:
             text = parse(text + '-' + month + '-' + day).date()
