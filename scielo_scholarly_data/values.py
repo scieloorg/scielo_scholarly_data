@@ -17,6 +17,8 @@ PATTERNS_ISSN = [re.compile(pi) for pi in [
     r'^[0-9]{4}-[0-9]{3}[0-9xX]$']
 ]
 
+PATTERN_PAGE_RANGE = r'(\d*)[-|_|:|;|,|.](\d*)'
+
 JOURNAL_TITLE_SPECIAL_CHARS = {
     '@',
     '&'
@@ -46,4 +48,13 @@ PUNCTUATION_TO_REMOVE_FROM_TITLE_VISUALIZATION = {
     ';',
     ':',
     ' '
+}
+
+PUNCTUATION_TO_DEFINE_PAGE_RANGE = {
+    '-',
+    '_',
+    ':',
+    ';',
+    ',',
+    '.'
 }
