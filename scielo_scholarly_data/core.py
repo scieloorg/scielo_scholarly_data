@@ -163,6 +163,14 @@ def defaults_date_to_ISO_format(text, day='01', month='01', just_year=False):
                     day = text[-2:]
                 except ValueError:
                     return None
+            if not month.isdigit():
+                #Para o caso em que o 'mês' não é um valor numérico, busca por esse valor no dicionário
+                #O dicionário considera os meses em português e espanhol, inglês é padrão no parse.
+                month = MONTHS_DICT[month]
+                month = remove_end_punctuation_chars(month)
+            try:
+                #Tenta converter a data tratada
+                text = parse(year + '-' + month + '-' + day).date()
             except ValueError:
                 return None
     if just_year:
