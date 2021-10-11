@@ -155,6 +155,14 @@ def defaults_date_to_ISO_format(text, day='01', month='01', just_year=False):
                 year = text.split('-')[0]
                 month = text.split('-')[1]
                 day = text.split('-')[2]
+            except IndexError:
+                try:
+                    #Tentar separar 'dia', 'mês' e 'ano' a partir da posição em text
+                    year = text[:4]
+                    month = text[4:-2]
+                    day = text[-2:]
+                except ValueError:
+                    return None
             except ValueError:
                 return None
     if just_year:
