@@ -1,5 +1,6 @@
 from scielo_scholarly_data.standardizer import (
-    document_author,
+    document_author_for_visualization,
+    document_author_for_deduplication,
     document_doi,
     document_elocation,
     document_first_page,
@@ -172,19 +173,29 @@ class TestStandardizer(unittest.TestCase):
 
         self.assertListEqual(expected_values, obtained_values)
 
-    def test_document_author(self):
-        authors = {
-            'Silva, Joao  J. P.. &': 'Silva Joao J P',
-            'Santos;=;] R': 'Santos R',
-            'Joao...Paulo': 'Joao Paulo',
-            '3ø Elton Jonas': 'Elton Jonas',
-            'Elvis-Presley': 'Elvis Presley'
-        }
+    def test_document_author_for_visualization_alpha_space(self):
+        self.assertEqual(
+            document_author_for_visualization('Silva, João  J. P.. '),
+            'Silva João J P'
+        )
 
-        expected_values = list(authors.values())
-        obtained_values = [document_author(da) for da in authors]
+    def test_document_author_for_visualization_double_space(self):
+        self.assertEqual(
+            document_author_for_visualization('Silva,  João   J.  P  ..  '),
+            'Silva João J P'
+        )
 
-        self.assertListEqual(expected_values, obtained_values)
+    def test_document_author_for_deduplication_remove_accents(self):
+        self.assertEqual(
+            document_author_for_deduplication('Silva,  João   J.  P  ..  '),
+            'silva joao j p'
+        )
+
+    def test_document_author_for_deduplication_lower_case(self):
+        self.assertEqual(
+            document_author_for_deduplication('SILVA,  JOÃO   J.  P  ..  '),
+            'silva joao j p'
+        )
 
     def test_document_elocation_non_printable_chars(self):
         self.assertEqual(
