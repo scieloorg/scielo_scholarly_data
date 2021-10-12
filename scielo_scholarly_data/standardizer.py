@@ -326,20 +326,40 @@ def document_author_for_visualization(text: str, surname_first=True):
     return text
 
 
-def document_author_for_deduplication(text: str):
+def document_author_for_deduplication(text: str, surname_first=True):
     """
-    Procedimento para padronizar nome de autor de documento.
+    Procedimento para padronizar nome de autor de documento, considerando os seguintes métodos, em ordem:
+    1. Remoção de caracteres não imprimíveis
+    2. Remover caracteres especiais, mantendo apenas caracteres alfabéticos e espaço
+    3. Remover espaços duplos
+    4. Remover espaços nas extremidades
+    5. Remover acentos
+    6. Converter para caixa baixa
+
     :param text: nome do autor a ser tratado
+    :param surname_first: valor lógico que indica a posição do sobrenome na saída
     :return: nome tratado do autor
     """
-    # Mantém letras e espaços e remove espaços duplos
-    text = document_author_for_visualization(text)
-
-    # Remove acentuação
+    text = remove_non_printable_chars(text)
+    text = convert_to_alpha_space(text, keep_chars=PUNCTUATION_TO_KEEP_IN_AUTHOR_VISUALIZATION)
+    text = remove_double_spaces(text)
+    text = text.strip()
     text = remove_accents(text)
-
-    # Transforma para caixa baixa
     text = text.lower()
+
+    if ',' not in text:
+        t = text.split(' ')
+        surname = ''.join(t[-1:])
+        name = ' '.join(t[:-1])
+    else:
+        t = text.split(', ')
+        surname = ''.join(t[:1])
+        name = ' '.join(t[1:])
+
+    if surname_first:
+        text = ''.join([surname, ', ', name])
+    else:
+        text = ''.join([name, ' ', surname])
 
     return text
 

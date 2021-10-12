@@ -173,29 +173,6 @@ class TestStandardizer(unittest.TestCase):
 
         self.assertListEqual(expected_values, obtained_values)
 
-    def test_document_author_for_visualization_alpha_space(self):
-        self.assertEqual(
-            document_author_for_visualization('Silva, João  J. P.. '),
-            'Silva João J P'
-        )
-
-    def test_document_author_for_visualization_double_space(self):
-        self.assertEqual(
-            document_author_for_visualization('Silva,  João   J.  P  ..  '),
-            'Silva João J P'
-        )
-
-    def test_document_author_for_deduplication_remove_accents(self):
-        self.assertEqual(
-            document_author_for_deduplication('Silva,  João   J.  P  ..  '),
-            'silva joao j p'
-        )
-
-    def test_document_author_for_deduplication_lower_case(self):
-        self.assertEqual(
-            document_author_for_deduplication('SILVA,  JOÃO   J.  P  ..  '),
-            'silva joao j p'
-        )
     def test_document_author_for_visualization_alpha_space_surname_first(self):
         names = {
             'Silva, João & J* P': 'Silva, João J P',
@@ -233,6 +210,26 @@ class TestStandardizer(unittest.TestCase):
         }
         expected_values = list(names.values())
         obtained_values = [document_author_for_visualization(name, surname_first=False) for name in names]
+
+        self.assertListEqual(expected_values, obtained_values)
+
+    def test_document_author_for_deduplication_remove_accents_surname_first(self):
+        names = {
+            'Sílva, João  J  P': 'silva, joao j p',
+            'João  J  P Silva': 'silva, joao j p'
+        }
+        expected_values = list(names.values())
+        obtained_values = [document_author_for_deduplication(name) for name in names]
+
+        self.assertListEqual(expected_values, obtained_values)
+
+    def test_document_author_for_deduplication_lower_case_surname_last(self):
+        names = {
+            'Silva, João  J  P': 'joao j p silva',
+            'João  J  P Silva': 'joao j p silva'
+        }
+        expected_values = list(names.values())
+        obtained_values = [document_author_for_deduplication(name, surname_first=False) for name in names]
 
         self.assertListEqual(expected_values, obtained_values)
 
