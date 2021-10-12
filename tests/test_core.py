@@ -6,6 +6,7 @@ from scielo_scholarly_data.core import (
     remove_non_printable_chars,
     remove_parenthesis,
     remove_end_punctuation_chars,
+    remove_words,
     unescape
 )
 
@@ -76,6 +77,12 @@ class TestCore(unittest.TestCase):
         self.assertEqual(
             remove_parenthesis('This is a text with (parenthesis) to remove'),
             'This is a text with to remove'
+        )
+
+    def test_remove_words(self):
+        self.assertEqual(
+            remove_words('21 de setembro de 2021', words_to_remove=['de']),
+            '21 setembro 2021'
         )
 
     def test_defaults_date_to_ISO_format_without_separators(self):

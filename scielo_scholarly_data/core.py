@@ -188,8 +188,8 @@ def remove_words(text, words_to_remove=[]):
     """
     text_words = text.split(' ')
 
-    for sw in words_to_remove:
-        if sw in text_words:
+    for sw in text_words:
+        if sw in words_to_remove:
             text_words.remove(sw)
 
     return ' '.join(text_words)
