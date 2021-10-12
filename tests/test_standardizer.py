@@ -243,48 +243,58 @@ class TestStandardizer(unittest.TestCase):
     def test_document_publication_date_non_printable_char(self):
         test_date = parse('2021-09-21').date()
         dates = {
-            '21-09-\t2021': test_date,
-            '21/\n09/2021': test_date,
-            '21.setembro\n.2021': test_date,
-            '21setembro2021\n': test_date
+            '2021-\t09-21': test_date,
+            '2021/\n09/21': test_date,
+            '2021.setembro\n.21': test_date,
+            '21setembro2021\n': test_date,
+            '21 de set de 2021\n': test_date,
+            '21 of sept 2021\n': test_date
         }
         expected_values = list(dates.values())
         obtained_values = [document_publication_date(dt) for dt in dates]
+
+        self.assertListEqual(expected_values, obtained_values)
 
     def test_document_publication_date_special_chars(self):
         test_date = parse('2021-09-21').date()
         dates = {
-            '21-09-&2021': test_date,
-            '21/%09/2021': test_date,
-            '21.setembro#.2021': test_date,
-            '21setembro2021()': test_date
+            '2021-09-&21': test_date,
+            '2021/%09/21': test_date,
+            '2021.setembro#.21': test_date,
+            '21 de setembro de 2021()': test_date
         }
         expected_values = list(dates.values())
         obtained_values = [document_publication_date(dt) for dt in dates]
+
+        self.assertListEqual(expected_values, obtained_values)
 
     def test_document_publication_date_double_spaces(self):
         test_date = parse('2021-09-21').date()
         dates = {
-            '21-09-  2021': test_date,
-            '21/  09/2021': test_date,
-            '21.setembro  .2021': test_date,
-            '21setembro2021  ': test_date
+            '2021-09-  21': test_date,
+            '2021/  09/21': test_date,
+            '2021.setembro  .21': test_date,
+            '2021setembro21  ': test_date
         }
         expected_values = list(dates.values())
         obtained_values = [document_publication_date(dt) for dt in dates]
 
+        self.assertListEqual(expected_values, obtained_values)
+
     def test_document_publication_date_special_date_formats(self):
         test_date = parse('2021-09-21').date()
         dates = {
-            '21092021': test_date,
-            '21/09/2021': test_date,
-            '21.setembro.2021': test_date,
-            '21set2021': test_date,
-            '21september2021':test_date,
-            '21septiembre2021':test_date
+            '20210921': test_date,
+            '2021/09/21': test_date,
+            '2021.setembro.21': test_date,
+            '2021set21': test_date,
+            '2021september21':test_date,
+            '2021septiembre21':test_date
         }
         expected_values = list(dates.values())
         obtained_values = [document_publication_date(dt) for dt in dates]
+
+        self.assertListEqual(expected_values, obtained_values)
 
     def test_issue_number_special_char(self):
         issues = {
