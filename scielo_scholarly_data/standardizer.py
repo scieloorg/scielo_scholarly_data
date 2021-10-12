@@ -1,6 +1,7 @@
 import re
 
 from scielo_scholarly_data.core import (
+    defaults_date_to_ISO_format,
     convert_to_alpha_space,
     keep_alpha_num_space,
     remove_accents,
@@ -278,14 +279,13 @@ def document_publication_date(text: str):
     :param text: data da publicação a ser padronizada
     :return: data da publicação padronizada
     """
-    # remove caracteres non printable
+
     text = remove_non_printable_chars(text)
-
-    # remove caracteres especiais
-    text = keep_alpha_num_space(text, keep_chars=DATE_SEPARATORS, replace_with='')
-
-    # remove espaços duplos
     text = remove_double_spaces(text)
+    text = text.strip()
+    text = text.lower()
+    text = remove_words(text, words_to_remove=['de', 'of'])
+    text = defaults_date_to_ISO_format(text)
 
     return text
 
