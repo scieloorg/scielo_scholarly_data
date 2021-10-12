@@ -3,6 +3,8 @@ import re
 
 PATTERN_PARENTHESIS = re.compile(r'[-a-zA-ZÀ-ÖØ-öø-ÿ|0-9]*\([-a-zA-ZÀ-ÖØ-öø-ÿ|\W|0-9]*\)[-a-zA-ZÀ-ÖØ-öø-ÿ|0-9]*', re.UNICODE)
 
+PATTERN_DATE = r'(\d*)([a-zA-Z]*)(\d*)'
+
 # https://www.crossref.org/blog/dois-and-matching-regular-expressions/ (accessed on 2021/08/31)
 PATTERNS_DOI = [re.compile(pd) for pd in [
     r'10.\d{4,9}/[-._;()/:A-Z0-9]+$',
@@ -86,11 +88,28 @@ MONTHS_DICT = {
 'oct':'10',
 'noviembre':'11',
 'diciembre':'12',
-'dic':'12'
+'dic':'12',
+'january':'01',
+'february':'02',
+'march':'03',
+'april':'04',
+'apr':'04',
+'may':'05',
+'june':'06',
+'july':'07',
+'august':'08',
+'aug':'08',
+'september':'09',
+'october':'10',
+'november':'11',
+'december':'12',
+'dec':'12'
 }
+
 
 DATE_SEPARATORS = {
     '/',
     '.',
-    ' '
+    ' ',
+    '-'
 }
