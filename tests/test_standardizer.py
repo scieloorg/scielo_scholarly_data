@@ -196,6 +196,45 @@ class TestStandardizer(unittest.TestCase):
             document_author_for_deduplication('SILVA,  JOÃO   J.  P  ..  '),
             'silva joao j p'
         )
+    def test_document_author_for_visualization_alpha_space_surname_first(self):
+        names = {
+            'Silva, João & J* P': 'Silva, João J P',
+            'João & J* P Silva': 'Silva, João J P'
+        }
+        expected_values = list(names.values())
+        obtained_values = [document_author_for_visualization(name) for name in names]
+
+        self.assertListEqual(expected_values, obtained_values)
+
+    def test_document_author_for_visualization_alpha_space_surname_last(self):
+        names = {
+            'Silva, João & J* P': 'João J P Silva',
+            'João & J* P Silva': 'João J P Silva'
+        }
+        expected_values = list(names.values())
+        obtained_values = [document_author_for_visualization(name, surname_first=False) for name in names]
+
+        self.assertListEqual(expected_values, obtained_values)
+
+    def test_document_author_for_visualization_double_space_surname_first(self):
+        names = {
+            'Silva, João  J  P': 'Silva, João J P',
+            'João  J  P Silva': 'Silva, João J P'
+        }
+        expected_values = list(names.values())
+        obtained_values = [document_author_for_visualization(name) for name in names]
+
+        self.assertListEqual(expected_values, obtained_values)
+
+    def test_document_author_for_visualization_double_space_surname_last(self):
+        names = {
+            'Silva, João  J  P': 'João J P Silva',
+            'João  J  P Silva': 'João J P Silva'
+        }
+        expected_values = list(names.values())
+        obtained_values = [document_author_for_visualization(name, surname_first=False) for name in names]
+
+        self.assertListEqual(expected_values, obtained_values)
 
     def test_document_elocation_non_printable_chars(self):
         self.assertEqual(
