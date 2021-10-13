@@ -137,7 +137,7 @@ def document_doi(text: str):
             return matched_doi.group()
 
 
-def document_title_for_deduplication(text: str):
+def document_title_for_deduplication(text: str, remove_special_char=True):
     """
     Função para padronizar títulos de documentos de acordo com os seguinte métodos, por ordem
         1. Converte códigos HTML para caracteres Unicode
@@ -153,15 +153,16 @@ def document_title_for_deduplication(text: str):
     :param remove_char: booleano que indica se as entidades HTML e os caracteres especiais devem ser mantidos ou retirados (default)
     :return: título tratado do documento
     """
-    #Aplica os métodos de 1 até 6 da mesma forma que document_title_for_visualization
-    text = document_title_for_visualization(text)
 
-    #Remove acentos do título do documento
+    text = unescape(text)
+    if remove_special_char:
+        text = keep_alpha_num_space(text)
+    text = remove_non_printable_chars(text)
+    text = remove_double_spaces(text)
+    text = remove_end_punctuation_chars(text)
+    text = text.strip()
     text = remove_accents(text)
-
-    #Converte os caracteres para caixa baixa
     text = text.lower()
-
     return text
 
 
