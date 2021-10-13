@@ -1,5 +1,5 @@
 from scielo_scholarly_data.core import (
-    global_date,
+    defaults_date_to_ISO_format,
     keep_alpha_num_space,
     remove_accents,
     remove_double_spaces,

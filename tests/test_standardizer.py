@@ -1,6 +1,7 @@
 from scielo_scholarly_data.standardizer import (
     document_author,
     document_doi,
+    document_title_for_deduplication,
     document_title_for_visualization,
     journal_issn,
     journal_title_for_deduplication,
@@ -228,6 +229,53 @@ class TestStandardizer(unittest.TestCase):
 
         self.assertListEqual(expected_values, obtained_values)
 
+    def test_document_title_for_deduplication_html_entities_keeps(self):
+        self.assertEqual(
+            document_title_for_deduplication('INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DE &#60; PROBLEMÁTICAS', remove_special_char=False),
+            'innovacion tecnologica en la resolucion de < problematicas'
+        )
+
+    def test_document_title_for_deduplication_keep_alpha_num_space(self):
+        self.assertEqual(
+            document_title_for_deduplication('INNOVACIÓN & TECNOLÓGICA EN LA RESOLUCIÓN DE &#60; PROBLEMÁTICAS'),
+            'innovacion tecnologica en la resolucion de problematicas'
+        )
+
+    def test_document_title_for_deduplication_remove_non_printable_chars(self):
+        self.assertEqual(
+            document_title_for_deduplication('INNOVACIÓN \n TECNOLÓGICA EN LA RESOLUCIÓN DE \t PROBLEMÁTICAS'),
+            'innovacion tecnologica en la resolucion de problematicas'
+        )
+
+    def test_document_title_for_deduplication_remove_double_spaces(self):
+        self.assertEqual(
+            document_title_for_deduplication('  INNOVACIÓN  TECNOLÓGICA  EN  LA  RESOLUCIÓN  DE  PROBLEMÁTICAS  '),
+            'innovacion tecnologica en la resolucion de problematicas'
+        )
+
+    def test_document_title_for_deduplication_remove_end_punctuation_chars(self):
+        self.assertEqual(
+            document_title_for_deduplication('INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DE PROBLEMÁTICAS,.;'),
+            'innovacion tecnologica en la resolucion de problematicas'
+        )
+
+    def test_document_title_for_deduplication_text_strip(self):
+        self.assertEqual(
+            document_title_for_deduplication(' INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DE PROBLEMÁTICAS '),
+            'innovacion tecnologica en la resolucion de problematicas'
+        )
+
+    def test_document_title_for_deduplication_remove_accents(self):
+        self.assertEqual(
+            document_title_for_deduplication('INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DE PROBLEMÁTICAS'),
+            'innovacion tecnologica en la resolucion de problematicas'
+        )
+
+    def test_document_title_for_deduplication_text_lower(self):
+        self.assertEqual(
+            document_title_for_deduplication('INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DE PROBLEMÁTICAS'),
+            'innovacion tecnologica en la resolucion de problematicas'
+        )
 
     def test_document_title_for_visualization_html_entities_keeps(self):
         titles = {

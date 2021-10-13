@@ -146,7 +146,7 @@ def defaults_date_to_ISO_format(text, day='15', month='06', just_year=False):
             text = parse(text).date()
         except ValueError:
             try:
-                text = convert_to_alpha_num_space(text, keep_chars=['-', '/', '.'], replace_with='')
+                text = keep_alpha_num_space(text, keep_chars=['-', '/', '.'], replace_with='')
                 text = parse(text).date()
             except ValueError:
                 return None
