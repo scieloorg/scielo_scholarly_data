@@ -1,5 +1,5 @@
 from scielo_scholarly_data.core import (
-    defaults_date_to_ISO_format,
+    convert_to_iso_date,
     keep_alpha_num_space,
     remove_accents,
     remove_double_spaces,
@@ -87,7 +87,7 @@ class TestCore(unittest.TestCase):
 
     def test_defaults_date_to_ISO_format_without_separators(self):
         self.assertEqual(
-            defaults_date_to_ISO_format('20210921'),
+            convert_to_iso_date('20210921'),
             parse('2021-09-21').date()
         )
 
@@ -100,7 +100,7 @@ class TestCore(unittest.TestCase):
             '2021 09 21': test_date
         }
         expected_values = list(dates.values())
-        obtained_values = [defaults_date_to_ISO_format(dt) for dt in dates]
+        obtained_values = [convert_to_iso_date(dt) for dt in dates]
 
         self.assertListEqual(expected_values, obtained_values)
 
@@ -113,43 +113,43 @@ class TestCore(unittest.TestCase):
             '21 09 2021': test_date
         }
         expected_values = list(dates.values())
-        obtained_values = [defaults_date_to_ISO_format(dt) for dt in dates]
+        obtained_values = [convert_to_iso_date(dt) for dt in dates]
 
         self.assertListEqual(expected_values, obtained_values)
 
     def test_defaults_date_to_ISO_format_just_year_received(self):
         self.assertEqual(
-            defaults_date_to_ISO_format('2021'),
+            convert_to_iso_date('2021'),
             parse('2021-01-01').date()
         )
 
     def test_defaults_date_to_ISO_format_just_year_delivered(self):
         self.assertEqual(
-            defaults_date_to_ISO_format('2021-06-15', just_year=True ),
+            convert_to_iso_date('2021-06-15', just_year=True ),
             parse('2021').date().year
         )
 
     def test_defaults_date_to_ISO_format_just_year_user_decision(self):
         self.assertEqual(
-            defaults_date_to_ISO_format('2021', day='1', month='1'),
+            convert_to_iso_date('2021', day='1', month='1'),
             parse('2021-01-01').date()
         )
 
     def test_defaults_date_to_ISO_format_invalid_month(self):
         self.assertEqual(
-            defaults_date_to_ISO_format('2021-13-09'),
+            convert_to_iso_date('2021-13-09'),
             None
         )
 
     def test_defaults_date_to_ISO_format_invalid_day(self):
         self.assertEqual(
-            defaults_date_to_ISO_format('2021-12-35'),
+            convert_to_iso_date('2021-12-35'),
             None
         )
 
     def test_defaults_date_to_ISO_format_invalid_date(self):
         self.assertEqual(
-            defaults_date_to_ISO_format('2021-02-31'),
+            convert_to_iso_date('2021-02-31'),
             None
         )
 

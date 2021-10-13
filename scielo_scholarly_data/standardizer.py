@@ -1,7 +1,7 @@
 import re
 
 from scielo_scholarly_data.core import (
-    defaults_date_to_ISO_format,
+    convert_to_iso_date,
     convert_to_alpha_space,
     keep_alpha_num_space,
     remove_accents,
@@ -285,7 +285,7 @@ def document_publication_date(text: str):
     text = text.strip()
     text = text.lower()
     text = remove_words(text, words_to_remove=['de', 'of'])
-    text = defaults_date_to_ISO_format(text)
+    text = convert_to_iso_date(text)
 
     return text
 

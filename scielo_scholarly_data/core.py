@@ -128,7 +128,7 @@ def remove_parenthesis(text):
     return text
 
 
-def defaults_date_to_ISO_format(text, day='01', month='01', just_year=False):
+def convert_to_iso_date(text, day='01', month='01', just_year=False):
     """
     Função para a padronização de datas no formato ISO YYYY-MM-DD
 
@@ -172,7 +172,7 @@ def defaults_date_to_ISO_format(text, day='01', month='01', just_year=False):
                         month = MONTHS_DICT[month]
                         #Tenta converter a data tratada
                         text = parse('-'.join([year, month, day])).date()
-                except ValueError:
+                except (ValueError, IndexError):
                     return None
             else:
                 return None
