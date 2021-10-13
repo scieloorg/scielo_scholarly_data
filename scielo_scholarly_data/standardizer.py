@@ -257,8 +257,11 @@ def document_last_page(text: str, keep_chars=PUNCTUATION_TO_DEFINE_PAGE_RANGE):
     text = remove_end_punctuation_chars(text)
     text = text.replace(' ', '')
     if not text.isdigit():
-        first_page = int(re.match(PATTERN_PAGE_RANGE, text).groups()[0])
-        last_page = int(re.match(PATTERN_PAGE_RANGE, text).groups()[1])
+        try:
+            first_page = int(re.match(PATTERN_PAGE_RANGE, text).groups()[0])
+            last_page = int(re.match(PATTERN_PAGE_RANGE, text).groups()[1])
+        except KeyError:
+            return
         if first_page > last_page:
             text = str(first_page + last_page)
         else:
