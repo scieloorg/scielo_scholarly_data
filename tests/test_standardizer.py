@@ -6,7 +6,8 @@ from scielo_scholarly_data.standardizer import (
     journal_issn,
     journal_title_for_deduplication,
     journal_title_for_visualization,
-    issue_number
+    issue_number,
+    issue_volume
 )
 
 import unittest
@@ -207,7 +208,7 @@ class TestStandardizer(unittest.TestCase):
 
     def test_issue_number_with_spaces(self):
         issues = {
-            '96':'96',
+            ' 96':'96',
             '96  ':'96',
             '96 a ':'96 a',
             ' 96 a':'96 a'
@@ -226,6 +227,66 @@ class TestStandardizer(unittest.TestCase):
         }
         expected_values = list(issues.values())
         obtained_values = [issue_number(num) for num in issues]
+
+        self.assertListEqual(expected_values, obtained_values)
+
+    def test_issue_volume_special_char(self):
+        issues = {
+            '&96':'96',
+            '$96':'96',
+            '@96a':'96a',
+            '!96a':'96a'
+        }
+        expected_values = list(issues.values())
+        obtained_values = [issue_volume(num) for num in issues]
+
+        self.assertListEqual(expected_values, obtained_values)
+
+    def test_issue_volume_non_printable(self):
+        issues = {
+            '\n96':'96',
+            '96\t':'96',
+            '96\aa':'96a',
+            '9\n6a':'96a'
+        }
+        expected_values = list(issues.values())
+        obtained_values = [issue_volume(num) for num in issues]
+
+        self.assertListEqual(expected_values, obtained_values)
+
+    def test_issue_volume_with_spaces(self):
+        issues = {
+            ' 96':'96',
+            '96  ':'96',
+            '96 a ':'96 a',
+            ' 96 a':'96 a'
+        }
+        expected_values = list(issues.values())
+        obtained_values = [issue_volume(num) for num in issues]
+
+        self.assertListEqual(expected_values, obtained_values)
+
+    def test_issue_volume_with_parenthesis(self):
+        issues = {
+            '(96)':'96',
+            '9(6)':'96',
+            '96(a)':'96a',
+            '(96)a':'96a'
+        }
+        expected_values = list(issues.values())
+        obtained_values = [issue_volume(num) for num in issues]
+
+        self.assertListEqual(expected_values, obtained_values)
+
+    def test_issue_volume_remove_points_at_end(self):
+        issues = {
+            '(96).':'96',
+            '9(6);':'96',
+            '96(a),':'96a',
+            '(96)a .':'96a'
+        }
+        expected_values = list(issues.values())
+        obtained_values = [issue_volume(num) for num in issues]
 
         self.assertListEqual(expected_values, obtained_values)
 

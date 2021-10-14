@@ -85,8 +85,29 @@ def journal_issn(text: str):
 
 
 def issue_volume(text: str):
-    # ToDo
-    pass
+    """
+    Procedimento que padroniza o número do volume do periódico
+
+    :param text: caracteres que representam o número do volume do periódico
+    :return: número do volume do periódico padronizado
+    """
+
+    # remove caracteres non printable
+    text = remove_non_printable_chars(text)
+
+    # remove caracteres especiais
+    text = keep_alpha_num_space(text, replace_with='')
+
+    # remove espaços duplos
+    text = remove_double_spaces(text)
+
+    # remove pontuação no final do número
+    text = remove_end_punctuation_chars(text)
+
+    #remove espaços nas extremidades do número
+    text = text.strip()
+
+    return text
 
 
 def issue_number(text: str):
@@ -163,7 +184,7 @@ def document_title_for_visualization(text: str, remove_special_char=True):
     text = unescape(text)
 
     if remove_special_char:
-        # se a pessoa optar por remover caracteres especiais, os removemos através do keep_alpha_num_space
+        # remove caracteres especiais
         text = keep_alpha_num_space(text)
 
     # remove caracteres non printable
