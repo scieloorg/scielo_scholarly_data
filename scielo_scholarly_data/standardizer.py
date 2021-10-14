@@ -16,7 +16,9 @@ from scielo_scholarly_data.values import (
     DOCUMENT_TITLE_SPECIAL_CHARS,
     JOURNAL_TITLE_SPECIAL_CHARS,
     JOURNAL_TITLE_SPECIAL_WORDS,
-    PATTERNS_DOI
+    PATTERNS_DOI,
+    PATTERN_PAGE_RANGE,
+    PUNCTUATION_TO_DEFINE_PAGE_RANGE
 )
 
 
@@ -202,8 +204,32 @@ def document_title_for_visualization(text: str, remove_special_char=True):
     return text
 
 
-def document_first_page(text: str):
-    pass
+def document_first_page(text: str, keep_chars=PUNCTUATION_TO_DEFINE_PAGE_RANGE):
+    """
+    Função para normalizar o número da página inicial de um documento, considerando os seguintes métodos em ordem:
+    1. Converter entidades HTML para caracteres unicode
+    2. Remover caracteres não imprimíveis
+    3. Remover caracteres especiais, mantendo apenas caracteres alfanuméricos e espaço
+    4. Remover espaços duplos
+    5. Remover pontuação no final do número
+    6. Remover espaços brancos nas extremidades
+
+    :param text: número da página inicial de um documento a ser normalizado
+    :return: número da página inicial de um documento normalizado
+    """
+
+    text = unescape(text)
+    text = remove_non_printable_chars(text)
+    text = keep_alpha_num_space(text, keep_chars)
+    text = remove_double_spaces(text)
+    text = remove_end_punctuation_chars(text)
+    text = text.replace(' ','')
+    if not text.isdigit():
+        try:
+            text = re.match(PATTERN_PAGE_RANGE, text).groups()[0]
+        except KeyError:
+            return
+    return text
 
 
 def document_last_page(text: str):
