@@ -2,6 +2,7 @@ from scielo_scholarly_data.standardizer import (
     document_author,
     document_doi,
     document_first_page,
+    document_last_page,
     document_title_for_deduplication,
     document_title_for_visualization,
     journal_issn,
@@ -212,6 +213,51 @@ class TestStandardizer(unittest.TestCase):
             document_first_page('128.,; .'),
             '128'
         )
+
+    def test_document_last_page_unescape(self):
+        self.assertEqual(
+            document_last_page('12&#38;8'),
+            '128'
+        )
+
+    def test_document_last_page_non_printable_chars(self):
+        self.assertEqual(
+            document_last_page('12\n8'),
+            '128'
+        )
+
+    def test_document_last_page_alpha_num_space(self):
+        self.assertEqual(
+            document_last_page('12&8'),
+            '128'
+        )
+
+    def test_document_last_page_double_spaces(self):
+        self.assertEqual(
+            document_last_page('  12  8'),
+            '128'
+        )
+
+    def test_document_last_page_end_punctuation_chars(self):
+        self.assertEqual(
+            document_last_page('128.,; .'),
+            '128'
+        )
+
+    def test_document_last_page_range(self):
+        range = {
+            '128-140':'140',
+            '128_140':'140',
+            '128:140':'140',
+            '128;140':'140',
+            '128,140':'140',
+            '128.140':'140',
+            '128-30':'158'
+        }
+        expected_values = list(range.values())
+        obtained_values = [document_last_page(page) for page in range]
+        
+        self.assertListEqual(exptected_values, obtained_values)
 
     def test_document_first_page_range(self):
         range = {
