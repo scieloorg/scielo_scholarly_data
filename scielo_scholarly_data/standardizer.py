@@ -19,6 +19,7 @@ from scielo_scholarly_data.values import (
     JOURNAL_TITLE_SPECIAL_CHARS,
     JOURNAL_TITLE_SPECIAL_WORDS,
     PATTERNS_DOI,
+    PUNCTUATION_TO_KEEP_IN_AUTHOR_VISUALIZATION
     PATTERN_PAGE_RANGE,
     PUNCTUATION_TO_DEFINE_PAGE_RANGE
 )
@@ -309,19 +310,75 @@ def document_publication_date(text: str):
     return text
 
 
-def document_author(text: str):
+def document_author_for_visualization(text: str, surname_first=True):
     """
-    Procedimento para padroniza nome de autor de acordo com os seguintes métodos, por ordem
-        1. Remove acentos
-        2. Mantém letras e espaços
-        3. Remove espaços duplos
+    Procedimento para padronizar nome de autor de documento, considerando os seguintes métodos, em ordem:
+    1. Remoção de caracteres não imprimíveis
+    2. Remover caracteres especiais, mantendo apenas caracteres alfabéticos e espaço
+    3. Remover espaços duplos
+    4. Remover espaços nas extremidades
 
     :param text: nome do autor a ser tratado
+    :param surname_first: valor lógico que indica a posição do sobrenome na saída
     :return: nome tratado do autor
     """
-    text = remove_accents(text)
-    text = convert_to_alpha_space(text)
+
+    text = remove_non_printable_chars(text)
+    text = convert_to_alpha_space(text, keep_chars=PUNCTUATION_TO_KEEP_IN_AUTHOR_VISUALIZATION)
     text = remove_double_spaces(text)
+    text = text.strip()
+
+    if ',' not in text:
+        t = text.split(' ')
+        surname = ''.join(t[-1:])
+        name = ' '.join(t[:-1])
+    else:
+        t = text.split(', ')
+        surname = ''.join(t[:1])
+        name = ' '.join(t[1:])
+
+    if surname_first:
+        text = ''.join([surname, ', ', name])
+    else:
+        text = ''.join([name, ' ', surname])
+
+    return text
+
+
+def document_author_for_deduplication(text: str, surname_first=True):
+    """
+    Procedimento para padronizar nome de autor de documento, considerando os seguintes métodos, em ordem:
+    1. Remoção de caracteres não imprimíveis
+    2. Remover caracteres especiais, mantendo apenas caracteres alfabéticos e espaço
+    3. Remover espaços duplos
+    4. Remover espaços nas extremidades
+    5. Remover acentos
+    6. Converter para caixa baixa
+
+    :param text: nome do autor a ser tratado
+    :param surname_first: valor lógico que indica a posição do sobrenome na saída
+    :return: nome tratado do autor
+    """
+    text = remove_non_printable_chars(text)
+    text = convert_to_alpha_space(text, keep_chars=PUNCTUATION_TO_KEEP_IN_AUTHOR_VISUALIZATION)
+    text = remove_double_spaces(text)
+    text = text.strip()
+    text = remove_accents(text)
+    text = text.lower()
+
+    if ',' not in text:
+        t = text.split(' ')
+        surname = ''.join(t[-1:])
+        name = ' '.join(t[:-1])
+    else:
+        t = text.split(', ')
+        surname = ''.join(t[:1])
+        name = ' '.join(t[1:])
+
+    if surname_first:
+        text = ''.join([surname, ', ', name])
+    else:
+        text = ''.join([name, ' ', surname])
 
     return text
 

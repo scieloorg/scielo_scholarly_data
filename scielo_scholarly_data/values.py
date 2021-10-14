@@ -52,6 +52,10 @@ PUNCTUATION_TO_REMOVE_FROM_TITLE_VISUALIZATION = {
     ' '
 }
 
+PUNCTUATION_TO_KEEP_IN_AUTHOR_VISUALIZATION = {
+    ','
+}
+
 MONTHS_DICT = {
     'janeiro':'01',
     'jan':'01',
