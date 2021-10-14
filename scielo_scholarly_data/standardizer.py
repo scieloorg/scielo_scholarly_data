@@ -1,6 +1,7 @@
 import re
 
 from scielo_scholarly_data.core import (
+    convert_to_iso_date,
     convert_to_alpha_space,
     keep_alpha_num_space,
     remove_accents,
@@ -19,6 +20,8 @@ from scielo_scholarly_data.values import (
     JOURNAL_TITLE_SPECIAL_WORDS,
     PATTERNS_DOI,
     PUNCTUATION_TO_KEEP_IN_AUTHOR_VISUALIZATION
+    PATTERN_PAGE_RANGE,
+    PUNCTUATION_TO_DEFINE_PAGE_RANGE
 )
 
 
@@ -204,7 +207,7 @@ def document_title_for_visualization(text: str, remove_special_char=True):
     return text
 
 
-def document_first_page(text: str):
+def document_first_page(text: str, keep_chars=PUNCTUATION_TO_DEFINE_PAGE_RANGE):
     """
     Função para normalizar o número da página inicial de um documento, considerando os seguintes métodos em ordem:
     1. Converter entidades HTML para caracteres unicode
@@ -213,39 +216,55 @@ def document_first_page(text: str):
     4. Remover espaços duplos
     5. Remover pontuação no final do número
     6. Remover espaços brancos nas extremidades
+
     :param text: número da página inicial de um documento a ser normalizado
     :return: número da página inicial de um documento normalizado
     """
-    # o método unescape converte códigos no formato &#38; para seus caracteres correspondentes
+
     text = unescape(text)
-
-    # remove caracteres non printable
     text = remove_non_printable_chars(text)
-
-    # remove caracteres especiais
-    text = keep_alpha_num_space(text)
-
-    # remove espaços duplos
+    text = keep_alpha_num_space(text, keep_chars)
     text = remove_double_spaces(text)
-
-    # remove ponto final
     text = remove_end_punctuation_chars(text)
-
-    # remove espaços
     text = text.replace(' ','')
-
+    if not text.isdigit():
+        try:
+            text = re.match(PATTERN_PAGE_RANGE, text).groups()[0]
+        except KeyError:
+            return
     return text
 
 
-def document_last_page(text: str):
+def document_last_page(text: str, keep_chars=PUNCTUATION_TO_DEFINE_PAGE_RANGE):
     """
-    Função para normalizar o número da página final de um documento, considerando os mesmo métodos da função document_first_page
+    Função para normalizar o número da página final de um documento, considerando os seguintes métodos em ordem:
+    1. Converter entidades HTML para caracteres unicode
+    2. Remover caracteres não imprimíveis
+    3. Remover caracteres especiais, mantendo apenas caracteres alfanuméricos e espaço
+    4. Remover espaços duplos
+    5. Remover pontuação no final do número
+    6. Remover espaços brancos
+
     :param text: número da página final de um documento a ser normalizado
     :return: número da página final de um documento normalizado
     """
-    # aplica os mesmos métodos considerados por document_first_page
-    text = document_first_page(text)
 
+    text = unescape(text)
+    text = remove_non_printable_chars(text)
+    text = keep_alpha_num_space(text, keep_chars)
+    text = remove_double_spaces(text)
+    text = remove_end_punctuation_chars(text)
+    text = text.replace(' ', '')
+    if not text.isdigit():
+        try:
+            first_page = int(re.match(PATTERN_PAGE_RANGE, text).groups()[0])
+            last_page = int(re.match(PATTERN_PAGE_RANGE, text).groups()[1])
+        except KeyError:
+            return
+        if first_page > last_page:
+            text = str(first_page + last_page)
+        else:
+            text = str(last_page)
     return text
 
 
@@ -280,14 +299,13 @@ def document_publication_date(text: str):
     :param text: data da publicação a ser padronizada
     :return: data da publicação padronizada
     """
-    # remove caracteres non printable
+
     text = remove_non_printable_chars(text)
-
-    # remove caracteres especiais
-    text = keep_alpha_num_space(text, keep_chars=DATE_SEPARATORS, replace_with='')
-
-    # remove espaços duplos
     text = remove_double_spaces(text)
+    text = text.strip()
+    text = text.lower()
+    text = remove_words(text, words_to_remove=['de', 'of'])
+    text = convert_to_iso_date(text)
 
     return text
 
