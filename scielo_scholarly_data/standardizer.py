@@ -10,7 +10,7 @@ from scielo_scholarly_data.core import (
     remove_parenthesis,
     remove_end_punctuation_chars,
     remove_words,
-    unescape
+    unescape,
 )
 
 from scielo_scholarly_data.values import (
@@ -19,9 +19,9 @@ from scielo_scholarly_data.values import (
     JOURNAL_TITLE_SPECIAL_CHARS,
     JOURNAL_TITLE_SPECIAL_WORDS,
     PATTERNS_DOI,
-    PUNCTUATION_TO_KEEP_IN_AUTHOR_VISUALIZATION
+    PUNCTUATION_TO_KEEP_IN_AUTHOR_VISUALIZATION,
     PATTERN_PAGE_RANGE,
-    PUNCTUATION_TO_DEFINE_PAGE_RANGE
+    PUNCTUATION_TO_DEFINE_PAGE_RANGE,
 )
 
 
