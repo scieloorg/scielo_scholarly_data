@@ -266,8 +266,29 @@ def document_last_page(text: str, keep_chars=PUNCTUATION_TO_DEFINE_PAGE_RANGE):
 
 
 def document_elocation(text: str):
-    pass
+    """
+    Função para padronizar o valor do atributo elocation, esse valor identifica uma paginação eletrônica e só deverá
+    ser utilizado quando houver um único número de paginação eletrônica. São exemplos de elocation: 0102961 e e27721
+    este último considerado para elementos de citação.
+    :param text: valor do atributo elocation a ser padronizado
+    :return: valor do atributo elocation padronizado
+    """
+    # remove caracteres non printable
+    text = remove_non_printable_chars(text)
 
+    # remove caracteres especiais
+    text = keep_alpha_num_space(text, replace_with='')
+
+    # remove espaços duplos
+    text = remove_double_spaces(text)
+
+    # remove pontuação no final do número
+    text = remove_end_punctuation_chars(text)
+
+    # remove espaços
+    text = text.replace(' ','')
+
+    return text
 
 def document_publication_date(text: str):
     pass
