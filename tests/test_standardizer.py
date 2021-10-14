@@ -186,7 +186,7 @@ class TestStandardizer(unittest.TestCase):
 
     def test_document_first_page_unescape(self):
         self.assertEqual(
-            document_first_page('12&#38;8'),
+            document_first_page('12&#60;8'),
             '128'
         )
 
@@ -196,19 +196,19 @@ class TestStandardizer(unittest.TestCase):
             '128'
         )
 
-    def test_document_first_alpha_num_space(self):
+    def test_document_first_page_alpha_num_space(self):
         self.assertEqual(
             document_first_page('12&8'),
             '128'
         )
 
-    def test_document_first_double_spaces(self):
+    def test_document_first_page_double_spaces(self):
         self.assertEqual(
             document_first_page('  12  8'),
             '128'
         )
 
-    def test_document_first_end_punctuation_chars(self):
+    def test_document_first_page_end_punctuation_chars(self):
         self.assertEqual(
             document_first_page('128.,; .'),
             '128'
@@ -256,6 +256,20 @@ class TestStandardizer(unittest.TestCase):
         }
         expected_values = list(range.values())
         obtained_values = [document_last_page(page) for page in range]
+        
+        self.assertListEqual(exptected_values, obtained_values)
+
+    def test_document_first_page_range(self):
+        range = {
+            '128-140': '128',
+            '128_140': '128',
+            '128:140': '128',
+            '128;140': '128',
+            '128,140': '128',
+            '128.140': '128'
+        }
+        expected_values = list(range.values())
+        obtained_values = [document_first_page(page) for page in range]
 
         self.assertListEqual(expected_values, obtained_values)
 
@@ -367,7 +381,49 @@ class TestStandardizer(unittest.TestCase):
 
         self.assertListEqual(expected_values, obtained_values)
 
-    def test_document_title_for_deduplication(self):
+    def test_document_title_for_deduplication_html_entities_keeps(self):
+        self.assertEqual(
+            document_title_for_deduplication('INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DE &#60; PROBLEMÁTICAS', remove_special_char=False),
+            'innovacion tecnologica en la resolucion de < problematicas'
+        )
+
+    def test_document_title_for_deduplication_keep_alpha_num_space(self):
+        self.assertEqual(
+            document_title_for_deduplication('INNOVACIÓN & TECNOLÓGICA EN LA RESOLUCIÓN DE &#60; PROBLEMÁTICAS'),
+            'innovacion tecnologica en la resolucion de problematicas'
+        )
+
+    def test_document_title_for_deduplication_remove_non_printable_chars(self):
+        self.assertEqual(
+            document_title_for_deduplication('INNOVACIÓN \n TECNOLÓGICA EN LA RESOLUCIÓN DE \t PROBLEMÁTICAS'),
+            'innovacion tecnologica en la resolucion de problematicas'
+        )
+
+    def test_document_title_for_deduplication_remove_double_spaces(self):
+        self.assertEqual(
+            document_title_for_deduplication('  INNOVACIÓN  TECNOLÓGICA  EN  LA  RESOLUCIÓN  DE  PROBLEMÁTICAS  '),
+            'innovacion tecnologica en la resolucion de problematicas'
+        )
+
+    def test_document_title_for_deduplication_remove_end_punctuation_chars(self):
+        self.assertEqual(
+            document_title_for_deduplication('INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DE PROBLEMÁTICAS,.;'),
+            'innovacion tecnologica en la resolucion de problematicas'
+        )
+
+    def test_document_title_for_deduplication_text_strip(self):
+        self.assertEqual(
+            document_title_for_deduplication(' INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DE PROBLEMÁTICAS '),
+            'innovacion tecnologica en la resolucion de problematicas'
+        )
+
+    def test_document_title_for_deduplication_remove_accents(self):
+        self.assertEqual(
+            document_title_for_deduplication('INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DE PROBLEMÁTICAS'),
+            'innovacion tecnologica en la resolucion de problematicas'
+        )
+
+    def test_document_title_for_deduplication_text_lower(self):
         self.assertEqual(
             document_title_for_deduplication('INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DE PROBLEMÁTICAS'),
             'innovacion tecnologica en la resolucion de problematicas'

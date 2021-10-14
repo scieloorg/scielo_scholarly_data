@@ -139,7 +139,7 @@ def document_doi(text: str):
             return matched_doi.group()
 
 
-def document_title_for_deduplication(text: str):
+def document_title_for_deduplication(text: str, remove_special_char=True):
     """
     Função para padronizar títulos de documentos de acordo com os seguinte métodos, por ordem
         1. Converte códigos HTML para caracteres Unicode
@@ -155,15 +155,16 @@ def document_title_for_deduplication(text: str):
     :param remove_char: booleano que indica se as entidades HTML e os caracteres especiais devem ser mantidos ou retirados (default)
     :return: título tratado do documento
     """
-    #Aplica os métodos de 1 até 6 da mesma forma que document_title_for_visualization
-    text = document_title_for_visualization(text)
 
-    #Remove acentos do título do documento
+    text = unescape(text)
+    if remove_special_char:
+        text = keep_alpha_num_space(text)
+    text = remove_non_printable_chars(text)
+    text = remove_double_spaces(text)
+    text = remove_end_punctuation_chars(text)
+    text = text.strip()
     text = remove_accents(text)
-
-    #Converte os caracteres para caixa baixa
     text = text.lower()
-
     return text
 
 
@@ -203,7 +204,7 @@ def document_title_for_visualization(text: str, remove_special_char=True):
     return text
 
 
-def document_first_page(text: str):
+def document_first_page(text: str, keep_chars=PUNCTUATION_TO_DEFINE_PAGE_RANGE):
     """
     Função para normalizar o número da página inicial de um documento, considerando os seguintes métodos em ordem:
     1. Converter entidades HTML para caracteres unicode
@@ -212,27 +213,22 @@ def document_first_page(text: str):
     4. Remover espaços duplos
     5. Remover pontuação no final do número
     6. Remover espaços brancos nas extremidades
+
     :param text: número da página inicial de um documento a ser normalizado
     :return: número da página inicial de um documento normalizado
     """
-    # o método unescape converte códigos no formato &#38; para seus caracteres correspondentes
+
     text = unescape(text)
-
-    # remove caracteres non printable
     text = remove_non_printable_chars(text)
-
-    # remove caracteres especiais
-    text = keep_alpha_num_space(text)
-
-    # remove espaços duplos
+    text = keep_alpha_num_space(text, keep_chars)
     text = remove_double_spaces(text)
-
-    # remove ponto final
     text = remove_end_punctuation_chars(text)
-
-    # remove espaços
     text = text.replace(' ','')
-
+    if not text.isdigit():
+        try:
+            text = re.match(PATTERN_PAGE_RANGE, text).groups()[0]
+        except KeyError:
+            return
     return text
 
 
