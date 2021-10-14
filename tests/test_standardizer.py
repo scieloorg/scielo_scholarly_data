@@ -4,6 +4,7 @@ from scielo_scholarly_data.standardizer import (
     document_elocation,
     document_first_page,
     document_publication_date,
+    document_last_page,
     document_title_for_deduplication,
     document_title_for_visualization,
     journal_issn,
@@ -212,7 +213,7 @@ class TestStandardizer(unittest.TestCase):
 
     def test_document_first_page_unescape(self):
         self.assertEqual(
-            document_first_page('12&#38;8'),
+            document_first_page('12&#60;8'),
             '128'
         )
 
@@ -288,11 +289,68 @@ class TestStandardizer(unittest.TestCase):
             '2021/09/21': test_date,
             '2021.setembro.21': test_date,
             '2021set21': test_date,
-            '2021september21':test_date,
-            '2021septiembre21':test_date
+            '2021september21': test_date,
+            '2021septiembre21': test_date
         }
         expected_values = list(dates.values())
         obtained_values = [document_publication_date(dt) for dt in dates]
+
+    def test_document_last_page_unescape(self):
+        self.assertEqual(
+            document_last_page('12&#38;8'),
+            '128'
+        )
+
+    def test_document_last_page_non_printable_chars(self):
+        self.assertEqual(
+            document_last_page('12\n8'),
+            '128'
+        )
+
+    def test_document_last_page_alpha_num_space(self):
+        self.assertEqual(
+            document_last_page('12&8'),
+            '128'
+        )
+
+    def test_document_last_page_double_spaces(self):
+        self.assertEqual(
+            document_last_page('  12  8'),
+            '128'
+        )
+
+    def test_document_last_page_end_punctuation_chars(self):
+        self.assertEqual(
+            document_last_page('128.,; .'),
+            '128'
+        )
+
+    def test_document_last_page_range(self):
+        range = {
+            '128-140':'140',
+            '128_140':'140',
+            '128:140':'140',
+            '128;140':'140',
+            '128,140':'140',
+            '128.140':'140',
+            '128-30':'158'
+        }
+        expected_values = list(range.values())
+        obtained_values = [document_last_page(page) for page in range]
+        
+        self.assertListEqual(exptected_values, obtained_values)
+
+    def test_document_first_page_range(self):
+        range = {
+            '128-140': '128',
+            '128_140': '128',
+            '128:140': '128',
+            '128;140': '128',
+            '128,140': '128',
+            '128.140': '128'
+        }
+        expected_values = list(range.values())
+        obtained_values = [document_first_page(page) for page in range]
 
         self.assertListEqual(expected_values, obtained_values)
 
