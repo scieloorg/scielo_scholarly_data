@@ -1,6 +1,7 @@
 import re
 
 from scielo_scholarly_data.core import (
+    convert_to_iso_date,
     convert_to_alpha_space,
     keep_alpha_num_space,
     remove_accents,
@@ -13,6 +14,7 @@ from scielo_scholarly_data.core import (
 )
 
 from scielo_scholarly_data.values import (
+    DATE_SEPARATORS,
     DOCUMENT_TITLE_SPECIAL_CHARS,
     JOURNAL_TITLE_SPECIAL_CHARS,
     JOURNAL_TITLE_SPECIAL_WORDS,
@@ -291,7 +293,20 @@ def document_elocation(text: str):
     return text
 
 def document_publication_date(text: str):
-    pass
+    """
+    Função para padronizar a data da publicação de um documento para o formato ISO
+    :param text: data da publicação a ser padronizada
+    :return: data da publicação padronizada
+    """
+
+    text = remove_non_printable_chars(text)
+    text = remove_double_spaces(text)
+    text = text.strip()
+    text = text.lower()
+    text = remove_words(text, words_to_remove=['de', 'of'])
+    text = convert_to_iso_date(text)
+
+    return text
 
 
 def document_author(text: str):
