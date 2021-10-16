@@ -14,8 +14,6 @@ from scielo_scholarly_data.core import (
 )
 
 from scielo_scholarly_data.values import (
-    DATE_SEPARATORS,
-    DOCUMENT_TITLE_SPECIAL_CHARS,
     JOURNAL_TITLE_SPECIAL_CHARS,
     JOURNAL_TITLE_SPECIAL_WORDS,
     PATTERNS_DOI,

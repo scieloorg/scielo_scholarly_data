@@ -27,7 +27,6 @@ class TestStandardizer(unittest.TestCase):
             'agrociencia & uruguay'
         )
 
-
     def test_journal_title_for_deduplication_remove_nonprintable_char(self):
         self.assertEqual(
             journal_title_for_deduplication('Agrociencia (Uruguay)\n'),
