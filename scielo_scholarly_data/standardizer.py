@@ -76,6 +76,22 @@ def journal_title_for_visualization(text: str):
 
 
 def journal_issn(text, use_issn_validator=False):
+    '''
+    Padroniza ISSN. Por exemplo, de "1387666x" para "1387-666X"
+
+    Parameters
+    ----------
+    text : str
+        Código ISSN a ser padrozinado
+    use_issn_validator : bool
+        O validador de ISSN deve ser utilizado?
+
+    Returns
+    -------
+    issn
+        Código ISSN padronizado ou None
+    '''
+
     if re.match(PATTERN_ISSN_WITH_HYPHEN, text):
         if use_issn_validator:
             if not is_valid_issn(text):
