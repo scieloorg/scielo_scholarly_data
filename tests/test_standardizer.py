@@ -348,6 +348,7 @@ class TestStandardizer(unittest.TestCase):
         }
         expected_values = list(dates.values())
         obtained_values = [document_publication_date(dt) for dt in dates]
+        self.assertListEqual(expected_values, obtained_values)
 
     def test_document_last_page_unescape(self):
         self.assertEqual(
@@ -392,7 +393,7 @@ class TestStandardizer(unittest.TestCase):
         expected_values = list(range.values())
         obtained_values = [document_last_page(page) for page in range]
         
-        self.assertListEqual(exptected_values, obtained_values)
+        self.assertListEqual(expected_values, obtained_values)
 
     def test_document_first_page_range(self):
         range = {
