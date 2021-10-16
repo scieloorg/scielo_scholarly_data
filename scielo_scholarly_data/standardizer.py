@@ -12,12 +12,13 @@ from scielo_scholarly_data.core import (
     remove_words,
     unescape,
 )
+from scielo_scholarly_data.helpers import is_valid_issn
 
 from scielo_scholarly_data.values import (
-    DATE_SEPARATORS,
-    DOCUMENT_TITLE_SPECIAL_CHARS,
     JOURNAL_TITLE_SPECIAL_CHARS,
     JOURNAL_TITLE_SPECIAL_WORDS,
+    PATTERN_ISSN_WITH_HYPHEN,
+    PATTERN_ISSN_WITHOUT_HYPHEN,
     PATTERNS_DOI,
     PUNCTUATION_TO_KEEP_IN_AUTHOR_VISUALIZATION,
     PATTERN_PAGE_RANGE,
@@ -74,19 +75,35 @@ def journal_title_for_visualization(text: str):
     return text
 
 
-def journal_issn(text: str):
-    """
-    Procedimento que padroniza ISSN de periódico
+def journal_issn(text, use_issn_validator=False):
+    '''
+    Padroniza ISSN. Por exemplo, de "1387666x" para "1387-666X"
 
-    :param text: caracteres que representam um código ISSN de um periódico
-    :return: código ISSN padronizado ou nada
-    """
-    if text.isdigit():
-        if len(text) == 8:
-            return '-'.join([text[:4]] + [text[4:]]).upper()
-    elif len(text) == 9:
-        if '-' in text and text[:4].isdigit():
-            return text.upper()
+    Parameters
+    ----------
+    text : str
+        Código ISSN a ser padrozinado
+    use_issn_validator : bool
+        O validador de ISSN deve ser utilizado?
+
+    Returns
+    -------
+    issn
+        Código ISSN padronizado ou None
+    '''
+
+    if re.match(PATTERN_ISSN_WITH_HYPHEN, text):
+        if use_issn_validator:
+            if not is_valid_issn(text):
+                return
+        return text.upper()
+
+    if re.match(PATTERN_ISSN_WITHOUT_HYPHEN, text):
+        text = '-'.join([text[:4], text[4:]])
+        if use_issn_validator:
+            if not is_valid_issn(text):
+                return
+        return text.upper()
 
 
 def issue_volume(text: str):

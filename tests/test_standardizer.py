@@ -27,7 +27,6 @@ class TestStandardizer(unittest.TestCase):
             'agrociencia & uruguay'
         )
 
-
     def test_journal_title_for_deduplication_remove_nonprintable_char(self):
         self.assertEqual(
             journal_title_for_deduplication('Agrociencia (Uruguay)\n'),
@@ -97,13 +96,21 @@ class TestStandardizer(unittest.TestCase):
     def test_journal_issn_without_hyphen(self):
         issns = {
             '15856280': '1585-6280',
-            '85856281': '8585-6281'
+            '85856281': '8585-6281',
+            '1387666X': '1387-666X',
         }
 
         expected_values = list(issns.values())
         obtained_values = [journal_issn(i) for i in issns]
 
         self.assertListEqual(expected_values, obtained_values)
+
+    def test_journal_issn_wrong_issn(self):
+        wrong_issn = '1387-6660'
+        self.assertEqual(journal_issn(wrong_issn, use_issn_validator=True), None)
+
+        correct_issn = '1387-666X'
+        self.assertEqual(journal_issn(correct_issn, use_issn_validator=False), '1387-666X')
 
     def test_journal_issn_correct(self):
         issns = {
@@ -341,6 +348,7 @@ class TestStandardizer(unittest.TestCase):
         }
         expected_values = list(dates.values())
         obtained_values = [document_publication_date(dt) for dt in dates]
+        self.assertListEqual(expected_values, obtained_values)
 
     def test_document_last_page_unescape(self):
         self.assertEqual(
@@ -385,7 +393,7 @@ class TestStandardizer(unittest.TestCase):
         expected_values = list(range.values())
         obtained_values = [document_last_page(page) for page in range]
         
-        self.assertListEqual(exptected_values, obtained_values)
+        self.assertListEqual(expected_values, obtained_values)
 
     def test_document_first_page_range(self):
         range = {

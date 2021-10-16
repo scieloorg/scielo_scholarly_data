@@ -1,16 +1,15 @@
 import html
 import unicodedata
 import re
-from dateutil.parser import parse
-from datetime import date
-from scielo_scholarly_data.values import PATTERN_PARENTHESIS
 
+from dateutil.parser import parse
 from scielo_scholarly_data.values import (
     PATTERN_DATE,
+    PATTERN_PARENTHESIS,
     PUNCTUATION_TO_REMOVE_FROM_TITLE_VISUALIZATION,
-    DATE_SEPARATORS,
-    MONTHS_DICT
+    MONTHS_DICT,
 )
+
 
 def keep_alpha_num_space(text, keep_chars=None, replace_with=' '):
     """
