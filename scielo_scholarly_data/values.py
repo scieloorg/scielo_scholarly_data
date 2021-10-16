@@ -14,10 +14,8 @@ PATTERNS_DOI = [re.compile(pd) for pd in [
 ]
 
 # https://en.wikipedia.org/wiki/International_Standard_Serial_Number (accessed on 2021/08/31)
-PATTERNS_ISSN = [re.compile(pi) for pi in [
-    r'^[0-9]{4}[0-9]{3}[0-9xX]$',
-    r'^[0-9]{4}-[0-9]{3}[0-9xX]$']
-]
+PATTERN_ISSN_WITHOUT_HYPHEN = re.compile(r'^[0-9]{4}[0-9]{3}[0-9xX]$')
+PATTERN_ISSN_WITH_HYPHEN = re.compile(r'^[0-9]{4}-[0-9]{3}[0-9xX]$')
 
 PATTERN_PAGE_RANGE = r'(\d*)[-|_|:|;|,|.](\d*)'
 
