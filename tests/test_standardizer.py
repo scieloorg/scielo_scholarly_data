@@ -105,23 +105,21 @@ class TestStandardizer(unittest.TestCase):
 
         self.assertListEqual(expected_values, obtained_values)
 
-    def test_journal_issn_wrong_issn(self):
-        wrong_issn = '1387-6660'
-        self.assertEqual(journal_issn(wrong_issn, use_issn_validator=True), None)
+    def test_journal_issn_validator_true_correct_issn(self):
+        correct_issn_upper_case_x = '1387-666X'
+        self.assertEqual(journal_issn(correct_issn_upper_case_x, use_issn_validator=True), '1387-666X')
 
-        correct_issn = '1387-666X'
-        self.assertEqual(journal_issn(correct_issn, use_issn_validator=False), '1387-666X')
+        correct_issn_lower_case_x = '1387-666x'
+        self.assertEqual(journal_issn(correct_issn_lower_case_x, use_issn_validator=True), '1387-666X')
 
-    def test_journal_issn_correct(self):
-        issns = {
-            '1585-6280': '1585-6280',
-            '8585-6281': '8585-6281'
-        }
+        correct_issn_lower_case_x_no_hyphen = '1387666x'
+        self.assertEqual(journal_issn(correct_issn_lower_case_x_no_hyphen, use_issn_validator=True), '1387-666X')
 
-        expected_values = list(issns.values())
-        obtained_values = [journal_issn(i) for i in issns]
+    def test_journal_issn_valiator_true_wrong_issn(self):
+        wrong_issns = ['1585-6280', '15856280', '15856281', '8585-6281', '1387-6660']
+        obtained_values = [journal_issn(i, use_issn_validator=True) for i in wrong_issns]
 
-        self.assertListEqual(expected_values, obtained_values)
+        self.assertListEqual([None for x in range(len(wrong_issns))], obtained_values)
 
     def test_journal_issn_with_char(self):
         issns = {
