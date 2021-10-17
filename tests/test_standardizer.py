@@ -293,6 +293,12 @@ class TestStandardizer(unittest.TestCase):
             '128'
         )
 
+    def test_document_first_page_re_doesnt_match(self):
+        self.assertEqual(
+            document_first_page('abc-128'),
+            None
+        )
+
     def test_document_publication_date_non_printable_char(self):
         test_date = parse('2021-09-21').date()
         dates = {
@@ -392,6 +398,12 @@ class TestStandardizer(unittest.TestCase):
         obtained_values = [document_last_page(page) for page in range]
         
         self.assertListEqual(expected_values, obtained_values)
+
+    def test_document_last_page_re_doesnt_match(self):
+        self.assertEqual(
+            document_last_page('abc-128'),
+            None
+        )
 
     def test_document_first_page_range(self):
         range = {
