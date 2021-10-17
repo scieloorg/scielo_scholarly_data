@@ -115,7 +115,7 @@ class TestStandardizer(unittest.TestCase):
         correct_issn_lower_case_x_no_hyphen = '1387666x'
         self.assertEqual(journal_issn(correct_issn_lower_case_x_no_hyphen, use_issn_validator=True), '1387-666X')
 
-    def test_journal_issn_valiator_true_wrong_issn(self):
+    def test_journal_issn_validator_true_wrong_issn(self):
         wrong_issns = ['1585-6280', '15856280', '15856281', '8585-6281', '1387-6660']
         obtained_values = [journal_issn(i, use_issn_validator=True) for i in wrong_issns]
 
