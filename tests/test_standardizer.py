@@ -315,7 +315,7 @@ class TestStandardizer(unittest.TestCase):
             '128'
         )
 
-    def test_document_first_page_re_doesnt_match(self):
+    def test_document_first_page_re_unmatch(self):
         self.assertEqual(
             document_first_page('abc-128'),
             None
@@ -421,7 +421,7 @@ class TestStandardizer(unittest.TestCase):
         
         self.assertListEqual(expected_values, obtained_values)
 
-    def test_document_last_page_re_doesnt_match(self):
+    def test_document_last_page_re_unmatch(self):
         self.assertEqual(
             document_last_page('abc-128'),
             None
