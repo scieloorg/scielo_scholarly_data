@@ -3,7 +3,7 @@ import re
 
 PATTERN_PARENTHESIS = re.compile(r'[-a-zA-ZÀ-ÖØ-öø-ÿ|0-9]*\([-a-zA-ZÀ-ÖØ-öø-ÿ|\W|0-9]*\)[-a-zA-ZÀ-ÖØ-öø-ÿ|0-9]*', re.UNICODE)
 
-PATTERN_DATE = r'(\d*)([a-zA-Z]*)(\d*)'
+PATTERN_DATE = r'(\d+)([a-zA-Z]*)(\d+)'
 
 # https://www.crossref.org/blog/dois-and-matching-regular-expressions/ (accessed on 2021/08/31)
 PATTERNS_DOI = [re.compile(pd) for pd in [
