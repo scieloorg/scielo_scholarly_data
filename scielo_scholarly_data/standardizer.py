@@ -347,12 +347,19 @@ def document_author_for_visualization(text: str, surname_first=True):
 
     if ',' not in text:
         t = text.split(' ')
-        surname = ''.join(t[-1:])
-        name = ' '.join(t[:-1])
+        if len(t) == 1:
+            return text
+        else:
+            surname = ''.join(t[-1:])
+            name = ' '.join(t[:-1])
     else:
-        t = text.split(', ')
-        surname = ''.join(t[:1])
-        name = ' '.join(t[1:])
+        t = text.split(',')
+        if len(t) == 2 and (t[0] == '' or t[1] == ''):
+            return ''.join(t)
+        else:
+            surname = ''.join(t[:1])
+            name = ' '.join(t[1:])
+            name = name.strip()
 
     if surname_first:
         text = ''.join([surname, ', ', name])
@@ -385,12 +392,19 @@ def document_author_for_deduplication(text: str, surname_first=True):
 
     if ',' not in text:
         t = text.split(' ')
-        surname = ''.join(t[-1:])
-        name = ' '.join(t[:-1])
+        if len(t) == 1:
+            return text
+        else:
+            surname = ''.join(t[-1:])
+            name = ' '.join(t[:-1])
     else:
-        t = text.split(', ')
-        surname = ''.join(t[:1])
-        name = ' '.join(t[1:])
+        t = text.split(',')
+        if len(t) == 2 and (t[0] == '' or t[1] == ''):
+            return ''.join(t)
+        else:
+            surname = ''.join(t[:1])
+            name = ' '.join(t[1:])
+            name = name.strip()
 
     if surname_first:
         text = ''.join([surname, ', ', name])

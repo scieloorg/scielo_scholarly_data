@@ -219,6 +219,17 @@ class TestStandardizer(unittest.TestCase):
 
         self.assertListEqual(expected_values, obtained_values)
 
+    def test_document_author_for_visualization_single_name_author(self):
+        names = {
+            'João': 'João',
+            ',João': 'João',
+            'João,': 'João'
+        }
+        expected_values = list(names.values())
+        obtained_values = [document_author_for_visualization(name) for name in names]
+
+        self.assertListEqual(expected_values, obtained_values)
+
     def test_document_author_for_deduplication_remove_accents_surname_first(self):
         names = {
             'Sílva, João  J  P': 'silva, joao j p',
@@ -236,6 +247,17 @@ class TestStandardizer(unittest.TestCase):
         }
         expected_values = list(names.values())
         obtained_values = [document_author_for_deduplication(name, surname_first=False) for name in names]
+
+        self.assertListEqual(expected_values, obtained_values)
+
+    def test_document_author_for_deduplication_single_name_author(self):
+        names = {
+            'João': 'joao',
+            ',João': 'joao',
+            'João,': 'joao'
+        }
+        expected_values = list(names.values())
+        obtained_values = [document_author_for_deduplication(name) for name in names]
 
         self.assertListEqual(expected_values, obtained_values)
 
