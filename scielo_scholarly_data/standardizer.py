@@ -289,30 +289,34 @@ def document_elocation(text: str):
     """
     Função para padronizar o valor do atributo elocation, esse valor identifica uma paginação eletrônica e só deverá
     ser utilizado quando houver um único número de paginação eletrônica. São exemplos de elocation: 0102961 e e27721
-    este último considerado para elementos de citação.
+    este último considerado para elementos de citação. A função considera os seguintes métodos, em ordem:
+    1. Remover caracteres não imprimíveis
+    2. Remover caracteres especiais, mantendo apenas caracteres alfanuméricos e espaço
+    3. Remover espaços duplos
+    4. Remover pontuação no final do número
+    5. Remover espaços brancos
+
     :param text: valor do atributo elocation a ser padronizado
     :return: valor do atributo elocation padronizado
     """
-    # remove caracteres non printable
+
     text = remove_non_printable_chars(text)
-
-    # remove caracteres especiais
     text = keep_alpha_num_space(text, replace_with='')
-
-    # remove espaços duplos
     text = remove_double_spaces(text)
-
-    # remove pontuação no final do número
     text = remove_end_punctuation_chars(text)
-
-    # remove espaços
     text = text.replace(' ','')
-
     return text
 
 def document_publication_date(text: str):
     """
-    Função para padronizar a data da publicação de um documento para o formato ISO
+    Função para padronizar a data da publicação de um documento para o formato ISO, considerando os seguinte métodos,
+    em ordem:
+    1. Remover caracteres não imprimíveis
+    2. Remover espaços duplos
+    3. Remover espaços brancos nas extremidades da data
+    4. Converter caracteres para caixa baixa
+    5. Remover palavras descritas na lista words_to_remove
+
     :param text: data da publicação a ser padronizada
     :return: data da publicação padronizada
     """
@@ -323,7 +327,6 @@ def document_publication_date(text: str):
     text = text.lower()
     text = remove_words(text, words_to_remove=['de', 'of'])
     text = convert_to_iso_date(text)
-
     return text
 
 
