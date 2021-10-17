@@ -153,3 +153,8 @@ class TestCore(unittest.TestCase):
             None
         )
 
+    def test_defaults_date_to_ISO_format_re_doesnt_match(self):
+        self.assertEqual(
+            convert_to_iso_date('abc-01-01'),
+            None
+        )
