@@ -1,6 +1,3 @@
-import re
-
-
 # https://www.issn.org/understanding-the-issn/what-is-an-issn (accessed on 2021/08/31)
 def is_valid_issn(issn: str):
     """
@@ -9,8 +6,7 @@ def is_valid_issn(issn: str):
     :param issn: código ISSN padronizado
     :return: True se código é válido, False caso contrário
     """
-
-    informed_check_digit = issn[8] if issn[8] != 'X' else '10'
+    informed_check_digit = issn[8] if issn[8].upper() != 'X' else '10'
     informed_check_digit = int(informed_check_digit)
 
     sum_digits = 0
