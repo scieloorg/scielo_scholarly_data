@@ -12,7 +12,6 @@ from scielo_scholarly_data.core import (
     remove_words,
     unescape,
 )
-from scielo_scholarly_data.helpers import is_valid_issn
 
 from scielo_scholarly_data.values import (
     JOURNAL_TITLE_SPECIAL_CHARS,
@@ -23,6 +22,11 @@ from scielo_scholarly_data.values import (
     PUNCTUATION_TO_KEEP_IN_AUTHOR_VISUALIZATION,
     PATTERN_PAGE_RANGE,
     PUNCTUATION_TO_DEFINE_PAGE_RANGE,
+)
+
+from stdnum import (
+    issn,
+    isbn,
 )
 
 
@@ -94,14 +98,14 @@ def journal_issn(text, use_issn_validator=False):
 
     if re.match(PATTERN_ISSN_WITH_HYPHEN, text):
         if use_issn_validator:
-            if not is_valid_issn(text):
+            if not issn.is_valid(text):
                 return
         return text.upper()
 
     if re.match(PATTERN_ISSN_WITHOUT_HYPHEN, text):
         text = '-'.join([text[:4], text[4:]])
         if use_issn_validator:
-            if not is_valid_issn(text):
+            if not issn.is_valid(text):
                 return
         return text.upper()
 
