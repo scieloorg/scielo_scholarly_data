@@ -348,6 +348,20 @@ class TestStandardizer(unittest.TestCase):
         obtained_values = [document_publication_date(dt) for dt in dates]
         self.assertListEqual(expected_values, obtained_values)
 
+    def test_document_publication_date_complete_format(self):
+        test_date = parse('2021-09-21').date()
+        dates = {
+            '2021-09-21T21:31:00Z': test_date,
+            ' 2021-09-21T21:31:00Z ': test_date,
+            '2021 09 21T21:31:00Z': test_date,
+            '2021/09/21T21:31:00Z': test_date,
+            '/2021-09-21T21:31:00Z': test_date,
+            '2021.09.21T21:31:00Z': test_date
+        }
+        expected_values = list(dates.values())
+        obtained_values = [document_publication_date(dt) for dt in dates]
+        self.assertListEqual(expected_values, obtained_values)
+
     def test_document_last_page_unescape(self):
         self.assertEqual(
             document_last_page('12&#38;8'),

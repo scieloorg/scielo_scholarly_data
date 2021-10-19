@@ -138,9 +138,6 @@ def convert_to_iso_date(text, day='01', month='01', just_year=False):
     :return: data padronizada
     """
 
-    # Substitui todos os possíveis separadores por espaço
-    text = keep_alpha_num_space(text, replace_with=' ')
-
     # Verifica se a data é composta apenas pelo ano retornando 'dia' e 'mês' da acordo com os valores recebidos como parâmetros
     if text.isdigit() and len(text) <= 4:
         try:
@@ -152,7 +149,9 @@ def convert_to_iso_date(text, day='01', month='01', just_year=False):
             #Tenta converter a data sem nenhum tratamento prévio
             text = parse(text).date()
         except ValueError:
+            text = keep_alpha_num_space(text, replace_with='')
             text = text.replace(' ', '')
+            text = text.lower()
             if not text.isdigit():
                 try:
                     #Tenta separar 'dia', 'mês' e 'ano' a partir da posição em text
@@ -171,10 +170,13 @@ def convert_to_iso_date(text, day='01', month='01', just_year=False):
                         month = MONTHS_DICT[month]
                         #Tenta converter a data tratada
                         text = parse('-'.join([year, month, day])).date()
-                except (ValueError, IndexError):
+                except (ValueError, IndexError, KeyError):
                     return None
             else:
-                return None
+                try:
+                    text = parse(text).date()
+                except ValueError:
+                    return None
     if just_year:
         return text.year
     else:
