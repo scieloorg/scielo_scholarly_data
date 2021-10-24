@@ -24,10 +24,7 @@ from scielo_scholarly_data.values import (
     PUNCTUATION_TO_DEFINE_PAGE_RANGE,
 )
 
-from stdnum import (
-    issn,
-    isbn,
-)
+from scielo_scholarly_data.helpers import is_valid_issn
 
 
 def journal_title_for_deduplication(text: str, words_to_remove=JOURNAL_TITLE_SPECIAL_WORDS, keep_parenthesis_content=True):
@@ -98,14 +95,14 @@ def journal_issn(text, use_issn_validator=False):
 
     if re.match(PATTERN_ISSN_WITH_HYPHEN, text):
         if use_issn_validator:
-            if not issn.is_valid(text):
+            if not is_valid_issn(text):
                 return
         return text.upper()
 
     if re.match(PATTERN_ISSN_WITHOUT_HYPHEN, text):
         text = '-'.join([text[:4], text[4:]])
         if use_issn_validator:
-            if not issn.is_valid(text):
+            if not is_valid_issn(text):
                 return
         return text.upper()
 
