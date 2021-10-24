@@ -66,16 +66,21 @@ This section aims to provide a scientific explanation about the decisions we mad
 - book_editor_name
 - book_title
 - chapter_title
-- document_author
+- document_author_for_deduplication
+- document_author_for_visualization
 - document_doi
 - document_elocation
 - document_first_page
 - document_last_page
 - document_publication_date
-- document_title
+- document_title_for_deduplication
+- document_title_for_visualization
+- issue_number
+- issue_volume
 - journal_issn
 - journal_number
-- journal_title
+- journal_title_for_deduplication
+- journal_title_for_visualization
 - journal_volume
 
 
