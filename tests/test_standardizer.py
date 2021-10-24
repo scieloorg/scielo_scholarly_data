@@ -359,7 +359,7 @@ class TestStandardizer(unittest.TestCase):
             '2021septiembre21': test_date
         }
         expected_values = list(dates.values())
-        obtained_values = [document_publication_date(dt, just_year=True) for dt in dates]
+        obtained_values = [document_publication_date(dt, only_year=True) for dt in dates]
         self.assertListEqual(expected_values, obtained_values)
 
     def test_document_publication_date_just_year_received(self):

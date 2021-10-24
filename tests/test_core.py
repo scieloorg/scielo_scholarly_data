@@ -117,19 +117,19 @@ class TestCore(unittest.TestCase):
 
         self.assertListEqual(expected_values, obtained_values)
 
-    def test_defaults_date_to_ISO_format_just_year_received(self):
+    def test_defaults_date_to_ISO_format_only_year_received(self):
         self.assertEqual(
             convert_to_iso_date('2021'),
             parse('2021-01-01').date()
         )
 
-    def test_defaults_date_to_ISO_format_just_year_delivered(self):
+    def test_defaults_date_to_ISO_format_only_year_delivered(self):
         self.assertEqual(
-            convert_to_iso_date('2021-06-15', just_year=True ),
+            convert_to_iso_date('2021-06-15', only_year=True ),
             parse('2021').date().year
         )
 
-    def test_defaults_date_to_ISO_format_just_year_user_decision(self):
+    def test_defaults_date_to_ISO_format_only_year_user_decision(self):
         self.assertEqual(
             convert_to_iso_date('2021', day='1', month='1'),
             parse('2021-01-01').date()
