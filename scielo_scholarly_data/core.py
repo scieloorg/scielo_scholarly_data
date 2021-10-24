@@ -13,13 +13,22 @@ from scielo_scholarly_data.values import (
 
 def keep_alpha_num_space(text, keep_chars=None, replace_with=' '):
     """
-    Mantém em text apenas caracteres alfanuméricos (letras latinas e algarismos arábicos) e espaços
-    Possibilita manter em text caracteres especiais na lista keep_chars
+    Mantém em text apenas caracteres alfanuméricos (letras latinas e algarismos arábicos) e espaços.
+    Possibilita manter em text caracteres especiais na lista keep_chars.
 
-    :param text: texto a ser tratado
-    :param keep_chars: set de caracteres a serem mantidos
-    :param replace_with: caracte a ser inserido quando não for alfanumérico ou não estiver em keep_chars
-    :return: texto com apenas caracteres alphanuméricos e espaço mantidos (e especiais, caso indicado)
+    Parameters
+    ----------
+    text : str
+        Texto a ser tratado.
+    keep_chars : list of str, default None
+        Conjunto de caracteres a serem mantidos.
+    replace_with : str, default ' '
+        Caracte a ser inserido quando não for alfanumérico ou não estiver em keep_chars.
+
+    Returns
+    -------
+    str
+        Texto com apenas caracteres alphanuméricos e espaço mantidos (e especiais, caso indicado).
     """
     if keep_chars is None:
         keep_chars = []
@@ -34,13 +43,22 @@ def keep_alpha_num_space(text, keep_chars=None, replace_with=' '):
 
 def keep_alpha_space(text, keep_chars=None, replace_with=' '):
     """
-    Mantém em text apenas caracteres alfa (letras latinas) e espaços
-    Possibilita manter em text caracteres especiais na lista keep_chars
+    Mantém em text apenas caracteres alfa (letras latinas) e espaços.
+    Possibilita manter em text caracteres especiais na lista keep_chars.
 
-    :param text: texto a ser tratado
-    :param keep_chars: set de caracteres a serem mantidos
-    :param replace_with: caracte a ser inserido quando não for alfa ou não estiver em keep_chars
-    :return: texto com apenas caracteres alpha e espaço mantidos (e especiais, caso indicado)
+    Parameters
+    ----------
+    text : str
+        Texto a ser tratado.
+    keep_chars : list of str, default None
+        Conjunto de caracteres a serem mantidos.
+    replace_with : str, default ' '
+        Caracte a ser inserido quando não for alfanumérico ou não estiver em keep_chars.
+
+    Returns
+    -------
+    str
+        Texto com apenas caracteres alphanuméricos e espaço mantidos (e especiais, caso indicado).
     """
     if keep_chars is None:
         keep_chars = []
@@ -57,30 +75,52 @@ def remove_accents(text):
     """
     Transforma caracteres acentuados de text em caracteres sem acento.
 
-    :param text: texto a ser tratado
-    :return: texto sem caracteres acentuados
+    Parameters
+    ----------
+    text : str
+        Texto a ser tratado.
+
+    Returns
+    -------
+    str
+        Texto sem caracteres acentuados.
     """
     return unicodedata.normalize('NFKD', text).encode('ASCII', 'ignore').decode('ASCII')
 
 
 def remove_double_spaces(text):
     """
-    Remove de text os espaços duplos
+    Remove de text os espaços duplos.
 
-    :param text: texto a ser tratado
-    :return: texto sem espaços duplos
+    Parameters
+    ----------
+    text : str
+        Texto a ser tratado.
+
+    Returns
+    -------
+    str
+        Texto sem espaços duplos.
     """
     return " ".join([w for w in text.split() if w])
 
 
 def remove_non_printable_chars(text, replace_with=''):
     """
-    Remove de text os caracteres non pritable, isto é, que possuem código ASCII de 0 a 31
-    Também remove caractere de código ASCII 127, que representa a ação DELETE
+    Remove de text os caracteres non pritable, isto é, que possuem código ASCII de 0 a 31.
+    Também remove caractere de código ASCII 127, que representa a ação DELETE.
 
-    :param text: texto a ser tratada
-    :param replace_with: caracte a ser inserido quando for non printable
-    :return: texto com caracteres ASCII de 0 a 31 e 127 removidos
+    Parameters
+    ----------
+    text : str
+        Texto a ser tratado.
+    replace_with : str, default ''
+        Caracte a ser inserido quando for non printable.
+
+    Returns
+    -------
+    str
+        Texto com caracteres ASCII de 0 a 31 e 127 removidos.
     """
     new_text = []
     for t in text:
@@ -93,10 +133,20 @@ def remove_non_printable_chars(text, replace_with=''):
 
 def remove_end_punctuation_chars(text, end_punctuation_chars_to_remove=PUNCTUATION_TO_REMOVE_FROM_TITLE_VISUALIZATION):
     """
-    Remove pontuação no final de text, os caracteres que serão removidos devem constar em values.PUNCTUATION_TO_REMOVE_FROM_TITLE_VISUALIZATION
+    Remove pontuação no final de text, os caracteres que serão removidos devem constar em
+    values.PUNCTUATION_TO_REMOVE_FROM_TITLE_VISUALIZATION.
 
-    :param text: text a ser tratado
-    :end_punctuation_chars_to_remove: conjunto de caracteres (pontuação) a serem removidos do final de text
+    Parameters
+    ----------
+    text : str
+        Texto a ser tratado.
+    end_punctuation_chars_to_remove : list of str
+        Conjunto de caracteres (pontuação) a serem removidos do final de text.
+
+    Returns
+    -------
+    str
+        Texto com pontuação removida no final.
     """
     while True in [text.endswith(x) for x in end_punctuation_chars_to_remove]:
         text = text[:-1]
@@ -106,18 +156,35 @@ def remove_end_punctuation_chars(text, end_punctuation_chars_to_remove=PUNCTUATI
 def unescape(text):
     """
     https://docs.python.org/3/library/html.html
+    Convert all named and numeric character references (e.g. &gt;, &#62;, &#x3e;) in the string s to the corresponding
+    Unicode characters.
 
-    Convert all named and numeric character references (e.g. &gt;, &#62;, &#x3e;) in the string s to the corresponding Unicode characters
+    Parameters
+    ----------
+    text : str
+        Texto a ser tratado.
+
+    Returns
+    -------
+    str
+        Texto sem entidades HTML.
     """
     return html.unescape(text)
 
 
 def remove_parenthesis(text):
     """
-    Função para remoção de parenteses e respectivo conteúdo
+    Função para remoção de parênteses e respectivo conteúdo.
 
-    :param text: texto no qual os parenteses e o respectivo conteúdo serão removidos
-    :return: texto sem parenteses e sem o respectivo conteúdo
+    Parameters
+    ----------
+    text : str
+        Texto no qual os parênteses e o respectivo conteúdo serão removidos.
+
+    Returns
+    -------
+    str
+        Texto sem parênteses e sem o respectivo conteúdo.
     """
     parenthesis_search = re.search(PATTERN_PARENTHESIS, text)
     while parenthesis_search is not None:
@@ -129,13 +196,23 @@ def remove_parenthesis(text):
 
 def convert_to_iso_date(text, day='01', month='01', just_year=False):
     """
-    Função para a padronização de datas no formato ISO YYYY-MM-DD
+    Função para a padronização de datas no formato ISO YYYY-MM-DD.
 
-    :param text: data a ser padronizada
-    :param day: valor para dia no caso de data composta somente pelo ano
-    :param month: valor para mês no caso de data composta somente pelo ano
-    :param just_year: valor lógico para retornar a data completa (default) ou apenas o ano
-    :return: data padronizada
+    Parameters
+    ----------
+    text : str
+        Data a ser padronizada.
+    day : str, default '01'
+        Valor para dia no caso de data composta somente pelo ano.
+    month : str, default '01'
+        Valor para mês no caso de data composta somente pelo ano.
+    just_year : bool, default False
+        Valor lógico para retornar a data completa ou apenas o ano
+
+    Returns
+    -------
+    data-type
+        Data padronizada, que pode ser apenas o ano ou a data completa.
     """
 
     # Substitui todos os possíveis separadores por espaço
@@ -182,11 +259,19 @@ def convert_to_iso_date(text, day='01', month='01', just_year=False):
 
 def remove_words(text, words_to_remove=[]):
     """
-    Função para a remoção de palavras, pré-definidas em uma lista, em um dado texto
+    Função para a remoção de palavras, pré-definidas em uma lista, em um dado texto.
 
-    :param text: texto no qual será realizada a remoção das palavras
-    :param words_to_remove: lista de palavras a serem removidas
-    :return: texto com as palavras removidas
+    Parameters
+    ----------
+    text : str
+        Texto no qual será realizada a remoção das palavras.
+    param words_to_remove : list of str
+        Lista de palavras a serem removidas.
+
+    Returns
+    -------
+    str
+        Texto com as palavras removidas.
     """
     text_words = text.split(' ')
 
