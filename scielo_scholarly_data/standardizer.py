@@ -12,7 +12,6 @@ from scielo_scholarly_data.core import (
     remove_words,
     unescape,
 )
-from scielo_scholarly_data.helpers import is_valid_issn
 
 from scielo_scholarly_data.values import (
     JOURNAL_TITLE_SPECIAL_CHARS,
@@ -24,6 +23,8 @@ from scielo_scholarly_data.values import (
     PATTERN_PAGE_RANGE,
     PUNCTUATION_TO_DEFINE_PAGE_RANGE,
 )
+
+from scielo_scholarly_data.helpers import is_valid_issn
 
 
 def journal_title_for_deduplication(text: str, words_to_remove=JOURNAL_TITLE_SPECIAL_WORDS, keep_parenthesis_content=True):
