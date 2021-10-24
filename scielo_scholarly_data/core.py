@@ -32,7 +32,7 @@ def keep_alpha_num_space(text, keep_chars=None, replace_with=' '):
     return ''.join(new_text)
 
 
-def convert_to_alpha_space(text, keep_chars=None, replace_with=' '):
+def keep_alpha_space(text, keep_chars=None, replace_with=' '):
     """
     Mantém em text apenas caracteres alfa (letras latinas) e espaços
     Possibilita manter em text caracteres especiais na lista keep_chars

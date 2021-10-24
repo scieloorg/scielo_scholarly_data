@@ -2,7 +2,7 @@ import re
 
 from scielo_scholarly_data.core import (
     convert_to_iso_date,
-    convert_to_alpha_space,
+    keep_alpha_space,
     keep_alpha_num_space,
     remove_accents,
     remove_double_spaces,
@@ -341,7 +341,7 @@ def document_author_for_visualization(text: str, surname_first=True):
     """
 
     text = remove_non_printable_chars(text)
-    text = convert_to_alpha_space(text, keep_chars=PUNCTUATION_TO_KEEP_IN_AUTHOR_VISUALIZATION)
+    text = keep_alpha_space(text, keep_chars=PUNCTUATION_TO_KEEP_IN_AUTHOR_VISUALIZATION)
     text = remove_double_spaces(text)
     text = text.strip()
 
@@ -377,7 +377,7 @@ def document_author_for_deduplication(text: str, surname_first=True):
     :return: nome tratado do autor
     """
     text = remove_non_printable_chars(text)
-    text = convert_to_alpha_space(text, keep_chars=PUNCTUATION_TO_KEEP_IN_AUTHOR_VISUALIZATION)
+    text = keep_alpha_space(text, keep_chars=PUNCTUATION_TO_KEEP_IN_AUTHOR_VISUALIZATION)
     text = remove_double_spaces(text)
     text = text.strip()
     text = remove_accents(text)
