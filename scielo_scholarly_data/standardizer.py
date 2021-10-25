@@ -368,7 +368,7 @@ def document_elocation(text: str):
     return text
 
 
-  def document_publication_date(text: str, day='01', month='01', only_year=False):
+def document_publication_date(text: str, day='01', month='01', only_year=False):
     """
     Função para padronizar a data da publicação de um documento para o formato ISO,
     de acordo com os seguinte métodos, em ordem:
