@@ -1,1 +1,2 @@
 python-dateutil==2.8.1
+python_stdnum==1.17
