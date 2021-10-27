@@ -392,7 +392,6 @@ def document_publication_date(text: str):
     text = remove_non_printable_chars(text)
     text = remove_double_spaces(text)
     text = text.strip()
-    text = text.lower()
     text = remove_words(text, words_to_remove=['de', 'of'])
     text = convert_to_iso_date(text)
     return text
