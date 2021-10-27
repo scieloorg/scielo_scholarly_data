@@ -219,6 +219,17 @@ class TestStandardizer(unittest.TestCase):
 
         self.assertListEqual(expected_values, obtained_values)
 
+    def test_document_author_for_visualization_single_name_author(self):
+        names = {
+            'João': 'João',
+            ',João': 'João',
+            'João,': 'João'
+        }
+        expected_values = list(names.values())
+        obtained_values = [document_author_for_visualization(name) for name in names]
+
+        self.assertListEqual(expected_values, obtained_values)
+
     def test_document_author_for_deduplication_remove_accents_surname_first(self):
         names = {
             'Sílva, João  J  P': 'silva, joao j p',
@@ -236,6 +247,17 @@ class TestStandardizer(unittest.TestCase):
         }
         expected_values = list(names.values())
         obtained_values = [document_author_for_deduplication(name, surname_first=False) for name in names]
+
+        self.assertListEqual(expected_values, obtained_values)
+
+    def test_document_author_for_deduplication_single_name_author(self):
+        names = {
+            'João': 'joao',
+            ',João': 'joao',
+            'João,': 'joao'
+        }
+        expected_values = list(names.values())
+        obtained_values = [document_author_for_deduplication(name) for name in names]
 
         self.assertListEqual(expected_values, obtained_values)
 
@@ -291,6 +313,12 @@ class TestStandardizer(unittest.TestCase):
         self.assertEqual(
             document_first_page('128.,; .'),
             '128'
+        )
+
+    def test_document_first_page_re_unmatch(self):
+        self.assertEqual(
+            document_first_page('abc-128'),
+            None
         )
 
     def test_document_publication_date_non_printable_char(self):
@@ -406,6 +434,12 @@ class TestStandardizer(unittest.TestCase):
         obtained_values = [document_last_page(page) for page in range]
         
         self.assertListEqual(expected_values, obtained_values)
+
+    def test_document_last_page_re_unmatch(self):
+        self.assertEqual(
+            document_last_page('abc-128'),
+            None
+        )
 
     def test_document_first_page_range(self):
         range = {
