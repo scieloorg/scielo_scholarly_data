@@ -293,7 +293,7 @@ def document_first_page(text: str, keep_chars=PUNCTUATION_TO_DEFINE_PAGE_RANGE):
     if not text.isdigit():
         try:
             text = re.match(PATTERN_PAGE_RANGE, text).groups()[0]
-        except KeyError:
+        except (KeyError, AttributeError):
             return
     return text
 
@@ -329,7 +329,7 @@ def document_last_page(text: str, keep_chars=PUNCTUATION_TO_DEFINE_PAGE_RANGE):
         try:
             first_page = int(re.match(PATTERN_PAGE_RANGE, text).groups()[0])
             last_page = int(re.match(PATTERN_PAGE_RANGE, text).groups()[1])
-        except KeyError:
+        except (KeyError, AttributeError):
             return
         if first_page > last_page:
             text = str(first_page + last_page)
@@ -392,7 +392,6 @@ def document_publication_date(text: str, day='01', month='01', only_year=False):
     text = remove_non_printable_chars(text)
     text = remove_double_spaces(text)
     text = text.strip()
-    text = text.lower()
     text = remove_words(text, words_to_remove=['de', 'of'])
     text = convert_to_iso_date(text, day, month, only_year)
 
@@ -427,12 +426,19 @@ def document_author_for_visualization(text: str, surname_first=True):
 
     if ',' not in text:
         t = text.split(' ')
-        surname = ''.join(t[-1:])
-        name = ' '.join(t[:-1])
+        if len(t) == 1:
+            return text
+        else:
+            surname = ''.join(t[-1:])
+            name = ' '.join(t[:-1])
     else:
-        t = text.split(', ')
-        surname = ''.join(t[:1])
-        name = ' '.join(t[1:])
+        t = text.split(',')
+        if len(t) == 2 and (t[0] == '' or t[1] == ''):
+            return ''.join(t)
+        else:
+            surname = ''.join(t[:1])
+            name = ' '.join(t[1:])
+            name = name.strip()
 
     if surname_first:
         text = ''.join([surname, ', ', name])
@@ -473,12 +479,19 @@ def document_author_for_deduplication(text: str, surname_first=True):
 
     if ',' not in text:
         t = text.split(' ')
-        surname = ''.join(t[-1:])
-        name = ' '.join(t[:-1])
+        if len(t) == 1:
+            return text
+        else:
+            surname = ''.join(t[-1:])
+            name = ' '.join(t[:-1])
     else:
-        t = text.split(', ')
-        surname = ''.join(t[:1])
-        name = ' '.join(t[1:])
+        t = text.split(',')
+        if len(t) == 2 and (t[0] == '' or t[1] == ''):
+            return ''.join(t)
+        else:
+            surname = ''.join(t[:1])
+            name = ' '.join(t[1:])
+            name = name.strip()
 
     if surname_first:
         text = ''.join([surname, ', ', name])
