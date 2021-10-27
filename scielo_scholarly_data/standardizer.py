@@ -10,6 +10,7 @@ from scielo_scholarly_data.core import (
     remove_parenthesis,
     remove_end_punctuation_chars,
     remove_words,
+    order_name_and_surname,
     unescape,
 )
 
@@ -423,28 +424,7 @@ def document_author_for_visualization(text: str, surname_first=True):
     text = keep_alpha_space(text, keep_chars=PUNCTUATION_TO_KEEP_IN_AUTHOR_VISUALIZATION)
     text = remove_double_spaces(text)
     text = text.strip()
-
-    if ',' not in text:
-        t = text.split(' ')
-        if len(t) == 1:
-            return text
-        else:
-            surname = ''.join(t[-1:])
-            name = ' '.join(t[:-1])
-    else:
-        t = text.split(',')
-        if len(t) == 2 and (t[0] == '' or t[1] == ''):
-            return ''.join(t)
-        else:
-            surname = ''.join(t[:1])
-            name = ' '.join(t[1:])
-            name = name.strip()
-
-    if surname_first:
-        text = ''.join([surname, ', ', name])
-    else:
-        text = ''.join([name, ' ', surname])
-
+    text = order_name_and_surname(text, surname_first)
     return text
 
 
@@ -476,28 +456,7 @@ def document_author_for_deduplication(text: str, surname_first=True):
     text = text.strip()
     text = remove_accents(text)
     text = text.lower()
-
-    if ',' not in text:
-        t = text.split(' ')
-        if len(t) == 1:
-            return text
-        else:
-            surname = ''.join(t[-1:])
-            name = ' '.join(t[:-1])
-    else:
-        t = text.split(',')
-        if len(t) == 2 and (t[0] == '' or t[1] == ''):
-            return ''.join(t)
-        else:
-            surname = ''.join(t[:1])
-            name = ' '.join(t[1:])
-            name = name.strip()
-
-    if surname_first:
-        text = ''.join([surname, ', ', name])
-    else:
-        text = ''.join([name, ' ', surname])
-
+    text = order_name_and_surname(text, surname_first)
     return text
 
 
