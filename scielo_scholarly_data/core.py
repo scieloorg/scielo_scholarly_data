@@ -194,7 +194,7 @@ def remove_parenthesis(text):
     return text
 
 
-def convert_to_iso_date(text, day='01', month='01', just_year=False):
+def convert_to_iso_date(text, day='01', month='01', only_year=False):
     """
     Função para a padronização de datas no formato ISO YYYY-MM-DD.
 

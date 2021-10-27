@@ -390,6 +390,31 @@ class TestStandardizer(unittest.TestCase):
         obtained_values = [str(document_publication_date(dt)) for dt in dates]
         self.assertListEqual(expected_values, obtained_values)
 
+    def test_document_publication_date_just_year(self):
+        test_date = parse('2021').date().year
+        dates = {
+            '20210921': test_date,
+            '2021/09/21': test_date,
+            '2021.setembro.21': test_date,
+            '2021set21': test_date,
+            '2021september21': test_date,
+            '2021septiembre21': test_date
+        }
+        expected_values = list(dates.values())
+        obtained_values = [document_publication_date(dt, only_year=True) for dt in dates]
+        self.assertListEqual(expected_values, obtained_values)
+
+    def test_document_publication_date_just_year_received(self):
+        test_date = parse('2021-06-15').date()
+        dates = {
+            '2021': test_date,
+            '2021 ': test_date,
+            ' 2021': test_date
+        }
+        expected_values = list(dates.values())
+        obtained_values = [document_publication_date(dt, day='15', month='06') for dt in dates]
+        self.assertListEqual(expected_values, obtained_values)
+
     def test_document_last_page_unescape(self):
         self.assertEqual(
             document_last_page('12&#38;8'),
