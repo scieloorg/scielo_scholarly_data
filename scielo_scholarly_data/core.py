@@ -41,7 +41,7 @@ def keep_alpha_num_space(text, keep_chars=None, replace_with=' '):
     return ''.join(new_text)
 
 
-def convert_to_alpha_space(text, keep_chars=None, replace_with=' '):
+def keep_alpha_space(text, keep_chars=None, replace_with=' '):
     """
     Mantém em text apenas caracteres alfa (letras latinas) e espaços.
     Possibilita manter em text caracteres especiais na lista keep_chars.
@@ -254,10 +254,11 @@ def convert_to_iso_date(text, day='01', month='01', only_year=False):
                     text = parse(text).date()
                 except ValueError:
                     return None
-    if just_year:
+    if only_year:
         return text.year
     else:
         return text
+
 
 def remove_words(text, words_to_remove=[]):
     """
@@ -282,3 +283,41 @@ def remove_words(text, words_to_remove=[]):
             text_words.remove(sw)
 
     return ' '.join(text_words)
+
+
+def order_name_and_surname(text, surname_first=True):
+    """
+    Função para separar o nome e o sobrenome de uma string que representa um nome completo.
+    Parameters
+    ----------
+    text : str
+        Nome completo a ser separado.
+    surname_first : bool, default = True
+        Valor lógico que determina a ordem do nome e sobrenome na saída.
+
+    Returns
+    -------
+    str
+        Nome completo recomposto de acordo com a ordem estabelecida.
+    """
+    if ',' not in text:
+        t = text.split(' ')
+        if len(t) == 1:
+            return text
+        else:
+            surname = t[-1]
+            name = ' '.join(t[:-1])
+    else:
+        t = text.split(',')
+        if len(t) == 2 and (t[0] == '' or t[1] == ''):
+            return ''.join(t)
+        else:
+            surname = t[0]
+            name = ' '.join(t[1:])
+            name = name.strip()
+
+    if surname_first:
+        text = ''.join([surname, ', ', name])
+    else:
+        text = ''.join([name, ' ', surname])
+    return text
