@@ -1,4 +1,6 @@
 from scielo_scholarly_data.standardizer import (
+    book_editor_name_for_visualization,
+    book_editor_name_for_deduplication,
     document_author_for_visualization,
     document_author_for_deduplication,
     document_doi,
@@ -12,7 +14,7 @@ from scielo_scholarly_data.standardizer import (
     journal_title_for_deduplication,
     journal_title_for_visualization,
     issue_number,
-    issue_volume
+    issue_volume,
 )
 
 import unittest
@@ -701,5 +703,56 @@ class TestStandardizer(unittest.TestCase):
         }
         expected_values = list(titles.values())
         obtained_values = [document_title_for_visualization(dt) for dt in titles]
+
+        self.assertListEqual(expected_values, obtained_values)
+
+    def test_book_editor_name_for_visualization_alpha_space_surname_first(self):
+        names = {
+            'Silva, João & J* P': 'Silva, João J P',
+            'João & J* P Silva': 'Silva, João J P'
+        }
+        expected_values = list(names.values())
+        obtained_values = [book_editor_name_for_visualization(name) for name in names]
+
+        self.assertListEqual(expected_values, obtained_values)
+
+    def test_book_editor_name_for_visualization_alpha_space_surname_last(self):
+        names = {
+            'Silva, João & J* P': 'João J P Silva',
+            'João & J* P Silva': 'João J P Silva'
+        }
+        expected_values = list(names.values())
+        obtained_values = [book_editor_name_for_visualization(name, surname_first=False) for name in names]
+
+        self.assertListEqual(expected_values, obtained_values)
+
+    def test_book_editor_name_for_visualization_double_space_surname_first(self):
+        names = {
+            'Silva, João  J  P': 'Silva, João J P',
+            'João  J  P Silva': 'Silva, João J P'
+        }
+        expected_values = list(names.values())
+        obtained_values = [book_editor_name_for_visualization(name) for name in names]
+
+        self.assertListEqual(expected_values, obtained_values)
+
+    def test_book_editor_name_for_visualization_double_space_surname_last(self):
+        names = {
+            'Silva, João  J  P': 'João J P Silva',
+            'João  J  P Silva': 'João J P Silva'
+        }
+        expected_values = list(names.values())
+        obtained_values = [book_editor_name_for_visualization(name, surname_first=False) for name in names]
+
+        self.assertListEqual(expected_values, obtained_values)
+
+    def test_book_editor_name_for_visualization_single_name_author(self):
+        names = {
+            'João': 'João',
+            ',João': 'João',
+            'João,': 'João'
+        }
+        expected_values = list(names.values())
+        obtained_values = [book_editor_name_for_visualization(name) for name in names]
 
         self.assertListEqual(expected_values, obtained_values)
