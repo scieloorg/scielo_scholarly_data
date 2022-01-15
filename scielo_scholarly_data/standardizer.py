@@ -20,7 +20,7 @@ from scielo_scholarly_data.values import (
     PATTERN_ISSN_WITH_HYPHEN,
     PATTERN_ISSN_WITHOUT_HYPHEN,
     PATTERNS_DOI,
-    PUNCTUATION_TO_KEEP_IN_AUTHOR_VISUALIZATION,
+    PUNCTUATION_TO_KEEP_IN_PERSONS_NAME_VISUALIZATION,
     PATTERN_PAGE_RANGE,
     PUNCTUATION_TO_DEFINE_PAGE_RANGE,
 )
@@ -421,7 +421,7 @@ def document_author_for_visualization(text: str, surname_first=True):
     """
 
     text = remove_non_printable_chars(text)
-    text = keep_alpha_space(text, keep_chars=PUNCTUATION_TO_KEEP_IN_AUTHOR_VISUALIZATION)
+    text = keep_alpha_space(text, keep_chars=PUNCTUATION_TO_KEEP_IN_PERSONS_NAME_VISUALIZATION)
     text = remove_double_spaces(text)
     text = text.strip()
     text = order_name_and_surname(text, surname_first)
@@ -451,7 +451,7 @@ def document_author_for_deduplication(text: str, surname_first=True):
         Nome padronizado do autor.
     """
     text = remove_non_printable_chars(text)
-    text = keep_alpha_space(text, keep_chars=PUNCTUATION_TO_KEEP_IN_AUTHOR_VISUALIZATION)
+    text = keep_alpha_space(text, keep_chars=PUNCTUATION_TO_KEEP_IN_PERSONS_NAME_VISUALIZATION)
     text = remove_double_spaces(text)
     text = text.strip()
     text = remove_accents(text)
@@ -464,8 +464,65 @@ def book_title(text: str):
     pass
 
 
-def book_editor_name(text: str):
-    pass
+def book_editor_name_for_visualization(text: str, surname_first=True):
+    """
+    Procedimento para padronizar nome de editor de livro, considerando os seguintes métodos, em ordem:
+    1. Remoção de caracteres não imprimíveis;
+    2. Remover caracteres especiais, mantendo apenas caracteres alfabéticos e espaço;
+    3. Remover espaços duplos;
+    4. Remover espaços nas extremidades.
+
+    Parameters
+    ----------
+    text : str
+        Nome do editor a ser padronizado.
+    surname_first : bool, default True
+        Valor lógico que indica a posição do sobrenome na saída.
+
+    Returns
+    -------
+    str
+        Nome padronizado do editor.
+    """
+
+    text = remove_non_printable_chars(text)
+    text = keep_alpha_space(text, keep_chars=PUNCTUATION_TO_KEEP_IN_PERSONS_NAME_VISUALIZATION)
+    text = remove_double_spaces(text)
+    text = text.strip()
+    text = order_name_and_surname(text, surname_first)
+    return text
+
+
+def book_editor_name_for_deduplication(text: str, surname_first=True):
+    """
+    Procedimento para padronizar nome de editor de livro, considerando os seguintes métodos, em ordem:
+    1. Remoção de caracteres não imprimíveis;
+    2. Remover caracteres especiais, mantendo apenas caracteres alfabéticos e espaço;
+    3. Remover espaços duplos;
+    4. Remover espaços nas extremidades;
+    5. Remover acentos;
+    6. Converter para caixa baixa.
+
+    Parameters
+    ----------
+    text : str
+        Nome do editor a ser padronizado.
+    surname_first : bool, default True
+        Valor lógico que indica a posição do sobrenome na saída.
+
+    Returns
+    -------
+    str
+        Nome padronizado do editor.
+    """
+    text = remove_non_printable_chars(text)
+    text = keep_alpha_space(text, keep_chars=PUNCTUATION_TO_KEEP_IN_PERSONS_NAME_VISUALIZATION)
+    text = remove_double_spaces(text)
+    text = text.strip()
+    text = remove_accents(text)
+    text = text.lower()
+    text = order_name_and_surname(text, surname_first)
+    return text
 
 
 def book_editor_address(text: str):
