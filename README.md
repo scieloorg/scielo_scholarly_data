@@ -97,6 +97,19 @@ standardizer.document_author_for_visualization('John Fitzgerald Kennedy')
 standardizer.document_author_for_visualization('John Fitzgerald Kennedy', surname_first=True)
 > 'Kennedy, John Fitzgerald'
 
+# Standardizer a book editor name
+standardizer.book_editor_name_for_deduplication('John Fitzgerald Kennedy')
+> 'kennedy, john fitzgerald'
+
+standardizer.book_editor_name_for_deduplication('John Fitzgerald Kennedy', surname_first=True)
+> 'kennedy, john fitzgerald'
+
+standardizer.book_editor_name_for_visualization('John Fitzgerald Kennedy')
+> 'Kennedy, John Fitzgerald'
+
+standardizer.book_editor_name_for_visualization('John Fitzgerald Kennedy', surname_first=True)
+> 'Kennedy, John Fitzgerald'
+
 
 from scielo_scholarly_data import core
 # Remove accents from a text
