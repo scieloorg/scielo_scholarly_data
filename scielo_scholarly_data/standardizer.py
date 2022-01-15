@@ -460,13 +460,78 @@ def document_author_for_deduplication(text: str, surname_first=True):
     return text
 
 
-def book_title(text: str):
-    pass
+def book_title_for_deduplication(text: str, remove_special_char=True):
+    """
+    Função para padronizar títulos de livros de acordo com os seguinte métodos, por ordem:
+        1. Converte códigos HTML para caracteres Unicode;
+        2. Mantém caracteres alfanuméricos e espaço;
+        3. Remove caracteres non printable;
+        4. Remove espaços duplos;
+        5. Remove pontuação no final do título;
+        6. Remove espaços nas extremidades do título;
+        7. Remove acentos;
+        8. Converte os caracteres para caixa baixa.
+
+    Parameters
+    ----------
+    text : str
+        Título do livro a ser padronizado.
+    remove_char : bool, default True
+        Valor lógico que indica se as entidades HTML e os caracteres especiais devem ser mantidos ou retirados.
+
+    Returns
+    -------
+    str
+        Título padronizado do livro.
+    """
+
+    text = unescape(text)
+    if remove_special_char:
+        text = keep_alpha_num_space(text)
+    text = remove_non_printable_chars(text)
+    text = remove_double_spaces(text)
+    text = remove_end_punctuation_chars(text)
+    text = text.strip()
+    text = remove_accents(text)
+    text = text.lower()
+    return text
+
+
+def book_title_for_visualization(text: str, remove_special_char=True):
+    """
+    Função para padronizar titulos de livros de acordo com os seguintes métodos, por ordem:
+        1. Converte códigos HTML para caracteres Unicode ou remove (default);
+        2. Mantém caracteres alfanuméricos e espaço ou remove (default);
+        3. Remove caracteres non printable;
+        4. Remove espaços duplos;
+        5. Remove pontuação no final do título;
+        6. Remove espaços nas extremidades do título.
+
+    Parameters
+    ----------
+    text : str
+        Título do livro a ser padronizado.
+    remove_char : bool, default True
+        Valor lógico que indica se as entidades HTML e os caracteres especiais devem ser mantidos ou retirados (default).
+
+    Returns
+    -------
+    str
+        Título padronizado do livro.
+    """
+
+    text = unescape(text)
+    if remove_special_char:
+        text = keep_alpha_num_space(text)
+    text = remove_non_printable_chars(text)
+    text = remove_double_spaces(text)
+    text = remove_end_punctuation_chars(text)
+    text = text.strip()
+    return text
 
 
 def book_editor_name(text: str):
     pass
-
 
 def book_editor_address(text: str):
     pass
