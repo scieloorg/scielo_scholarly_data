@@ -1,4 +1,6 @@
 from scielo_scholarly_data.standardizer import (
+    book_title_for_deduplication,
+    book_title_for_visualization,
     document_author_for_visualization,
     document_author_for_deduplication,
     document_doi,
@@ -703,3 +705,87 @@ class TestStandardizer(unittest.TestCase):
         obtained_values = [document_title_for_visualization(dt) for dt in titles]
 
         self.assertListEqual(expected_values, obtained_values)
+
+    def test_book_title_for_deduplication_html_entities_keeps(self):
+        self.assertEqual(
+            book_title_for_deduplication('O MODELO DE DESENVOLVIMENTO BRASILEIRO DAS PRIMEIRAS DÉCADAS DO SÉCULO XXI: &#60; APORTES PARA O DEBATE', remove_special_char=False),
+            'o modelo de desenvolvimento brasileiro das primeiras decadas do seculo xxi: < aportes para o debate'
+        )
+
+    def test_book_title_for_deduplication_keep_alpha_num_space(self):
+        self.assertEqual(
+            book_title_for_deduplication('O MODELO DE DESENVOLVIMENTO BRASILEIRO DAS PRIMEIRAS DÉCADAS DO SÉCULO XXI: &#60; APORTES PARA O DEBATE'),
+            'o modelo de desenvolvimento brasileiro das primeiras decadas do seculo xxi aportes para o debate'
+        )
+
+    def test_book_title_for_deduplication_remove_non_printable_chars(self):
+        self.assertEqual(
+            book_title_for_deduplication('\tO MODELO DE DESENVOLVIMENTO BRASILEIRO DAS PRIMEIRAS DÉCADAS DO SÉCULO XXI:\n APORTES PARA O DEBATE'),
+            'o modelo de desenvolvimento brasileiro das primeiras decadas do seculo xxi aportes para o debate'
+        )
+
+    def test_book_title_for_deduplication_remove_double_spaces(self):
+        self.assertEqual(
+            book_title_for_deduplication('  O  MODELO DE DESENVOLVIMENTO BRASILEIRO DAS PRIMEIRAS   DÉCADAS DO SÉCULO XXI:  APORTES PARA O  DEBATE'),
+            'o modelo de desenvolvimento brasileiro das primeiras decadas do seculo xxi aportes para o debate'
+        )
+
+    def test_book_title_for_deduplication_remove_end_punctuation_chars(self):
+        self.assertEqual(
+            book_title_for_deduplication('O MODELO DE DESENVOLVIMENTO BRASILEIRO DAS PRIMEIRAS DÉCADAS DO SÉCULO XXI: APORTES PARA O DEBATE,.;'),
+            'o modelo de desenvolvimento brasileiro das primeiras decadas do seculo xxi aportes para o debate'
+        )
+
+    def test_book_title_for_deduplication_text_strip(self):
+        self.assertEqual(
+            book_title_for_deduplication(' O MODELO DE DESENVOLVIMENTO BRASILEIRO DAS PRIMEIRAS DÉCADAS DO SÉCULO XXI: APORTES PARA O DEBATE '),
+            'o modelo de desenvolvimento brasileiro das primeiras decadas do seculo xxi aportes para o debate'
+        )
+
+    def test_book_title_for_deduplication_remove_accents(self):
+        self.assertEqual(
+            book_title_for_deduplication('O MODELO DE DESENVOLVIMENTO BRASILEIRO DAS PRIMEIRAS DÉCADAS DO SÉCULO XXI: APORTES PARA O DEBATE'),
+            'o modelo de desenvolvimento brasileiro das primeiras decadas do seculo xxi aportes para o debate'
+        )
+
+    def test_book_title_for_deduplication_text_lower(self):
+        self.assertEqual(
+            book_title_for_deduplication('O MODELO DE DESENVOLVIMENTO BRASILEIRO DAS PRIMEIRAS DÉCADAS DO SÉCULO XXI: APORTES PARA O DEBATE'),
+            'o modelo de desenvolvimento brasileiro das primeiras decadas do seculo xxi aportes para o debate'
+        )
+
+    def test_book_title_for_visualization_html_entities_keeps(self):
+        self.assertEqual(
+            book_title_for_visualization(
+                'O MODELO DE DESENVOLVIMENTO BRASILEIRO DAS PRIMEIRAS DÉCADAS DO SÉCULO XXI: &#60; APORTES PARA O DEBATE',
+                remove_special_char=False),
+            'O MODELO DE DESENVOLVIMENTO BRASILEIRO DAS PRIMEIRAS DÉCADAS DO SÉCULO XXI: < APORTES PARA O DEBATE'
+        )
+
+    def test_book_title_for_visualization_non_printable(self):
+        self.assertEqual(
+            book_title_for_visualization(
+                '\tO MODELO DE DESENVOLVIMENTO BRASILEIRO DAS PRIMEIRAS DÉCADAS DO SÉCULO XXI:\n APORTES PARA O DEBATE'),
+            'O MODELO DE DESENVOLVIMENTO BRASILEIRO DAS PRIMEIRAS DÉCADAS DO SÉCULO XXI APORTES PARA O DEBATE'
+        )
+
+    def test_book_title_for_visualization_alpha_num_spaces(self):
+        self.assertEqual(
+            book_title_for_visualization(
+                'O MODELO DE DESENVOLVIMENTO BRASILEIRO DAS PRIMEIRAS DÉCADAS DO SÉCULO XXI: &#60; APORTES PARA O DEBATE'),
+            'O MODELO DE DESENVOLVIMENTO BRASILEIRO DAS PRIMEIRAS DÉCADAS DO SÉCULO XXI APORTES PARA O DEBATE'
+        )
+
+    def test_book_title_for_visualization_double_spaces(self):
+        self.assertEqual(
+            book_title_for_visualization(
+                '  O  MODELO DE DESENVOLVIMENTO BRASILEIRO DAS PRIMEIRAS   DÉCADAS DO SÉCULO XXI:  APORTES PARA O  DEBATE'),
+            'O MODELO DE DESENVOLVIMENTO BRASILEIRO DAS PRIMEIRAS DÉCADAS DO SÉCULO XXI APORTES PARA O DEBATE'
+        )
+
+    def test_book_title_for_visualization_remove_pointing_at_end(self):
+        self.assertEqual(
+            book_title_for_visualization(
+                'O MODELO DE DESENVOLVIMENTO BRASILEIRO DAS PRIMEIRAS DÉCADAS DO SÉCULO XXI: APORTES PARA O DEBATE,.;'),
+            'O MODELO DE DESENVOLVIMENTO BRASILEIRO DAS PRIMEIRAS DÉCADAS DO SÉCULO XXI APORTES PARA O DEBATE'
+        )
