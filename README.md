@@ -97,6 +97,9 @@ standardizer.document_author_for_visualization('John Fitzgerald Kennedy')
 standardizer.document_author_for_visualization('John Fitzgerald Kennedy', surname_first=True)
 > 'Kennedy, John Fitzgerald'
 
+standardizer.orcid_validator('0000-0002-1694-233X', type=1)
+> 'https://orcid.org/0000-0002-1694-233X'
+
 
 from scielo_scholarly_data import core
 # Remove accents from a text
@@ -137,6 +140,9 @@ core.convert_to_iso_date('2021')
 core.convert_to_iso_date('2021', month='06', day='15')
 > datetime.date(2021, 6, 15)
 
+core.check_sum_orcid('000000021694233X')
+>True
+
 ```
 
 ## Documentation
@@ -163,6 +169,7 @@ This section aims to provide a scientific explanation about the decisions we mad
 - journal_title_for_deduplication
 - journal_title_for_visualization
 - journal_volume
+- orcid_validator
 
 
 ### Normalization processes
