@@ -1,6 +1,7 @@
 import re
 
 from scielo_scholarly_data.core import (
+    check_sum_orcid,
     convert_to_iso_date,
     keep_alpha_space,
     keep_alpha_num_space,
@@ -458,6 +459,48 @@ def document_author_for_deduplication(text: str, surname_first=True):
     text = text.lower()
     text = order_name_and_surname(text, surname_first)
     return text
+
+
+def orcid_validator(text: str, type=1):
+    """
+        Função para verificar e padronizar um registro ORCID.
+
+        Parameters
+        ----------
+        text : str
+            Registro ORCID a ser validado e padronizado.
+        type : int
+            Define qual a informação que será retornada, 1 default.
+
+        Returns
+        -------
+        str ou None
+            'uri' se type = 1
+            'check' se type = 2
+            'path' se type = 3
+            'host' se type = 4
+
+        Exemplo:
+            uri: https://orcid.org/0000-0002-1825-0097.
+            check: True se registro válido ou False caso contrário.
+            path: 0000-0002-1825-0097.
+            host: orcid.org.
+        """
+    path = []
+    for d in text:
+        if d.isdigit() or d == 'X':
+            path.append(d)
+    path = ''.join(path)
+    if not check_sum_orcid(path) or type < 1 or type > 4 :
+        return False
+    elif type == 1:
+        return 'https://orcid.org/' + path[:4] + '-' + path[4:8] + '-' + path[8:12] + '-' + path[12:]
+    elif type == 2:
+        return True
+    elif type == 3:
+        return path[:4] + '-' + path[4:8] + '-' + path[8:12] + '-' + path[12:]
+    else:
+        return 'orcid.org'
 
 
 def book_title(text: str):
