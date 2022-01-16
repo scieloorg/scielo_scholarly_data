@@ -1,4 +1,5 @@
 from scielo_scholarly_data.core import (
+    check_sum_orcid,
     convert_to_iso_date,
     keep_alpha_num_space,
     remove_accents,
@@ -158,3 +159,15 @@ class TestCore(unittest.TestCase):
             convert_to_iso_date('abc-01-01'),
             None
         )
+
+    def test_check_sum_orcid(self):
+        orcids = {
+            '0000000925158361': True,
+            '0000000955138362': False,
+            '000000071302576X': True,
+            '0000000157937897': False
+        }
+        expected_values = list(orcids.values())
+        obtained_values = [check_sum_orcid(register) for register in orcids]
+
+        self.assertListEqual(expected_values, obtained_values)

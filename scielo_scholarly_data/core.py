@@ -321,3 +321,23 @@ def order_name_and_surname(text, surname_first=True):
     else:
         text = ''.join([name, ' ', surname])
     return text
+
+def check_sum_orcid(orcid_number):
+    """
+        Função para verificar a validade de um regitro ORCID por meio do dígito verificador.
+        Parameters
+        ----------
+        orcid_number : str
+            Número de registro a ser verificado.
+
+        Returns
+        -------
+        bool
+            Retorna True caso o registro seja válido ou False caso contrário.
+        """
+    sub_calculation = 0
+    for number in orcid_number[:-1]:
+        sub_calculation = (sub_calculation + int(number)) * 2
+    verifying_digit = (12 - (sub_calculation % 11)) % 11
+    if verifying_digit == 10: verifying_digit = 'X'
+    return str(verifying_digit) == orcid_number[-1]
