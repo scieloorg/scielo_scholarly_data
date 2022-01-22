@@ -194,6 +194,29 @@ def remove_parenthesis(text):
     return text
 
 
+def remove_specific_chars_from_list(text, chars_to_remove):
+    """
+        Função para remoção de caracteres específicos, definidos a partir de uma lista.
+
+        Parameters
+        ----------
+        text : str
+            Texto no qual os caracteres específicados serão removidos.
+        chars_to_remove : list
+            Lista de caracteres a serem removidos do texto.
+
+        Returns
+        -------
+        str
+            Texto com os caracteres especificados removidos.
+        """
+    text_aux = []
+    for c in text:
+        if c not in chars_to_remove:
+            text_aux.append(c)
+    return ''.join(text_aux)
+
+
 def convert_to_iso_date(text, day='01', month='01', only_year=False):
     """
     Função para a padronização de datas no formato ISO YYYY-MM-DD.
