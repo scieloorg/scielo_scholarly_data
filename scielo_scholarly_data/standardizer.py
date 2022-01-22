@@ -464,64 +464,73 @@ def book_title(text: str):
     pass
 
 
-def book_editor_name_for_visualization(text: str, surname_first=True):
+def book_editor_name_for_visualization(text: str, remove_special_char=True):
     """
-    Procedimento para padronizar nome de editor de livro, considerando os seguintes métodos, em ordem:
-    1. Remoção de caracteres não imprimíveis;
-    2. Remover caracteres especiais, mantendo apenas caracteres alfabéticos e espaço;
-    3. Remover espaços duplos;
-    4. Remover espaços nas extremidades.
+    Função para padronizar nomes de editoras de acordo com os seguintes métodos, por ordem:
+        1. Converte códigos HTML para caracteres Unicode ou remove (default);
+        2. Mantém caracteres alfanuméricos e espaço ou remove (default);
+        3. Remove caracteres non printable;
+        4. Remove espaços duplos;
+        5. Remove pontuação no final do nome;
+        6. Remove espaços nas extremidades do nome.
 
     Parameters
     ----------
     text : str
-        Nome do editor a ser padronizado.
-    surname_first : bool, default True
-        Valor lógico que indica a posição do sobrenome na saída.
+        Nome da editora a ser padronizado.
+    remove_special_char : bool, default True
+        Valor lógico que indica se as entidades HTML e os caracteres especiais devem ser mantidos ou retirados (default).
 
     Returns
     -------
     str
-        Nome padronizado do editor.
+        Nome padronizado da editora.
     """
 
+    text = unescape(text)
+    if remove_special_char:
+        text = keep_alpha_num_space(text)
     text = remove_non_printable_chars(text)
-    text = keep_alpha_space(text, keep_chars=PUNCTUATION_TO_KEEP_IN_PERSONS_NAME_VISUALIZATION)
     text = remove_double_spaces(text)
+    text = remove_end_punctuation_chars(text)
     text = text.strip()
-    text = order_name_and_surname(text, surname_first)
     return text
 
 
-def book_editor_name_for_deduplication(text: str, surname_first=True):
+def book_editor_name_for_deduplication(text: str, remove_special_char=True):
     """
-    Procedimento para padronizar nome de editor de livro, considerando os seguintes métodos, em ordem:
-    1. Remoção de caracteres não imprimíveis;
-    2. Remover caracteres especiais, mantendo apenas caracteres alfabéticos e espaço;
-    3. Remover espaços duplos;
-    4. Remover espaços nas extremidades;
-    5. Remover acentos;
-    6. Converter para caixa baixa.
+    Função para padronizar nomes de editoras de acordo com os seguinte métodos, por ordem:
+        1. Converte códigos HTML para caracteres Unicode;
+        2. Mantém caracteres alfanuméricos e espaço;
+        3. Remove caracteres non printable;
+        4. Remove espaços duplos;
+        5. Remove pontuação no final do nome;
+        6. Remove espaços nas extremidades do nome;
+        7. Remove acentos;
+        8. Converte os caracteres para caixa baixa.
 
     Parameters
     ----------
     text : str
-        Nome do editor a ser padronizado.
-    surname_first : bool, default True
-        Valor lógico que indica a posição do sobrenome na saída.
+        Nome da editora a ser padronizado.
+    remove_char : bool, default True
+        Valor lógico que indica se as entidades HTML e os caracteres especiais devem ser mantidos ou retirados.
 
     Returns
     -------
     str
-        Nome padronizado do editor.
+        Nome padronizado da editora.
     """
+
+    text = unescape(text)
+    if remove_special_char:
+        text = keep_alpha_num_space(text)
     text = remove_non_printable_chars(text)
-    text = keep_alpha_space(text, keep_chars=PUNCTUATION_TO_KEEP_IN_PERSONS_NAME_VISUALIZATION)
     text = remove_double_spaces(text)
+    text = remove_end_punctuation_chars(text)
     text = text.strip()
     text = remove_accents(text)
     text = text.lower()
-    text = order_name_and_surname(text, surname_first)
     return text
 
 
