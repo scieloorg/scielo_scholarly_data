@@ -5,6 +5,8 @@ PATTERN_PARENTHESIS = re.compile(r'[-a-zA-ZÀ-ÖØ-öø-ÿ|0-9]*\([-a-zA-ZÀ-Ö�
 
 PATTERN_DATE = r'(\d+)([a-zA-Z]*)(\d+)'
 
+PATTERN_ORCID = r'(\S*)(\d{4}-\d{4}-\d{4}-\d{3}[\d|X])(\S*)'
+
 # https://www.crossref.org/blog/dois-and-matching-regular-expressions/ (accessed on 2021/08/31)
 PATTERNS_DOI = [re.compile(pd) for pd in [
     r'10.\d{4,9}/[-._;()/:A-Z0-9]+$',

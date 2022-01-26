@@ -21,12 +21,15 @@ from scielo_scholarly_data.values import (
     PATTERN_ISSN_WITH_HYPHEN,
     PATTERN_ISSN_WITHOUT_HYPHEN,
     PATTERNS_DOI,
+    PATTERN_ORCID,
     PUNCTUATION_TO_KEEP_IN_AUTHOR_VISUALIZATION,
     PATTERN_PAGE_RANGE,
     PUNCTUATION_TO_DEFINE_PAGE_RANGE,
 )
 
 from scielo_scholarly_data.helpers import is_valid_issn
+
+from urllib.parse import urlparse
 
 
 def journal_title_for_deduplication(text: str, words_to_remove=JOURNAL_TITLE_SPECIAL_WORDS, keep_parenthesis_content=True):
@@ -461,7 +464,7 @@ def document_author_for_deduplication(text: str, surname_first=True):
     return text
 
 
-def orcid_validator(text: str, type=1):
+def orcid_validator(text: str, return_mode='uri'):
     """
         Função para verificar e padronizar um registro ORCID.
 
@@ -469,38 +472,38 @@ def orcid_validator(text: str, type=1):
         ----------
         text : str
             Registro ORCID a ser validado e padronizado.
-        type : int
-            Define qual a informação que será retornada, 1 default.
+        return_mode : str
+            Define qual a informação que será retornada host, path ou uri (default).
 
         Returns
         -------
-        str ou None
-            'uri' se type = 1
-            'check' se type = 2
-            'path' se type = 3
-            'host' se type = 4
+        str ou error
 
         Exemplo:
             uri: https://orcid.org/0000-0002-1825-0097.
-            check: True se registro válido ou False caso contrário.
             path: 0000-0002-1825-0097.
             host: orcid.org.
         """
-    path = []
-    for d in text:
-        if d.isdigit() or d == 'X':
-            path.append(d)
-    path = ''.join(path)
-    if not check_sum_orcid(path) or type < 1 or type > 4 :
-        return False
-    elif type == 1:
-        return 'https://orcid.org/' + path[:4] + '-' + path[4:8] + '-' + path[8:12] + '-' + path[12:]
-    elif type == 2:
-        return True
-    elif type == 3:
-        return path[:4] + '-' + path[4:8] + '-' + path[8:12] + '-' + path[12:]
+    orcid = urlparse(text)
+    if not re.match(PATTERN_ORCID, orcid.path):
+        return {'error' : 'invalid format'}
+    path = keep_alpha_num_space(re.match(PATTERN_ORCID, orcid.path).groups()[1], replace_with='')
+    if not check_sum_orcid(path):
+        return {'error' : 'invalid checksum'}
+    if orcid.scheme == '':
+        scheme = 'https'
     else:
-        return 'orcid.org'
+        scheme = orcid.scheme
+    if orcid.netloc == '':
+        hostname = 'orcid.org'
+    else:
+        hostname = orcid.netloc
+    if return_mode == 'uri':
+        return scheme + '://' + hostname + '/' + re.match(PATTERN_ORCID, orcid.path).groups()[1]
+    if return_mode == 'path':
+        return re.match(PATTERN_ORCID, orcid.path).groups()[1]
+    if return_mode == 'host':
+        return hostname
 
 
 def book_title(text: str):

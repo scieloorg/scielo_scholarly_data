@@ -705,7 +705,7 @@ class TestStandardizer(unittest.TestCase):
 
         self.assertListEqual(expected_values, obtained_values)
 
-    def test_orcid_validator_return_type_1(self):
+    def test_orcid_validator_return_uri(self):
         orcids = {
             'https://orcid.org/0000-0002-1825-0097' : 'https://orcid.org/0000-0002-1825-0097',
             '0000-0001-5109-3700' : 'https://orcid.org/0000-0001-5109-3700',
@@ -716,35 +716,25 @@ class TestStandardizer(unittest.TestCase):
 
         self.assertListEqual(expected_values, obtained_values)
 
-    def test_orcid_validator_return_type_2(self):
+    def test_orcid_validator_return_hostname(self):
         orcids = {
-            'https://orcid.org/0000-0002-1825-0097' : True,
-            '0000-0001-5109-3701' : False,
-            'orcid.org/0000-0002-1694-2339' : False
+            'https://orcid.org/0000-0002-1825-0097' : 'orcid.org',
+            '0000-0001-5109-3701' : {'error' : 'invalid checksum'},
+            'orcid.org/0000-0002-1694-2339' : {'error' : 'invalid checksum'},
+            'orcid.org/000-0002-1825-0097' : {'error' : 'invalid format'}
         }
         expected_values = list(orcids.values())
-        obtained_values = [orcid_validator(register, type=2) for register in orcids]
+        obtained_values = [orcid_validator(register, return_mode='host') for register in orcids]
 
         self.assertListEqual(expected_values, obtained_values)
 
-    def test_orcid_validator_return_type_3(self):
+    def test_orcid_validator_return_path(self):
         orcids = {
             'https://orcid.org/0000-0002-1825-0097' : '0000-0002-1825-0097',
-            '0000-0001-5109-3701' : False,
+            '0000-0001-5109-3701' : {'error' : 'invalid checksum'},
             'orcid.org/0000-0002-1694-233X' : '0000-0002-1694-233X'
         }
         expected_values = list(orcids.values())
-        obtained_values = [orcid_validator(register, type=3) for register in orcids]
-
-        self.assertListEqual(expected_values, obtained_values)
-
-    def test_orcid_validator_return_type_4(self):
-        orcids = {
-            'https://orcid.org/0000-0002-1825-0097' : 'orcid.org',
-            '0000-0001-5109-3701' : False,
-            'orcid.org/0000-0002-1694-2339' : False
-        }
-        expected_values = list(orcids.values())
-        obtained_values = [orcid_validator(register, type=4) for register in orcids]
+        obtained_values = [orcid_validator(register, return_mode='path') for register in orcids]
 
         self.assertListEqual(expected_values, obtained_values)
