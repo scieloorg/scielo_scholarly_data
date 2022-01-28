@@ -485,9 +485,10 @@ def orcid_validator(text: str, return_mode='uri'):
             host: orcid.org.
         """
     orcid = urlparse(text)
-    if not re.match(PATTERN_ORCID, orcid.path):
+    matched_orcid = re.match(PATTERN_ORCID, orcid.path)
+    if not matched_orcid:
         return {'error' : 'invalid format'}
-    path = keep_alpha_num_space(re.match(PATTERN_ORCID, orcid.path).groups()[1], replace_with='')
+    path = keep_alpha_num_space(matched_orcid.groups()[1], replace_with='')
     if not check_sum_orcid(path):
         return {'error' : 'invalid checksum'}
     if orcid.scheme == '':
@@ -499,9 +500,9 @@ def orcid_validator(text: str, return_mode='uri'):
     else:
         hostname = orcid.netloc
     if return_mode == 'uri':
-        return scheme + '://' + hostname + '/' + re.match(PATTERN_ORCID, orcid.path).groups()[1]
+        return scheme + '://' + hostname + '/' + matched_orcid.groups()[1]
     if return_mode == 'path':
-        return re.match(PATTERN_ORCID, orcid.path).groups()[1]
+        return matched_orcid.groups()[1]
     if return_mode == 'host':
         return hostname
 
