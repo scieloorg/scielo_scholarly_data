@@ -464,7 +464,7 @@ def book_title(text: str):
     pass
 
 
-def book_editor_name_for_visualization(text: str, remove_special_char=True):
+def book_editor_name_for_visualization(text: str, keep_alpha_num_space_only=True):
     """
     Função para padronizar nomes de editoras de acordo com os seguintes métodos, por ordem:
         1. Converte códigos HTML para caracteres Unicode ou remove (default);
@@ -478,7 +478,7 @@ def book_editor_name_for_visualization(text: str, remove_special_char=True):
     ----------
     text : str
         Nome da editora a ser padronizado.
-    remove_special_char : bool, default True
+    keep_alpha_num_space_only : bool, default True
         Valor lógico que indica se as entidades HTML e os caracteres especiais devem ser mantidos ou retirados (default).
 
     Returns
@@ -488,7 +488,7 @@ def book_editor_name_for_visualization(text: str, remove_special_char=True):
     """
 
     text = unescape(text)
-    if remove_special_char:
+    if keep_alpha_num_space_only:
         text = keep_alpha_num_space(text)
     text = remove_non_printable_chars(text)
     text = remove_double_spaces(text)
@@ -497,7 +497,7 @@ def book_editor_name_for_visualization(text: str, remove_special_char=True):
     return text
 
 
-def book_editor_name_for_deduplication(text: str, remove_special_char=True):
+def book_editor_name_for_deduplication(text: str, keep_alpha_num_space_only=True):
     """
     Função para padronizar nomes de editoras de acordo com os seguinte métodos, por ordem:
         1. Converte códigos HTML para caracteres Unicode;
@@ -513,7 +513,7 @@ def book_editor_name_for_deduplication(text: str, remove_special_char=True):
     ----------
     text : str
         Nome da editora a ser padronizado.
-    remove_char : bool, default True
+    keep_alpha_num_space_only : bool, default True
         Valor lógico que indica se as entidades HTML e os caracteres especiais devem ser mantidos ou retirados.
 
     Returns
@@ -523,7 +523,7 @@ def book_editor_name_for_deduplication(text: str, remove_special_char=True):
     """
 
     text = unescape(text)
-    if remove_special_char:
+    if keep_alpha_num_space_only:
         text = keep_alpha_num_space(text)
     text = remove_non_printable_chars(text)
     text = remove_double_spaces(text)

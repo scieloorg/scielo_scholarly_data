@@ -708,7 +708,7 @@ class TestStandardizer(unittest.TestCase):
 
     def test_book_editor_name_for_deduplication_html_entities_keeps(self):
         self.assertEqual(
-            book_editor_name_for_deduplication('Editora da Universidade Estadual &#60; de São Paulo', remove_special_char=False),
+            book_editor_name_for_deduplication('Editora da Universidade Estadual &#60; de São Paulo', keep_alpha_num_space_only=False),
             'editora da universidade estadual < de sao paulo'
         )
 
@@ -756,7 +756,7 @@ class TestStandardizer(unittest.TestCase):
 
     def test_book_editor_name_for_visualization_html_entities_keeps(self):
         self.assertEqual(
-            book_editor_name_for_visualization('Editora da Universidade Estadual &#60; de São Paulo', remove_special_char=False),
+            book_editor_name_for_visualization('Editora da Universidade Estadual &#60; de São Paulo', keep_alpha_num_space_only=False),
             'Editora da Universidade Estadual < de São Paulo'
         )
 
