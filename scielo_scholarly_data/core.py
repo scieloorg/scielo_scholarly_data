@@ -194,7 +194,7 @@ def remove_parenthesis(text):
     return text
 
 
-def remove_specific_chars_from_list(text, chars_to_remove):
+def remove_chars(text, chars_to_remove):
     """
         Função para remoção de caracteres específicos, definidos a partir de uma lista.
 

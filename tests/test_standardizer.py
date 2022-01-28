@@ -73,7 +73,7 @@ class TestStandardizer(unittest.TestCase):
 
     def test_journal_title_for_deduplication_remove_specific_chars(self):
         self.assertEqual(
-            journal_title_for_deduplication('Agrociencia (URUGUAY)', remove_specific_chars=True),
+            journal_title_for_deduplication('Agrociencia (URUGUAY)', chars_to_remove=[' ']),
             'agrocienciauruguay'
         )
 
@@ -275,7 +275,7 @@ class TestStandardizer(unittest.TestCase):
             'João  J  P Silva': 'joaojpsilva'
         }
         expected_values = list(names.values())
-        obtained_values = [document_author_for_deduplication(name, surname_first=False, remove_specific_chars=True) for name in names]
+        obtained_values = [document_author_for_deduplication(name, surname_first=False, chars_to_remove=[' ']) for name in names]
 
         self.assertListEqual(expected_values, obtained_values)
 
@@ -657,7 +657,7 @@ class TestStandardizer(unittest.TestCase):
     def test_document_title_for_deduplication_remove_specific_chars(self):
         self.assertEqual(
             document_title_for_deduplication('INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DE PROBLEMÁTICAS',
-                                             remove_specific_chars=True),
+                                             chars_to_remove=[' ']),
             'innovaciontecnologicaenlaresoluciondeproblematicas'
         )
 
@@ -790,7 +790,7 @@ class TestStandardizer(unittest.TestCase):
         self.assertEqual(
             book_title_for_deduplication(
                 'O MODELO DE DESENVOLVIMENTO BRASILEIRO DAS PRIMEIRAS DÉCADAS DO SÉCULO XXI: APORTES PARA O DEBATE',
-            remove_specific_chars=True),
+            chars_to_remove=[' ']),
             'omodelodedesenvolvimentobrasileirodasprimeirasdecadasdoseculoxxiaportesparaodebate'
         )
 
@@ -828,4 +828,12 @@ class TestStandardizer(unittest.TestCase):
             book_title_for_visualization(
                 'O MODELO DE DESENVOLVIMENTO BRASILEIRO DAS PRIMEIRAS DÉCADAS DO SÉCULO XXI: APORTES PARA O DEBATE,.;'),
             'O MODELO DE DESENVOLVIMENTO BRASILEIRO DAS PRIMEIRAS DÉCADAS DO SÉCULO XXI APORTES PARA O DEBATE'
+        )
+
+    def test_book_title_for_visualization_remove_specific_chars(self):
+        self.assertEqual(
+            book_title_for_visualization(
+                'O MODELO DE DESENVOLVIMENTO BRASILEIRO DAS PRIMEIRAS DÉCADAS DO SÉCULO XXI: APORTES PARA O DEBATE',
+                chars_to_remove=[' ']),
+            'OMODELODEDESENVOLVIMENTOBRASILEIRODASPRIMEIRASDÉCADASDOSÉCULOXXIAPORTESPARAODEBATE'
         )
