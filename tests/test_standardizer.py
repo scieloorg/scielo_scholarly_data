@@ -1,4 +1,6 @@
 from scielo_scholarly_data.standardizer import (
+    book_editor_name_for_visualization,
+    book_editor_name_for_deduplication,
     book_title_for_deduplication,
     book_title_for_visualization,
     document_author_for_visualization,
@@ -14,7 +16,7 @@ from scielo_scholarly_data.standardizer import (
     journal_title_for_deduplication,
     journal_title_for_visualization,
     issue_number,
-    issue_volume
+    issue_volume,
 )
 
 import unittest
@@ -728,6 +730,83 @@ class TestStandardizer(unittest.TestCase):
         obtained_values = [document_title_for_visualization(dt) for dt in titles]
 
         self.assertListEqual(expected_values, obtained_values)
+
+    def test_book_editor_name_for_deduplication_html_entities_keeps(self):
+        self.assertEqual(
+            book_editor_name_for_deduplication('Editora da Universidade Estadual &#60; de São Paulo', keep_alpha_num_space_only=False),
+            'editora da universidade estadual < de sao paulo'
+        )
+
+    def test_book_editor_name_for_deduplication_keep_alpha_num_space(self):
+        self.assertEqual(
+            book_editor_name_for_deduplication('Editora da Universidade Estadual &#60; de São Paulo'),
+            'editora da universidade estadual de sao paulo'
+        )
+
+    def test_book_editor_name_for_deduplication_remove_non_printable_chars(self):
+        self.assertEqual(
+            book_editor_name_for_deduplication('Editora da \n Universidade Estadual \t de São Paulo'),
+            'editora da universidade estadual de sao paulo'
+        )
+
+    def test_book_editor_name_for_deduplication_remove_double_spaces(self):
+        self.assertEqual(
+            book_editor_name_for_deduplication('  Editora  da   Universidade Estadual   de  São  Paulo'),
+            'editora da universidade estadual de sao paulo'
+        )
+
+    def test_book_editor_name_for_deduplication_remove_end_punctuation_chars(self):
+        self.assertEqual(
+            book_editor_name_for_deduplication('Editora da Universidade Estadual de São Paulo,.;'),
+            'editora da universidade estadual de sao paulo'
+        )
+
+    def test_book_editor_name_for_deduplication_text_strip(self):
+        self.assertEqual(
+            book_editor_name_for_deduplication(' Editora da Universidade Estadual de São Paulo '),
+            'editora da universidade estadual de sao paulo'
+        )
+
+    def test_book_editor_name_for_deduplication_remove_accents(self):
+        self.assertEqual(
+            book_editor_name_for_deduplication('Editora da Universidade Estadual de São Paulo'),
+            'editora da universidade estadual de sao paulo'
+        )
+
+    def test_book_editor_name_for_deduplication_text_lower(self):
+        self.assertEqual(
+            book_editor_name_for_deduplication('Editora da Universidade Estadual de São Paulo'),
+            'editora da universidade estadual de sao paulo'
+        )
+
+    def test_book_editor_name_for_visualization_html_entities_keeps(self):
+        self.assertEqual(
+            book_editor_name_for_visualization('Editora da Universidade Estadual &#60; de São Paulo', keep_alpha_num_space_only=False),
+            'Editora da Universidade Estadual < de São Paulo'
+        )
+
+    def test_book_editor_name_for_visualization_non_printable(self):
+        self.assertEqual(
+            book_editor_name_for_visualization('Editora da Universidade Estadual \n de São Paulo'),
+            'Editora da Universidade Estadual de São Paulo'
+        )
+
+    def test_book_editor_name_for_visualization_alpha_num_spaces(self):
+        self.assertEqual(
+            book_editor_name_for_visualization('Editora da $ Universidade % Estadual * de São Paulo'),
+            'Editora da Universidade Estadual de São Paulo'
+        )
+
+    def test_book_editor_name_for_visualization_double_spaces(self):
+        self.assertEqual(
+            book_editor_name_for_visualization(' Editora  da  Universidade   Estadual  de  São  Paulo '),
+            'Editora da Universidade Estadual de São Paulo'
+        )
+
+    def test_book_editor_name_for_visualization_remove_pointing_at_end(self):
+        self.assertEqual(
+            book_editor_name_for_visualization('Editora da Universidade Estadual de São Paulo.,;.;'),
+            'Editora da Universidade Estadual de São Paulo'
 
     def test_book_title_for_deduplication_html_entities_keeps(self):
         self.assertEqual(

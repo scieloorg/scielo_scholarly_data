@@ -21,7 +21,7 @@ from scielo_scholarly_data.values import (
     PATTERN_ISSN_WITH_HYPHEN,
     PATTERN_ISSN_WITHOUT_HYPHEN,
     PATTERNS_DOI,
-    PUNCTUATION_TO_KEEP_IN_AUTHOR_VISUALIZATION,
+    PUNCTUATION_TO_KEEP_IN_PERSONS_NAME_VISUALIZATION,
     PATTERN_PAGE_RANGE,
     PUNCTUATION_TO_DEFINE_PAGE_RANGE,
 )
@@ -433,7 +433,7 @@ def document_author_for_visualization(text: str, surname_first=True):
     """
 
     text = remove_non_printable_chars(text)
-    text = keep_alpha_space(text, keep_chars=PUNCTUATION_TO_KEEP_IN_AUTHOR_VISUALIZATION)
+    text = keep_alpha_space(text, keep_chars=PUNCTUATION_TO_KEEP_IN_PERSONS_NAME_VISUALIZATION)
     text = remove_double_spaces(text)
     text = text.strip()
     text = order_name_and_surname(text, surname_first)
@@ -466,7 +466,7 @@ def document_author_for_deduplication(text: str, surname_first=True, chars_to_re
         Nome padronizado do autor.
     """
     text = remove_non_printable_chars(text)
-    text = keep_alpha_space(text, keep_chars=PUNCTUATION_TO_KEEP_IN_AUTHOR_VISUALIZATION)
+    text = keep_alpha_space(text, keep_chars=PUNCTUATION_TO_KEEP_IN_PERSONS_NAME_VISUALIZATION)
     text = remove_double_spaces(text)
     text = text.strip()
     text = remove_accents(text)
@@ -557,8 +557,74 @@ def book_title_for_visualization(text: str, keep_alpha_num_space_chars_only=True
     return text
 
 
-def book_editor_name(text: str):
-    pass
+def book_editor_name_for_visualization(text: str, keep_alpha_num_space_only=True):
+    """
+    Função para padronizar nomes de editoras de acordo com os seguintes métodos, por ordem:
+        1. Converte códigos HTML para caracteres Unicode ou remove (default);
+        2. Mantém caracteres alfanuméricos e espaço ou remove (default);
+        3. Remove caracteres non printable;
+        4. Remove espaços duplos;
+        5. Remove pontuação no final do nome;
+        6. Remove espaços nas extremidades do nome.
+
+    Parameters
+    ----------
+    text : str
+        Nome da editora a ser padronizado.
+    keep_alpha_num_space_only : bool, default True
+        Valor lógico que indica se as entidades HTML e os caracteres especiais devem ser mantidos ou retirados (default).
+
+    Returns
+    -------
+    str
+        Nome padronizado da editora.
+    """
+
+    text = unescape(text)
+    if keep_alpha_num_space_only:
+        text = keep_alpha_num_space(text)
+    text = remove_non_printable_chars(text)
+    text = remove_double_spaces(text)
+    text = remove_end_punctuation_chars(text)
+    text = text.strip()
+    return text
+
+
+def book_editor_name_for_deduplication(text: str, keep_alpha_num_space_only=True):
+    """
+    Função para padronizar nomes de editoras de acordo com os seguinte métodos, por ordem:
+        1. Converte códigos HTML para caracteres Unicode;
+        2. Mantém caracteres alfanuméricos e espaço;
+        3. Remove caracteres non printable;
+        4. Remove espaços duplos;
+        5. Remove pontuação no final do nome;
+        6. Remove espaços nas extremidades do nome;
+        7. Remove acentos;
+        8. Converte os caracteres para caixa baixa.
+
+    Parameters
+    ----------
+    text : str
+        Nome da editora a ser padronizado.
+    keep_alpha_num_space_only : bool, default True
+        Valor lógico que indica se as entidades HTML e os caracteres especiais devem ser mantidos ou retirados.
+
+    Returns
+    -------
+    str
+        Nome padronizado da editora.
+    """
+
+    text = unescape(text)
+    if keep_alpha_num_space_only:
+        text = keep_alpha_num_space(text)
+    text = remove_non_printable_chars(text)
+    text = remove_double_spaces(text)
+    text = remove_end_punctuation_chars(text)
+    text = text.strip()
+    text = remove_accents(text)
+    text = text.lower()
+    return text
 
 def book_editor_address(text: str):
     pass
