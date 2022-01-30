@@ -17,6 +17,7 @@ from scielo_scholarly_data.standardizer import (
     journal_title_for_visualization,
     issue_number,
     issue_volume,
+    orcid_validator,
 )
 
 import unittest
@@ -728,6 +729,40 @@ class TestStandardizer(unittest.TestCase):
         }
         expected_values = list(titles.values())
         obtained_values = [document_title_for_visualization(dt) for dt in titles]
+
+        self.assertListEqual(expected_values, obtained_values)
+
+    def test_orcid_validator_return_uri(self):
+        orcids = {
+            'https://orcid.org/0000-0002-1825-0097' : 'https://orcid.org/0000-0002-1825-0097',
+            '0000-0001-5109-3700' : 'https://orcid.org/0000-0001-5109-3700',
+            'orcid.org/0000-0002-1694-233X' : 'https://orcid.org/0000-0002-1694-233X'
+        }
+        expected_values = list(orcids.values())
+        obtained_values = [orcid_validator(register) for register in orcids]
+
+        self.assertListEqual(expected_values, obtained_values)
+
+    def test_orcid_validator_return_hostname(self):
+        orcids = {
+            'https://orcid.org/0000-0002-1825-0097' : 'orcid.org',
+            '0000-0001-5109-3701' : {'error' : 'invalid checksum'},
+            'orcid.org/0000-0002-1694-2339' : {'error' : 'invalid checksum'},
+            'orcid.org/000-0002-1825-0097' : {'error' : 'invalid format'}
+        }
+        expected_values = list(orcids.values())
+        obtained_values = [orcid_validator(register, return_mode='host') for register in orcids]
+
+        self.assertListEqual(expected_values, obtained_values)
+
+    def test_orcid_validator_return_path(self):
+        orcids = {
+            'https://orcid.org/0000-0002-1825-0097' : '0000-0002-1825-0097',
+            '0000-0001-5109-3701' : {'error' : 'invalid checksum'},
+            'orcid.org/0000-0002-1694-233X' : '0000-0002-1694-233X'
+        }
+        expected_values = list(orcids.values())
+        obtained_values = [orcid_validator(register, return_mode='path') for register in orcids]
 
         self.assertListEqual(expected_values, obtained_values)
 

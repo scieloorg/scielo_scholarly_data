@@ -142,6 +142,9 @@ core.convert_to_iso_date('2021')
 core.convert_to_iso_date('2021', month='06', day='15')
 > datetime.date(2021, 6, 15)
 
+core.check_sum_orcid('000000021694233X')
+>True
+
 ```
 
 ## Documentation
@@ -168,6 +171,7 @@ This section aims to provide a scientific explanation about the decisions we mad
 - journal_title_for_deduplication
 - journal_title_for_visualization
 - journal_volume
+- orcid_validator
 
 
 ### Normalization processes

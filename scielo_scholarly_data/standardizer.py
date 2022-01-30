@@ -1,6 +1,7 @@
 import re
 
 from scielo_scholarly_data.core import (
+    check_sum_orcid,
     convert_to_iso_date,
     keep_alpha_space,
     keep_alpha_num_space,
@@ -21,12 +22,15 @@ from scielo_scholarly_data.values import (
     PATTERN_ISSN_WITH_HYPHEN,
     PATTERN_ISSN_WITHOUT_HYPHEN,
     PATTERNS_DOI,
-    PUNCTUATION_TO_KEEP_IN_PERSONS_NAME_VISUALIZATION,
+    PATTERN_ORCID,
+    PUNCTUATION_TO_KEEP_IN_AUTHOR_VISUALIZATION,
     PATTERN_PAGE_RANGE,
     PUNCTUATION_TO_DEFINE_PAGE_RANGE,
 )
 
 from scielo_scholarly_data.helpers import is_valid_issn
+
+from urllib.parse import urlparse
 
 
 def journal_title_for_deduplication(text: str, words_to_remove=JOURNAL_TITLE_SPECIAL_WORDS,
@@ -475,6 +479,49 @@ def document_author_for_deduplication(text: str, surname_first=True, chars_to_re
     if chars_to_remove:
         text = remove_chars(text, chars_to_remove)
     return text
+
+
+def orcid_validator(text: str, return_mode='uri'):
+    """
+        Função para verificar e padronizar um registro ORCID.
+
+        Parameters
+        ----------
+        text : str
+            Registro ORCID a ser validado e padronizado.
+        return_mode : str
+            Define qual a informação que será retornada host, path ou uri (default).
+
+        Returns
+        -------
+        str ou error
+
+        Exemplo:
+            uri: https://orcid.org/0000-0002-1825-0097.
+            path: 0000-0002-1825-0097.
+            host: orcid.org.
+        """
+    orcid = urlparse(text)
+    matched_orcid = re.match(PATTERN_ORCID, orcid.path)
+    if not matched_orcid:
+        return {'error' : 'invalid format'}
+    path = keep_alpha_num_space(matched_orcid.groups()[1], replace_with='')
+    if not check_sum_orcid(path):
+        return {'error' : 'invalid checksum'}
+    if orcid.scheme == '':
+        scheme = 'https'
+    else:
+        scheme = orcid.scheme
+    if orcid.netloc == '':
+        hostname = 'orcid.org'
+    else:
+        hostname = orcid.netloc
+    if return_mode == 'uri':
+        return scheme + '://' + hostname + '/' + matched_orcid.groups()[1]
+    if return_mode == 'path':
+        return matched_orcid.groups()[1]
+    if return_mode == 'host':
+        return hostname
 
 
 def book_title_for_deduplication(text: str, keep_alpha_num_space_chars_only=True, chars_to_remove=[]):
