@@ -97,19 +97,11 @@ standardizer.document_author_for_visualization('John Fitzgerald Kennedy')
 standardizer.document_author_for_visualization('John Fitzgerald Kennedy', surname_first=True)
 > 'Kennedy, John Fitzgerald'
 
-# Standardizer a book editor name
-standardizer.book_editor_name_for_deduplication('John Fitzgerald Kennedy')
-> 'kennedy, john fitzgerald'
+standardizer.book_title_for_deduplication('O MODELO DE DESENVOLVIMENTO BRASILEIRO DAS PRIMEIRAS DÉCADAS DO SÉCULO XXI: &#60; APORTES PARA O DEBATE', remove_special_char=False)
+> 'o modelo de desenvolvimento brasileiro das primeiras decadas do seculo xxi: < aportes para o debate'
 
-standardizer.book_editor_name_for_deduplication('John Fitzgerald Kennedy', surname_first=True)
-> 'kennedy, john fitzgerald'
-
-standardizer.book_editor_name_for_visualization('John Fitzgerald Kennedy')
-> 'Kennedy, John Fitzgerald'
-
-standardizer.book_editor_name_for_visualization('John Fitzgerald Kennedy', surname_first=True)
-> 'Kennedy, John Fitzgerald'
-
+standardizer.book_title_for_visualization('O MODELO DE DESENVOLVIMENTO BRASILEIRO DAS PRIMEIRAS DÉCADAS DO SÉCULO XXI: &#60; APORTES PARA O DEBATE', remove_special_char=False)
+> 'O MODELO DE DESENVOLVIMENTO BRASILEIRO DAS PRIMEIRAS DÉCADAS DO SÉCULO XXI: APORTES PARA O DEBATE'
 
 from scielo_scholarly_data import core
 # Remove accents from a text

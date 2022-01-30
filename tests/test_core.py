@@ -6,6 +6,7 @@ from scielo_scholarly_data.core import (
     remove_non_printable_chars,
     remove_parenthesis,
     remove_end_punctuation_chars,
+    remove_chars,
     remove_words,
     unescape
 )
@@ -77,6 +78,12 @@ class TestCore(unittest.TestCase):
         self.assertEqual(
             remove_parenthesis('This is a text with (parenthesis) to remove'),
             'This is a text with to remove'
+        )
+
+    def test_remove_chars(self):
+        self.assertEqual(
+            remove_chars('This is a text with chars to remove', [' ']),
+            'Thisisatextwithcharstoremove'
         )
 
     def test_remove_words(self):
