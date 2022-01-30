@@ -10,6 +10,7 @@ from scielo_scholarly_data.core import (
     remove_non_printable_chars,
     remove_parenthesis,
     remove_end_punctuation_chars,
+    remove_chars,
     remove_words,
     order_name_and_surname,
     unescape,
@@ -32,7 +33,8 @@ from scielo_scholarly_data.helpers import is_valid_issn
 from urllib.parse import urlparse
 
 
-def journal_title_for_deduplication(text: str, words_to_remove=JOURNAL_TITLE_SPECIAL_WORDS, keep_parenthesis_content=True):
+def journal_title_for_deduplication(text: str, words_to_remove=JOURNAL_TITLE_SPECIAL_WORDS,
+                                    keep_parenthesis_content=True, chars_to_remove=[]):
     """
     Procedimento para padronizar título de periódico de acordo com os seguintes métodos, por ordem:
         1. Converte códigos HTML para caracteres Unicode;
@@ -42,7 +44,8 @@ def journal_title_for_deduplication(text: str, words_to_remove=JOURNAL_TITLE_SPE
         5. Mantém caracteres alfanuméricos e espaço;
         6. Remove espaços duplos;
         7. Remove palavras especiais;
-        8. Transforma para caracteres minúsculos.
+        8. Transforma para caracteres minúsculos;
+        9. Remove caracteres específicos definidos a partir de uma lista.
 
     Parameters
     ----------
@@ -52,6 +55,8 @@ def journal_title_for_deduplication(text: str, words_to_remove=JOURNAL_TITLE_SPE
         Conjunto de palavras a serem removidas.
     keep_parenthesis_content : bool, default True
         Valor lógico que indica se deve ou não ser aplicada remoção de conteúdo entre parênteses.
+    chars_to_remove : list, default empty
+        Lista de caracteres que devem ser removidos.
 
     Returns
     -------
@@ -66,6 +71,8 @@ def journal_title_for_deduplication(text: str, words_to_remove=JOURNAL_TITLE_SPE
     text = keep_alpha_num_space(text, JOURNAL_TITLE_SPECIAL_CHARS)
     text = remove_double_spaces(text)
     text = remove_words(text, words_to_remove)
+    if chars_to_remove:
+        text = remove_chars(text, chars_to_remove)
     return text.lower()
 
 
@@ -198,7 +205,7 @@ def document_doi(text: str):
             return matched_doi.group()
 
 
-def document_title_for_deduplication(text: str, remove_special_char=True):
+def document_title_for_deduplication(text: str, remove_special_char=True, chars_to_remove=[]):
     """
     Função para padronizar títulos de documentos de acordo com os seguinte métodos, por ordem:
         1. Converte códigos HTML para caracteres Unicode;
@@ -208,7 +215,8 @@ def document_title_for_deduplication(text: str, remove_special_char=True):
         5. Remove pontuação no final do título;
         6. Remove espaços nas extremidades do título;
         7. Remove acentos;
-        8. Converte os caracteres para caixa baixa.
+        8. Remove caracteres específicos definidos a partir de uma lista;
+        9. Converte os caracteres para caixa baixa.
 
     Parameters
     ----------
@@ -216,6 +224,8 @@ def document_title_for_deduplication(text: str, remove_special_char=True):
         Título do documento a ser padronizado.
     remove_char : bool, default True
         Valor lógico que indica se as entidades HTML e os caracteres especiais devem ser mantidos ou retirados.
+    chars_to_remove : list, default empty
+        Lista de caracetres que devem ser removidos.
 
     Returns
     -------
@@ -231,6 +241,8 @@ def document_title_for_deduplication(text: str, remove_special_char=True):
     text = remove_end_punctuation_chars(text)
     text = text.strip()
     text = remove_accents(text)
+    if chars_to_remove:
+        text = remove_chars(text, chars_to_remove)
     text = text.lower()
     return text
 
@@ -249,7 +261,7 @@ def document_title_for_visualization(text: str, remove_special_char=True):
     ----------
     text : str
         Título do documento a ser padronizado.
-    remove_char : bool, default True
+    remove_special_char : bool, default True
         Valor lógico que indica se as entidades HTML e os caracteres especiais devem ser mantidos ou retirados (default).
 
     Returns
@@ -425,14 +437,14 @@ def document_author_for_visualization(text: str, surname_first=True):
     """
 
     text = remove_non_printable_chars(text)
-    text = keep_alpha_space(text, keep_chars=PUNCTUATION_TO_KEEP_IN_AUTHOR_VISUALIZATION)
+    text = keep_alpha_space(text, keep_chars=PUNCTUATION_TO_KEEP_IN_PERSONS_NAME_VISUALIZATION)
     text = remove_double_spaces(text)
     text = text.strip()
     text = order_name_and_surname(text, surname_first)
     return text
 
 
-def document_author_for_deduplication(text: str, surname_first=True):
+def document_author_for_deduplication(text: str, surname_first=True, chars_to_remove=[]):
     """
     Procedimento para padronizar nome de autor de documento, considerando os seguintes métodos, em ordem:
     1. Remoção de caracteres não imprimíveis;
@@ -440,7 +452,8 @@ def document_author_for_deduplication(text: str, surname_first=True):
     3. Remover espaços duplos;
     4. Remover espaços nas extremidades;
     5. Remover acentos;
-    6. Converter para caixa baixa.
+    6. Converter para caixa baixa;
+    7. Remove caracteres específicos definidos a partir de uma lista.
 
     Parameters
     ----------
@@ -448,6 +461,8 @@ def document_author_for_deduplication(text: str, surname_first=True):
         Nome do autor a ser padronizado.
     surname_first : bool, default True
         Valor lógico que indica a posição do sobrenome na saída.
+    chars_to_remove : list, default empty
+        Lista de caracteres que devem ser removidos.
 
     Returns
     -------
@@ -455,12 +470,14 @@ def document_author_for_deduplication(text: str, surname_first=True):
         Nome padronizado do autor.
     """
     text = remove_non_printable_chars(text)
-    text = keep_alpha_space(text, keep_chars=PUNCTUATION_TO_KEEP_IN_AUTHOR_VISUALIZATION)
+    text = keep_alpha_space(text, keep_chars=PUNCTUATION_TO_KEEP_IN_PERSONS_NAME_VISUALIZATION)
     text = remove_double_spaces(text)
     text = text.strip()
     text = remove_accents(text)
     text = text.lower()
     text = order_name_and_surname(text, surname_first)
+    if chars_to_remove:
+        text = remove_chars(text, chars_to_remove)
     return text
 
 
@@ -507,13 +524,154 @@ def orcid_validator(text: str, return_mode='uri'):
         return hostname
 
 
-def book_title(text: str):
-    pass
+def book_title_for_deduplication(text: str, keep_alpha_num_space_chars_only=True, chars_to_remove=[]):
+    """
+    Função para padronizar títulos de livros de acordo com os seguinte métodos, por ordem:
+        1. Converte códigos HTML para caracteres Unicode;
+        2. Converte os caracteres para caixa baixa;
+        3. Mantém caracteres alfanuméricos e espaço;
+        4. Remove caracteres non printable;
+        5. Remove espaços duplos;
+        6. Remove pontuação no final do título;
+        7. Remove espaços nas extremidades do título;
+        8. Remove acentos;
+        9. Remove caracteres específicos definidos a partir de uma lista.
+
+    Parameters
+    ----------
+    text : str
+        Título do livro a ser padronizado.
+    keep_alpha_num_space_chars_only : bool, default True
+        Valor lógico que indica se as entidades HTML e os caracteres especiais devem ser mantidos ou retirados.
+    chars_to_remove : list, default empty
+        Lista de caracteres que devem ser removidos.
+
+    Returns
+    -------
+    str
+        Título padronizado do livro.
+    """
+
+    text = unescape(text)
+    if keep_alpha_num_space_chars_only:
+        text = keep_alpha_num_space(text)
+    text = remove_non_printable_chars(text)
+    text = remove_double_spaces(text)
+    text = remove_end_punctuation_chars(text)
+    text = text.strip()
+    text = remove_accents(text)
+    text = text.lower()
+    if chars_to_remove:
+        text = remove_chars(text, chars_to_remove)
+    return text
 
 
-def book_editor_name(text: str):
-    pass
+def book_title_for_visualization(text: str, keep_alpha_num_space_chars_only=True, chars_to_remove=[]):
+    """
+    Função para padronizar titulos de livros de acordo com os seguintes métodos, por ordem:
+        1. Converte códigos HTML para caracteres Unicode ou remove (default);
+        2. Remove espaços nas extremidades do título;
+        3. Mantém caracteres alfanuméricos e espaço ou remove (default);
+        4. Remove caracteres non printable;
+        5. Remove espaços duplos;
+        6. Remove pontuação no final do título;
+        7. Remove caracteres específicos definidos a partir de uma lista.
 
+    Parameters
+    ----------
+    text : str
+        Título do livro a ser padronizado.
+    keep_alpha_num_space_chars_only : bool, default True
+        Valor lógico que indica se as entidades HTML e os caracteres especiais devem ser mantidos ou retirados (default).
+    chars_to_remove : list, default empty
+        Lista de caracteres que devem ser removidos.
+
+    Returns
+    -------
+    str
+        Título padronizado do livro.
+    """
+
+    text = unescape(text)
+    if keep_alpha_num_space_chars_only:
+        text = keep_alpha_num_space(text)
+    text = remove_non_printable_chars(text)
+    text = remove_double_spaces(text)
+    text = remove_end_punctuation_chars(text)
+    text = text.strip()
+    if chars_to_remove:
+        text = remove_chars(text, chars_to_remove)
+    return text
+
+
+def book_editor_name_for_visualization(text: str, keep_alpha_num_space_only=True):
+    """
+    Função para padronizar nomes de editoras de acordo com os seguintes métodos, por ordem:
+        1. Converte códigos HTML para caracteres Unicode ou remove (default);
+        2. Mantém caracteres alfanuméricos e espaço ou remove (default);
+        3. Remove caracteres non printable;
+        4. Remove espaços duplos;
+        5. Remove pontuação no final do nome;
+        6. Remove espaços nas extremidades do nome.
+
+    Parameters
+    ----------
+    text : str
+        Nome da editora a ser padronizado.
+    keep_alpha_num_space_only : bool, default True
+        Valor lógico que indica se as entidades HTML e os caracteres especiais devem ser mantidos ou retirados (default).
+
+    Returns
+    -------
+    str
+        Nome padronizado da editora.
+    """
+
+    text = unescape(text)
+    if keep_alpha_num_space_only:
+        text = keep_alpha_num_space(text)
+    text = remove_non_printable_chars(text)
+    text = remove_double_spaces(text)
+    text = remove_end_punctuation_chars(text)
+    text = text.strip()
+    return text
+
+
+def book_editor_name_for_deduplication(text: str, keep_alpha_num_space_only=True):
+    """
+    Função para padronizar nomes de editoras de acordo com os seguinte métodos, por ordem:
+        1. Converte códigos HTML para caracteres Unicode;
+        2. Mantém caracteres alfanuméricos e espaço;
+        3. Remove caracteres non printable;
+        4. Remove espaços duplos;
+        5. Remove pontuação no final do nome;
+        6. Remove espaços nas extremidades do nome;
+        7. Remove acentos;
+        8. Converte os caracteres para caixa baixa.
+
+    Parameters
+    ----------
+    text : str
+        Nome da editora a ser padronizado.
+    keep_alpha_num_space_only : bool, default True
+        Valor lógico que indica se as entidades HTML e os caracteres especiais devem ser mantidos ou retirados.
+
+    Returns
+    -------
+    str
+        Nome padronizado da editora.
+    """
+
+    text = unescape(text)
+    if keep_alpha_num_space_only:
+        text = keep_alpha_num_space(text)
+    text = remove_non_printable_chars(text)
+    text = remove_double_spaces(text)
+    text = remove_end_punctuation_chars(text)
+    text = text.strip()
+    text = remove_accents(text)
+    text = text.lower()
+    return text
 
 def book_editor_address(text: str):
     pass

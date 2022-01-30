@@ -97,9 +97,11 @@ standardizer.document_author_for_visualization('John Fitzgerald Kennedy')
 standardizer.document_author_for_visualization('John Fitzgerald Kennedy', surname_first=True)
 > 'Kennedy, John Fitzgerald'
 
-standardizer.orcid_validator('0000-0002-1694-233X', type=1)
-> 'https://orcid.org/0000-0002-1694-233X'
+standardizer.book_title_for_deduplication('O MODELO DE DESENVOLVIMENTO BRASILEIRO DAS PRIMEIRAS DÉCADAS DO SÉCULO XXI: &#60; APORTES PARA O DEBATE', remove_special_char=False)
+> 'o modelo de desenvolvimento brasileiro das primeiras decadas do seculo xxi: < aportes para o debate'
 
+standardizer.book_title_for_visualization('O MODELO DE DESENVOLVIMENTO BRASILEIRO DAS PRIMEIRAS DÉCADAS DO SÉCULO XXI: &#60; APORTES PARA O DEBATE', remove_special_char=False)
+> 'O MODELO DE DESENVOLVIMENTO BRASILEIRO DAS PRIMEIRAS DÉCADAS DO SÉCULO XXI: APORTES PARA O DEBATE'
 
 from scielo_scholarly_data import core
 # Remove accents from a text
