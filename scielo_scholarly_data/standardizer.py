@@ -196,16 +196,17 @@ def document_doi(text: str, return_mode='uri'):
         path: 10.1038/nphys1170.
         host: dx.doi.org.
     """
-    matched_doi = True
+    matched_doi = False
     for pattern_doi in PATTERNS_DOI:
         matched_doi = pattern_doi.search(text)
+        if matched_doi:
+            break
     if not matched_doi:
         return {'error' : 'invalid doi'}
-    d = urlparse(text)
-    if return_mode == 'uri' and d.scheme != '' and (d.scheme == 'http' or d.scheme == 'https' or d.scheme == 'ftp'):
-        return d.scheme + '://' + d.netloc + d.path
+    if return_mode == 'uri':
+        return f'http://doi.org/{matched_doi.group()}'
     if return_mode == 'host':
-        return d.netloc
+        return 'doi.org'
     if return_mode == 'path':
         return matched_doi.group()
 

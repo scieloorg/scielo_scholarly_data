@@ -181,12 +181,12 @@ class TestStandardizer(unittest.TestCase):
 
     def test_document_doi_return_mode_uri(self):
         dois = {
-            'https://10.1016/J.SCITOTENV.2019.02.108': 'https://10.1016/J.SCITOTENV.2019.02.108',
-            'http://10.1007/S13157-019-01161-Y': 'http://10.1007/S13157-019-01161-Y',
-            '10.4257/OECO.2020.2401.05': None,
-            'ftp://10.1111/EFF.12536': 'ftp://10.1111/EFF.12536',
-            'axc; 10.1007/S10452-020-09782-W': None,
-            '&referrer=google*url=10.1590/1678-4766E2016006': None,
+            'https://10.1016/J.SCITOTENV.2019.02.108': 'http://doi.org/10.1016/J.SCITOTENV.2019.02.108',
+            'http://10.1007/S13157-019-01161-Y': 'http://doi.org/10.1007/S13157-019-01161-Y',
+            '10.4257/OECO.2020.2401.05': 'http://doi.org/10.4257/OECO.2020.2401.05',
+            'ftp://10.1111/EFF.12536': 'http://doi.org/10.1111/EFF.12536',
+            'axc; 10.1007/S10452-020-09782-W': 'http://doi.org/10.1007/S10452-020-09782-W',
+            '&referrer=google*url=10.1590/1678-4766E2016006': 'http://doi.org/10.1590/1678-4766E2016006',
         }
 
         expected_values = list(dois.values())
@@ -196,12 +196,12 @@ class TestStandardizer(unittest.TestCase):
 
     def test_document_doi_return_mode_host(self):
         dois = {
-            'https://10.1016/J.SCITOTENV.2019.02.108': '10.1016',
-            'http://10.1007/S13157-019-01161-Y': '10.1007',
-            '10.4257/OECO.2020.2401.05': '',
-            'ftp://10.1111/EFF.12536': '10.1111',
-            'axc; 10.1007/S10452-020-09782-W': '',
-            '&referrer=google*url=10.1590/1678-4766E2016006': '',
+            'https://10.1016/J.SCITOTENV.2019.02.108': 'doi.org',
+            'http://10.1007/S13157-019-01161-Y': 'doi.org',
+            '10.4257/OECO.2020.2401.05': 'doi.org',
+            'ftp://10.1111/EFF.12536': 'doi.org',
+            'axc; 10.1007/S10452-020-09782-W': 'doi.org',
+            '&referrer=google*url=10.1590/1678-4766E2016006': 'doi.org',
         }
 
         expected_values = list(dois.values())
