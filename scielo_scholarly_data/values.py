@@ -12,7 +12,8 @@ PATTERNS_DOI = [re.compile(pd) for pd in [
     r'10.\d{4,9}/[-._;()/:A-Z0-9]+$',
     r'10.1002/[^\s]+$',
     r'10.\d{4}/\d+-\d+X?(\d+)\d+<[\d\w]+:[\d\w]*>\d+.\d+.\w+;\d$',
-    r'10.1207/[\w\d]+\&\d+_\d+$']
+    r'10.1207/[\w\d]+\&\d+_\d+$',
+    r'10.\d{4,9}/[-._;()/:a-zA-Z0-9]*']
 ]
 
 # https://en.wikipedia.org/wiki/International_Standard_Serial_Number (accessed on 2021/08/31)

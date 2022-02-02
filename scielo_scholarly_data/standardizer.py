@@ -29,6 +29,7 @@ from scielo_scholarly_data.values import (
 )
 
 from scielo_scholarly_data.helpers import is_valid_issn
+from urllib.parse import urlparse
 
 from urllib.parse import urlparse
 
@@ -185,7 +186,7 @@ def issue_number(text: str):
     return text
 
 
-def document_doi(text: str):
+def document_doi(text: str, return_mode='uri'):
     """
     Procedimento que padroniza DOI de documento.
 
@@ -193,16 +194,32 @@ def document_doi(text: str):
     ----------
     text : str
         Caracteres que representam um código DOI de um documento.
+    return_mode : str
+        Define qual a informação que será retornada host, path ou uri (default).
 
     Returns
     -------
-    str
-        Código DOI padronizado ou nada.
+    str ou error.
+        Código DOI padronizado de acordo com a demanda ou str vazia ou erro de formato.
+
+    Exemplo:
+        uri: http://dx.doi.org/10.1038/nphys1170.
+        path: 10.1038/nphys1170.
+        host: dx.doi.org.
     """
+    matched_doi = False
     for pattern_doi in PATTERNS_DOI:
         matched_doi = pattern_doi.search(text)
         if matched_doi:
-            return matched_doi.group()
+            break
+    if not matched_doi:
+        return {'error' : 'invalid doi'}
+    if return_mode == 'uri':
+        return f'http://doi.org/{matched_doi.group()}'
+    if return_mode == 'host':
+        return 'doi.org'
+    if return_mode == 'path':
+        return matched_doi.group()
 
 
 def document_title_for_deduplication(text: str, remove_special_char=True, chars_to_remove=[]):

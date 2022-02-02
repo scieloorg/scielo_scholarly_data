@@ -175,7 +175,7 @@ class TestStandardizer(unittest.TestCase):
 
         self.assertListEqual(expected_values, obtained_values)
 
-    def test_document_doi(self):
+    def test_document_doi_return_mode_path(self):
         dois = {
             'https://10.1016/J.SCITOTENV.2019.02.108': '10.1016/J.SCITOTENV.2019.02.108',
             'http://10.1007/S13157-019-01161-Y': '10.1007/S13157-019-01161-Y',
@@ -186,7 +186,37 @@ class TestStandardizer(unittest.TestCase):
         }
 
         expected_values = list(dois.values())
-        obtained_values = [document_doi(d) for d in dois]
+        obtained_values = [document_doi(d, return_mode='path') for d in dois]
+
+        self.assertListEqual(expected_values, obtained_values)
+
+    def test_document_doi_return_mode_uri(self):
+        dois = {
+            'https://10.1016/J.SCITOTENV.2019.02.108': 'http://doi.org/10.1016/J.SCITOTENV.2019.02.108',
+            'http://10.1007/S13157-019-01161-Y': 'http://doi.org/10.1007/S13157-019-01161-Y',
+            '10.4257/OECO.2020.2401.05': 'http://doi.org/10.4257/OECO.2020.2401.05',
+            'ftp://10.1111/EFF.12536': 'http://doi.org/10.1111/EFF.12536',
+            'axc; 10.1007/S10452-020-09782-W': 'http://doi.org/10.1007/S10452-020-09782-W',
+            '&referrer=google*url=10.1590/1678-4766E2016006': 'http://doi.org/10.1590/1678-4766E2016006',
+        }
+
+        expected_values = list(dois.values())
+        obtained_values = [document_doi(d, return_mode='uri') for d in dois]
+
+        self.assertListEqual(expected_values, obtained_values)
+
+    def test_document_doi_return_mode_host(self):
+        dois = {
+            'https://10.1016/J.SCITOTENV.2019.02.108': 'doi.org',
+            'http://10.1007/S13157-019-01161-Y': 'doi.org',
+            '10.4257/OECO.2020.2401.05': 'doi.org',
+            'ftp://10.1111/EFF.12536': 'doi.org',
+            'axc; 10.1007/S10452-020-09782-W': 'doi.org',
+            '&referrer=google*url=10.1590/1678-4766E2016006': 'doi.org',
+        }
+
+        expected_values = list(dois.values())
+        obtained_values = [document_doi(d, return_mode='host') for d in dois]
 
         self.assertListEqual(expected_values, obtained_values)
 
