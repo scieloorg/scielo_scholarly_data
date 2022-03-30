@@ -703,3 +703,51 @@ class TestStandardizer(unittest.TestCase):
         obtained_values = [document_title_for_visualization(dt) for dt in titles]
 
         self.assertListEqual(expected_values, obtained_values)
+
+    def test_document_sponsors_html_entities_keeps(self):
+        self.assertEqual(
+            document_title_for_deduplication('Fundação de Amparo a Pesquisa do Estado de São Paulo &#60; Biota Program', remove_special_char=False),
+            'fundacao de amparo a pesquisa do estado de sao paulo < biota program'
+        )
+
+    def test_document_sponsors_keep_alpha_num_space(self):
+        self.assertEqual(
+            document_title_for_deduplication('Fundação de Amparo a Pesquisa do Estado de São Paulo &#60; Biota Program'),
+            'fundacao de amparo a pesquisa do estado de sao paulo biota program'
+        )
+
+    def test_document_sponsors_remove_non_printable_chars(self):
+        self.assertEqual(
+            document_title_for_deduplication('Fundação de Amparo a Pesquisa do \n Estado de São Paulo \t Biota Program'),
+            'fundacao de amparo a pesquisa do estado de sao paulo biota program'
+        )
+
+    def test_document_sponsors_remove_double_spaces(self):
+        self.assertEqual(
+            document_title_for_deduplication('Fundação  de   Amparo  a Pesquisa do  Estado de São Paulo  Biota Program'),
+            'fundacao de amparo a pesquisa do estado de sao paulo biota program'
+        )
+
+    def test_document_sponsors_remove_end_punctuation_chars(self):
+        self.assertEqual(
+            document_title_for_deduplication('Fundação de Amparo a Pesquisa do Estado de São Paulo Biota Program,.;'),
+            'fundacao de amparo a pesquisa do estado de sao paulo biota program'
+        )
+
+    def test_document_sponsors_text_strip(self):
+        self.assertEqual(
+            document_title_for_deduplication(' Fundação de Amparo a Pesquisa do Estado de São Paulo Biota Program '),
+            'fundacao de amparo a pesquisa do estado de sao paulo biota program'
+        )
+
+    def test_document_sponsors_remove_accents(self):
+        self.assertEqual(
+            document_title_for_deduplication('Fundação de Amparo à Pesquisa do Estado de São Paulo Biota Program'),
+            'fundacao de amparo a pesquisa do estado de sao paulo biota program'
+        )
+
+    def test_document_sponsors_text_lower(self):
+        self.assertEqual(
+            document_title_for_deduplication('Fundação de Amparo a Pesquisa do Estado de São Paulo Biota Program'),
+            'fundacao de amparo a pesquisa do estado de sao paulo biota program'
+        )
