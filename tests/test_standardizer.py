@@ -1,4 +1,8 @@
 from scielo_scholarly_data.standardizer import (
+    book_editor_name_for_visualization,
+    book_editor_name_for_deduplication,
+    book_title_for_deduplication,
+    book_title_for_visualization,
     document_author_for_visualization,
     document_author_for_deduplication,
     document_doi,
@@ -12,7 +16,8 @@ from scielo_scholarly_data.standardizer import (
     journal_title_for_deduplication,
     journal_title_for_visualization,
     issue_number,
-    issue_volume
+    issue_volume,
+    orcid_validator,
 )
 
 import unittest
@@ -69,13 +74,19 @@ class TestStandardizer(unittest.TestCase):
             'agrociencia uruguay'
         )
 
+    def test_journal_title_for_deduplication_remove_specific_chars(self):
+        self.assertEqual(
+            journal_title_for_deduplication('Agrociencia (URUGUAY)', chars_to_remove=[' ']),
+            'agrocienciauruguay'
+        )
+
     def test_journal_title_for_visualization_html_code_to_unicode(self):
         self.assertEqual(
             journal_title_for_visualization('Agrociencia &amp; (Uruguay)'),
             'Agrociencia & (Uruguay)'
         )
 
-    def test_journal_title_for_visualization_remove_nonprintable_char(self):
+    def test_journal_title_for_visualization_remove_nonprintable_char(self):>>>>>>> main
         self.assertEqual(
             journal_title_for_visualization('Agrociencia (Uruguay)\n'),
             'Agrociencia (Uruguay)'
@@ -164,7 +175,7 @@ class TestStandardizer(unittest.TestCase):
 
         self.assertListEqual(expected_values, obtained_values)
 
-    def test_document_doi(self):
+    def test_document_doi_return_mode_path(self):
         dois = {
             'https://10.1016/J.SCITOTENV.2019.02.108': '10.1016/J.SCITOTENV.2019.02.108',
             'http://10.1007/S13157-019-01161-Y': '10.1007/S13157-019-01161-Y',
@@ -175,7 +186,37 @@ class TestStandardizer(unittest.TestCase):
         }
 
         expected_values = list(dois.values())
-        obtained_values = [document_doi(d) for d in dois]
+        obtained_values = [document_doi(d, return_mode='path') for d in dois]
+
+        self.assertListEqual(expected_values, obtained_values)
+
+    def test_document_doi_return_mode_uri(self):
+        dois = {
+            'https://10.1016/J.SCITOTENV.2019.02.108': 'http://doi.org/10.1016/J.SCITOTENV.2019.02.108',
+            'http://10.1007/S13157-019-01161-Y': 'http://doi.org/10.1007/S13157-019-01161-Y',
+            '10.4257/OECO.2020.2401.05': 'http://doi.org/10.4257/OECO.2020.2401.05',
+            'ftp://10.1111/EFF.12536': 'http://doi.org/10.1111/EFF.12536',
+            'axc; 10.1007/S10452-020-09782-W': 'http://doi.org/10.1007/S10452-020-09782-W',
+            '&referrer=google*url=10.1590/1678-4766E2016006': 'http://doi.org/10.1590/1678-4766E2016006',
+        }
+
+        expected_values = list(dois.values())
+        obtained_values = [document_doi(d, return_mode='uri') for d in dois]
+
+        self.assertListEqual(expected_values, obtained_values)
+
+    def test_document_doi_return_mode_host(self):
+        dois = {
+            'https://10.1016/J.SCITOTENV.2019.02.108': 'doi.org',
+            'http://10.1007/S13157-019-01161-Y': 'doi.org',
+            '10.4257/OECO.2020.2401.05': 'doi.org',
+            'ftp://10.1111/EFF.12536': 'doi.org',
+            'axc; 10.1007/S10452-020-09782-W': 'doi.org',
+            '&referrer=google*url=10.1590/1678-4766E2016006': 'doi.org',
+        }
+
+        expected_values = list(dois.values())
+        obtained_values = [document_doi(d, return_mode='host') for d in dois]
 
         self.assertListEqual(expected_values, obtained_values)
 
@@ -258,6 +299,16 @@ class TestStandardizer(unittest.TestCase):
         }
         expected_values = list(names.values())
         obtained_values = [document_author_for_deduplication(name) for name in names]
+
+        self.assertListEqual(expected_values, obtained_values)
+
+    def test_document_author_for_deduplication_remove_specific_chars(self):
+        names = {
+            'Silva, João  J  P': 'joaojpsilva',
+            'João  J  P Silva': 'joaojpsilva'
+        }
+        expected_values = list(names.values())
+        obtained_values = [document_author_for_deduplication(name, surname_first=False, chars_to_remove=[' ']) for name in names]
 
         self.assertListEqual(expected_values, obtained_values)
 
@@ -636,6 +687,13 @@ class TestStandardizer(unittest.TestCase):
             'innovacion tecnologica en la resolucion de problematicas'
         )
 
+    def test_document_title_for_deduplication_remove_specific_chars(self):
+        self.assertEqual(
+            document_title_for_deduplication('INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DE PROBLEMÁTICAS',
+                                             chars_to_remove=[' ']),
+            'innovaciontecnologicaenlaresoluciondeproblematicas'
+        )
+
     def test_document_title_for_visualization_html_entities_keeps(self):
         titles = {
             'INNOVACIÓN TECNOLÓGICA EN LA RESOLUCIÓN DE &#60; PROBLEMÁTICAS':
@@ -704,6 +762,226 @@ class TestStandardizer(unittest.TestCase):
 
         self.assertListEqual(expected_values, obtained_values)
 
+    def test_orcid_validator_return_uri(self):
+        orcids = {
+            'https://orcid.org/0000-0002-1825-0097' : 'https://orcid.org/0000-0002-1825-0097',
+            '0000-0001-5109-3700' : 'https://orcid.org/0000-0001-5109-3700',
+            'orcid.org/0000-0002-1694-233X' : 'https://orcid.org/0000-0002-1694-233X'
+        }
+        expected_values = list(orcids.values())
+        obtained_values = [orcid_validator(register) for register in orcids]
+
+        self.assertListEqual(expected_values, obtained_values)
+
+    def test_orcid_validator_return_hostname(self):
+        orcids = {
+            'https://orcid.org/0000-0002-1825-0097' : 'orcid.org',
+            '0000-0001-5109-3701' : {'error' : 'invalid checksum'},
+            'orcid.org/0000-0002-1694-2339' : {'error' : 'invalid checksum'},
+            'orcid.org/000-0002-1825-0097' : {'error' : 'invalid format'}
+        }
+        expected_values = list(orcids.values())
+        obtained_values = [orcid_validator(register, return_mode='host') for register in orcids]
+
+        self.assertListEqual(expected_values, obtained_values)
+
+    def test_orcid_validator_return_path(self):
+        orcids = {
+            'https://orcid.org/0000-0002-1825-0097' : '0000-0002-1825-0097',
+            '0000-0001-5109-3701' : {'error' : 'invalid checksum'},
+            'orcid.org/0000-0002-1694-233X' : '0000-0002-1694-233X'
+        }
+        expected_values = list(orcids.values())
+        obtained_values = [orcid_validator(register, return_mode='path') for register in orcids]
+
+        self.assertListEqual(expected_values, obtained_values)
+
+    def test_book_editor_name_for_deduplication_html_entities_keeps(self):
+        self.assertEqual(
+            book_editor_name_for_deduplication('Editora da Universidade Estadual &#60; de São Paulo', keep_alpha_num_space_only=False),
+            'editora da universidade estadual < de sao paulo'
+        )
+
+    def test_book_editor_name_for_deduplication_keep_alpha_num_space(self):
+        self.assertEqual(
+            book_editor_name_for_deduplication('Editora da Universidade Estadual &#60; de São Paulo'),
+            'editora da universidade estadual de sao paulo'
+        )
+
+    def test_book_editor_name_for_deduplication_remove_non_printable_chars(self):
+        self.assertEqual(
+            book_editor_name_for_deduplication('Editora da \n Universidade Estadual \t de São Paulo'),
+            'editora da universidade estadual de sao paulo'
+        )
+
+    def test_book_editor_name_for_deduplication_remove_double_spaces(self):
+        self.assertEqual(
+            book_editor_name_for_deduplication('  Editora  da   Universidade Estadual   de  São  Paulo'),
+            'editora da universidade estadual de sao paulo'
+        )
+
+    def test_book_editor_name_for_deduplication_remove_end_punctuation_chars(self):
+        self.assertEqual(
+            book_editor_name_for_deduplication('Editora da Universidade Estadual de São Paulo,.;'),
+            'editora da universidade estadual de sao paulo'
+        )
+
+    def test_book_editor_name_for_deduplication_text_strip(self):
+        self.assertEqual(
+            book_editor_name_for_deduplication(' Editora da Universidade Estadual de São Paulo '),
+            'editora da universidade estadual de sao paulo'
+        )
+
+    def test_book_editor_name_for_deduplication_remove_accents(self):
+        self.assertEqual(
+            book_editor_name_for_deduplication('Editora da Universidade Estadual de São Paulo'),
+            'editora da universidade estadual de sao paulo'
+        )
+
+    def test_book_editor_name_for_deduplication_text_lower(self):
+        self.assertEqual(
+            book_editor_name_for_deduplication('Editora da Universidade Estadual de São Paulo'),
+            'editora da universidade estadual de sao paulo'
+        )
+
+    def test_book_editor_name_for_visualization_html_entities_keeps(self):
+        self.assertEqual(
+            book_editor_name_for_visualization('Editora da Universidade Estadual &#60; de São Paulo', keep_alpha_num_space_only=False),
+            'Editora da Universidade Estadual < de São Paulo'
+        )
+
+    def test_book_editor_name_for_visualization_non_printable(self):
+        self.assertEqual(
+            book_editor_name_for_visualization('Editora da Universidade Estadual \n de São Paulo'),
+            'Editora da Universidade Estadual de São Paulo'
+        )
+
+    def test_book_editor_name_for_visualization_alpha_num_spaces(self):
+        self.assertEqual(
+            book_editor_name_for_visualization('Editora da $ Universidade % Estadual * de São Paulo'),
+            'Editora da Universidade Estadual de São Paulo'
+        )
+
+    def test_book_editor_name_for_visualization_double_spaces(self):
+        self.assertEqual(
+            book_editor_name_for_visualization(' Editora  da  Universidade   Estadual  de  São  Paulo '),
+            'Editora da Universidade Estadual de São Paulo'
+        )
+
+    def test_book_editor_name_for_visualization_remove_pointing_at_end(self):
+        self.assertEqual(
+            book_editor_name_for_visualization('Editora da Universidade Estadual de São Paulo.,;.;'),
+            'Editora da Universidade Estadual de São Paulo'
+
+    def test_book_title_for_deduplication_html_entities_keeps(self):
+        self.assertEqual(
+            book_title_for_deduplication(
+                'O MODELO DE DESENVOLVIMENTO BRASILEIRO DAS PRIMEIRAS DÉCADAS DO SÉCULO XXI: &#60; APORTES PARA O DEBATE',
+            keep_alpha_num_space_chars_only=False),
+            'o modelo de desenvolvimento brasileiro das primeiras decadas do seculo xxi: < aportes para o debate'
+        )
+
+    def test_book_title_for_deduplication_keep_alpha_num_space(self):
+        self.assertEqual(
+            book_title_for_deduplication(
+                'O MODELO DE DESENVOLVIMENTO BRASILEIRO DAS PRIMEIRAS DÉCADAS DO SÉCULO XXI: &#60; APORTES PARA O DEBATE'),
+            'o modelo de desenvolvimento brasileiro das primeiras decadas do seculo xxi aportes para o debate'
+        )
+
+    def test_book_title_for_deduplication_remove_non_printable_chars(self):
+        self.assertEqual(
+            book_title_for_deduplication(
+                '\tO MODELO DE DESENVOLVIMENTO BRASILEIRO DAS PRIMEIRAS DÉCADAS DO SÉCULO XXI:\n APORTES PARA O DEBATE'),
+            'o modelo de desenvolvimento brasileiro das primeiras decadas do seculo xxi aportes para o debate'
+        )
+
+    def test_book_title_for_deduplication_remove_double_spaces(self):
+        self.assertEqual(
+            book_title_for_deduplication(
+                '  O  MODELO DE DESENVOLVIMENTO BRASILEIRO DAS PRIMEIRAS   DÉCADAS DO SÉCULO XXI:  APORTES PARA O  DEBATE'),
+            'o modelo de desenvolvimento brasileiro das primeiras decadas do seculo xxi aportes para o debate'
+        )
+
+    def test_book_title_for_deduplication_remove_end_punctuation_chars(self):
+        self.assertEqual(
+            book_title_for_deduplication(
+                'O MODELO DE DESENVOLVIMENTO BRASILEIRO DAS PRIMEIRAS DÉCADAS DO SÉCULO XXI: APORTES PARA O DEBATE,.;'),
+            'o modelo de desenvolvimento brasileiro das primeiras decadas do seculo xxi aportes para o debate'
+        )
+
+    def test_book_title_for_deduplication_text_strip(self):
+        self.assertEqual(
+            book_title_for_deduplication(
+                ' O MODELO DE DESENVOLVIMENTO BRASILEIRO DAS PRIMEIRAS DÉCADAS DO SÉCULO XXI: APORTES PARA O DEBATE '),
+            'o modelo de desenvolvimento brasileiro das primeiras decadas do seculo xxi aportes para o debate'
+        )
+
+    def test_book_title_for_deduplication_remove_accents(self):
+        self.assertEqual(
+            book_title_for_deduplication(
+                'O MODELO DE DESENVOLVIMENTO BRASILEIRO DAS PRIMEIRAS DÉCADAS DO SÉCULO XXI: APORTES PARA O DEBATE'),
+            'o modelo de desenvolvimento brasileiro das primeiras decadas do seculo xxi aportes para o debate'
+        )
+
+    def test_book_title_for_deduplication_text_lower(self):
+        self.assertEqual(
+            book_title_for_deduplication(
+                'O MODELO DE DESENVOLVIMENTO BRASILEIRO DAS PRIMEIRAS DÉCADAS DO SÉCULO XXI: APORTES PARA O DEBATE'),
+            'o modelo de desenvolvimento brasileiro das primeiras decadas do seculo xxi aportes para o debate'
+        )
+
+    def test_book_title_for_deduplication_remove_specific_chars(self):
+        self.assertEqual(
+            book_title_for_deduplication(
+                'O MODELO DE DESENVOLVIMENTO BRASILEIRO DAS PRIMEIRAS DÉCADAS DO SÉCULO XXI: APORTES PARA O DEBATE',
+            chars_to_remove=[' ']),
+            'omodelodedesenvolvimentobrasileirodasprimeirasdecadasdoseculoxxiaportesparaodebate'
+        )
+
+    def test_book_title_for_visualization_html_entities_keeps(self):
+        self.assertEqual(
+            book_title_for_visualization(
+                'O MODELO DE DESENVOLVIMENTO BRASILEIRO DAS PRIMEIRAS DÉCADAS DO SÉCULO XXI: &#60; APORTES PARA O DEBATE',
+            keep_alpha_num_space_chars_only=False),
+            'O MODELO DE DESENVOLVIMENTO BRASILEIRO DAS PRIMEIRAS DÉCADAS DO SÉCULO XXI: < APORTES PARA O DEBATE'
+        )
+
+    def test_book_title_for_visualization_non_printable(self):
+        self.assertEqual(
+            book_title_for_visualization(
+                '\tO MODELO DE DESENVOLVIMENTO BRASILEIRO DAS PRIMEIRAS DÉCADAS DO SÉCULO XXI:\n APORTES PARA O DEBATE'),
+            'O MODELO DE DESENVOLVIMENTO BRASILEIRO DAS PRIMEIRAS DÉCADAS DO SÉCULO XXI APORTES PARA O DEBATE'
+        )
+
+    def test_book_title_for_visualization_alpha_num_spaces(self):
+        self.assertEqual(
+            book_title_for_visualization(
+                'O MODELO DE DESENVOLVIMENTO BRASILEIRO DAS PRIMEIRAS DÉCADAS DO SÉCULO XXI: &#60; APORTES PARA O DEBATE'),
+            'O MODELO DE DESENVOLVIMENTO BRASILEIRO DAS PRIMEIRAS DÉCADAS DO SÉCULO XXI APORTES PARA O DEBATE'
+        )
+
+    def test_book_title_for_visualization_double_spaces(self):
+        self.assertEqual(
+            book_title_for_visualization(
+                '  O  MODELO DE DESENVOLVIMENTO BRASILEIRO DAS PRIMEIRAS   DÉCADAS DO SÉCULO XXI:  APORTES PARA O  DEBATE'),
+            'O MODELO DE DESENVOLVIMENTO BRASILEIRO DAS PRIMEIRAS DÉCADAS DO SÉCULO XXI APORTES PARA O DEBATE'
+        )
+
+    def test_book_title_for_visualization_remove_pointing_at_end(self):
+        self.assertEqual(
+            book_title_for_visualization(
+                'O MODELO DE DESENVOLVIMENTO BRASILEIRO DAS PRIMEIRAS DÉCADAS DO SÉCULO XXI: APORTES PARA O DEBATE,.;'),
+            'O MODELO DE DESENVOLVIMENTO BRASILEIRO DAS PRIMEIRAS DÉCADAS DO SÉCULO XXI APORTES PARA O DEBATE'
+        )
+
+    def test_book_title_for_visualization_remove_specific_chars(self):
+        self.assertEqual(
+            book_title_for_visualization(
+                'O MODELO DE DESENVOLVIMENTO BRASILEIRO DAS PRIMEIRAS DÉCADAS DO SÉCULO XXI: APORTES PARA O DEBATE',
+                chars_to_remove=[' ']),
+            'OMODELODEDESENVOLVIMENTOBRASILEIRODASPRIMEIRASDÉCADASDOSÉCULOXXIAPORTESPARAODEBATE'
+        )
+          
     def test_document_sponsors_html_entities_keeps(self):
         self.assertEqual(
             document_title_for_deduplication('Fundação de Amparo a Pesquisa do Estado de São Paulo &#60; Biota Program', remove_special_char=False),

@@ -194,6 +194,29 @@ def remove_parenthesis(text):
     return text
 
 
+def remove_chars(text, chars_to_remove):
+    """
+        Função para remoção de caracteres específicos, definidos a partir de uma lista.
+
+        Parameters
+        ----------
+        text : str
+            Texto no qual os caracteres específicados serão removidos.
+        chars_to_remove : list
+            Lista de caracteres a serem removidos do texto.
+
+        Returns
+        -------
+        str
+            Texto com os caracteres especificados removidos.
+        """
+    text_aux = []
+    for c in text:
+        if c not in chars_to_remove:
+            text_aux.append(c)
+    return ''.join(text_aux)
+
+
 def convert_to_iso_date(text, day='01', month='01', only_year=False):
     """
     Função para a padronização de datas no formato ISO YYYY-MM-DD.
@@ -321,3 +344,23 @@ def order_name_and_surname(text, surname_first=True):
     else:
         text = ''.join([name, ' ', surname])
     return text
+
+def check_sum_orcid(orcid_number):
+    """
+        Função para verificar a validade de um regitro ORCID por meio do dígito verificador.
+        Parameters
+        ----------
+        orcid_number : str
+            Número de registro a ser verificado.
+
+        Returns
+        -------
+        bool
+            Retorna True caso o registro seja válido ou False caso contrário.
+        """
+    sub_calculation = 0
+    for number in orcid_number[:-1]:
+        sub_calculation = (sub_calculation + int(number)) * 2
+    verifying_digit = (12 - (sub_calculation % 11)) % 11
+    if verifying_digit == 10: verifying_digit = 'X'
+    return str(verifying_digit) == orcid_number[-1]

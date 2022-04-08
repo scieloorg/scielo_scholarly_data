@@ -5,12 +5,15 @@ PATTERN_PARENTHESIS = re.compile(r'[-a-zA-ZÀ-ÖØ-öø-ÿ|0-9]*\([-a-zA-ZÀ-Ö�
 
 PATTERN_DATE = r'(\d+)([a-zA-Z]*)(\d+)'
 
+PATTERN_ORCID = r'(.*)(\d{4}-\d{4}-\d{4}-\d{3}[\d|X|x])(.*)'
+
 # https://www.crossref.org/blog/dois-and-matching-regular-expressions/ (accessed on 2021/08/31)
 PATTERNS_DOI = [re.compile(pd) for pd in [
     r'10.\d{4,9}/[-._;()/:A-Z0-9]+$',
     r'10.1002/[^\s]+$',
     r'10.\d{4}/\d+-\d+X?(\d+)\d+<[\d\w]+:[\d\w]*>\d+.\d+.\w+;\d$',
-    r'10.1207/[\w\d]+\&\d+_\d+$']
+    r'10.1207/[\w\d]+\&\d+_\d+$',
+    r'10.\d{4,9}/[-._;()/:a-zA-Z0-9]*']
 ]
 
 # https://en.wikipedia.org/wiki/International_Standard_Serial_Number (accessed on 2021/08/31)
@@ -42,7 +45,7 @@ PUNCTUATION_TO_REMOVE_FROM_TITLE_VISUALIZATION = {
     ' '
 }
 
-PUNCTUATION_TO_KEEP_IN_AUTHOR_VISUALIZATION = {
+PUNCTUATION_TO_KEEP_IN_PERSONS_NAME_VISUALIZATION = {
     ','
 }
 
