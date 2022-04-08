@@ -497,49 +497,6 @@ def document_author_for_deduplication(text: str, surname_first=True, chars_to_re
     return text
 
 
-def orcid_validator(text: str, return_mode='uri'):
-    """
-        Função para verificar e padronizar um registro ORCID.
-
-        Parameters
-        ----------
-        text : str
-            Registro ORCID a ser validado e padronizado.
-        return_mode : str
-            Define qual a informação que será retornada host, path ou uri (default).
-
-        Returns
-        -------
-        str ou error
-
-        Exemplo:
-            uri: https://orcid.org/0000-0002-1825-0097.
-            path: 0000-0002-1825-0097.
-            host: orcid.org.
-        """
-    orcid = urlparse(text)
-    matched_orcid = re.match(PATTERN_ORCID, orcid.path)
-    if not matched_orcid:
-        return {'error' : 'invalid format'}
-    path = keep_alpha_num_space(matched_orcid.groups()[1], replace_with='')
-    if not check_sum_orcid(path):
-        return {'error' : 'invalid checksum'}
-    if orcid.scheme == '':
-        scheme = 'https'
-    else:
-        scheme = orcid.scheme
-    if orcid.netloc == '':
-        hostname = 'orcid.org'
-    else:
-        hostname = orcid.netloc
-    if return_mode == 'uri':
-        return scheme + '://' + hostname + '/' + matched_orcid.groups()[1]
-    if return_mode == 'path':
-        return matched_orcid.groups()[1]
-    if return_mode == 'host':
-        return hostname
-
-
 def book_title_for_deduplication(text: str, keep_alpha_num_space_chars_only=True, chars_to_remove=[]):
     """
     Função para padronizar títulos de livros de acordo com os seguinte métodos, por ordem:
@@ -689,6 +646,91 @@ def book_editor_name_for_deduplication(text: str, keep_alpha_num_space_only=True
     text = text.lower()
     return text
 
+  
+def orcid_validator(text: str, return_mode='uri'):
+    """
+        Função para verificar e padronizar um registro ORCID.
+
+        Parameters
+        ----------
+        text : str
+            Registro ORCID a ser validado e padronizado.
+        return_mode : str
+            Define qual a informação que será retornada host, path ou uri (default).
+
+        Returns
+        -------
+        str ou error
+
+        Exemplo:
+            uri: https://orcid.org/0000-0002-1825-0097.
+            path: 0000-0002-1825-0097.
+            host: orcid.org.
+        """
+    orcid = urlparse(text)
+    matched_orcid = re.match(PATTERN_ORCID, orcid.path)
+    if not matched_orcid:
+        return {'error' : 'invalid format'}
+    path = keep_alpha_num_space(matched_orcid.groups()[1], replace_with='')
+    if not check_sum_orcid(path):
+        return {'error' : 'invalid checksum'}
+    if orcid.scheme == '':
+        scheme = 'https'
+    else:
+        scheme = orcid.scheme
+    if orcid.netloc == '':
+        hostname = 'orcid.org'
+    else:
+        hostname = orcid.netloc
+    if return_mode == 'uri':
+        return scheme + '://' + hostname + '/' + matched_orcid.groups()[1]
+    if return_mode == 'path':
+        return matched_orcid.groups()[1]
+    if return_mode == 'host':
+        return hostname
+  
+
+def document_sponsors(text: str, remove_special_char=True):
+    """
+    Função para padronizar o nome de patrocinadores de documentos de acordo com os seguinte métodos, por ordem:
+        1. Converte códigos HTML para caracteres Unicode;
+        2. Mantém caracteres alfanuméricos e espaço;
+        3. Remove caracteres non printable;
+        4. Remove espaços duplos;
+        5. Remove pontuação no final do título;
+        6. Remove espaços nas extremidades do título;
+        7. Remove acentos;
+        8. Converte os caracteres para caixa baixa.
+
+    Parameters
+    ----------
+    text : str
+        Título do documento a ser padronizado.
+    remove_char : bool, default True
+        Valor lógico que indica se as entidades HTML e os caracteres especiais devem ser mantidos ou retirados.
+
+    Returns
+    -------
+    str
+        Título padronizado do documento.
+    """
+
+    text = unescape(text)
+    if remove_special_char:
+        text = keep_alpha_num_space(text)
+    text = remove_non_printable_chars(text)
+    text = remove_double_spaces(text)
+    text = remove_end_punctuation_chars(text)
+    text = text.strip()
+    text = remove_accents(text)
+    text = text.lower()
+    return text
+
+
+def book_title(text: str):
+    pass  
+
+  
 def book_editor_address(text: str):
     pass
 
