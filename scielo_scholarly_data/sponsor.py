@@ -156,3 +156,43 @@ def search_sponsors_by_semantic_similarity(name, sponsors):
         result.append(d)
 
     return result
+
+def get_sponsor_names(name, sponsors, method="jaccard"):
+    """
+    Procedimento para obter o nome completo e o acrônimo do financiador de uma pesquisa,
+    a partir da escolha de um método específico (jaccard ou semantic).
+
+    Parameters
+    ----------
+    name : str
+        Nome da instituição financiadora, da forma que foi declarada, para padronização.
+    sponsors : list
+        Uma lista de dicionários nos quais a chave "text" descreve as possíveis combinações de nome e acrônimo.
+    method : str
+        "jaccard" - similaridade de Jaccard
+        "semantic" - similaridade semântica textual
+
+    Returns
+    -------
+    list
+        Uma lista ordenada de dicionários nos quais os nomes e acrônimos são associados a uma medida de similaridade.
+        [{
+            "standard_name": "Conselho Nacional de Desenvolvimento Científico e Tecnológico",
+            "standard_acronym": "CNPq",
+            "score": 1.0
+        },
+        {
+            "standard_name": "Coordenação de Aperfeiçoamento de Pessoal de Nível Superior",
+            "standard_acronym": "CAPES",
+            "score": 0.01
+        },
+        {
+            "standard_name": "Fundação de Amparo à Pesquisa do Estado de São Paulo",
+            "standard_acronym": "FAPESP",
+            "score": 0.05
+        }]
+    """
+    if method == 'jaccard':
+        return search_sponsors_by_jaccard_similarity(name, sponsors)
+    else:
+        return search_sponsors_by_semantic_similarity(name, sponsors)
