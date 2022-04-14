@@ -5,8 +5,55 @@ import kshingle as ks
 
 
 def get_similar(name, standard_names):
+def make_standard_sponsor(sponsor):
     """
-    Procedimento para obter o nome completo e o acrônimo do financiador de uma pesquisa.
+    Função para montar uma lista de dicionários a partir de uma string que descreve o nome de um financiador e seu acrônimo.
+
+    Parameters
+    ----------
+    sponsor : str
+        Nome e acrônimo padronizados de um financiador.
+        Exemplo:
+            "Conselho Nacional de Desenvolvimento Científico e Tecnológico,CNPq"
+
+    Returns
+    -------
+    list
+        Uma lista de dicionários nos quais a chave "text" descreve as possíveis combinações de nome e acrônimo.
+        [{
+            "text": "Conselho Nacional de Desenvolvimento Científico e Tecnológico CNPq",
+            "name": "Conselho Nacional de Desenvolvimento Científico",
+            "acronym": "CNPq"
+        },
+        {
+            "text": "Conselho Nacional de Desenvolvimento Científico e Tecnológico",
+            "name": "Conselho Nacional de Desenvolvimento Científico",
+            "acronym": "CNPq"
+        },
+        {
+            "text": "CNPq",
+            "name": "Conselho Nacional de Desenvolvimento Científico",
+            "acronym": "CNPq"
+        }]
+    """
+    result = [
+        {
+            "text": sponsor.split(',')[0] + " " + sponsor.split(',')[1],
+            "name": sponsor.split(',')[0],
+            "acronym": sponsor.split(',')[1]
+        },
+        {
+            "text": sponsor.split(',')[0],
+            "name": sponsor.split(',')[0],
+            "acronym": sponsor.split(',')[1]
+        },
+        {
+            "text": sponsor.split(',')[1],
+            "name": sponsor.split(',')[0],
+            "acronym": sponsor.split(',')[1]
+        }
+    ]
+    return result
 
     Parameters
     ----------
