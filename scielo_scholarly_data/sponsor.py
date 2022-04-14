@@ -55,25 +55,50 @@ def make_standard_sponsor(sponsor):
     ]
     return result
 
+def search_sponsors_by_jaccard_similarity(name, sponsors):
+    """
+    Procedimento para obter o nome completo e o acrônimo do financiador de uma pesquisa,
+    considerando o coeficiente de similaridade de Jaccard
+
     Parameters
     ----------
-    standard_names : tuple
-        Nome completo e acrônimo padronizado.
     name : str
-        Texto não padronizado.
+        Nome da instituição financiadora, da forma que foi declarada, para padronização.
+    sponsors : list
+        Uma lista de dicionários nos quais a chave "text" descreve as possíveis combinações de nome e acrônimo.
 
     Returns
     -------
-    tuple
-        1º elemento: texto de entrada tratado
-        2º elemento: nome completo padronizado
-        3º elemento: acrônimo padronizado
+    list
+        Uma lista ordenada de dicionários nos quais os nomes e acrônimos são associados a uma medida de similaridade.
+        [{
+            "standard_name": "Conselho Nacional de Desenvolvimento Científico e Tecnológico",
+            "standard_acronym": "CNPq",
+            "score": 1.0
+        },
+        {
+            "standard_name": "Coordenação de Aperfeiçoamento de Pessoal de Nível Superior",
+            "standard_acronym": "CAPES",
+            "score": 0.01
+        },
+        {
+            "standard_name": "Fundação de Amparo à Pesquisa do Estado de São Paulo",
+            "standard_acronym": "FAPESP",
+            "score": 0.05
+        }]
     """
     name = standardizer.document_sponsors(name)
-    for standard_name in standard_names:
-        if len(name) > 0 and ks.jaccard_strings(standardizer.document_sponsors(standard_name), name, k=2) > 0.75:
-            return name, standard_names[0], standard_names[1]
-    return name, "", ""
+    if len(name) > 0:
+        result = []
+        for sponsor in sponsors:
+            jaccard_index = ks.jaccard_strings(standardizer.document_sponsors(sponsor["text"]), name, k=2)
+            d = {
+                "standard_name": sponsor["name"],
+                "standard_acronym": sponsor["acronym"],
+                "score": jaccard_index
+            }
+            result.append(d)
+        return sorted(result, key=itemgetter('score'), reverse=True)
 
 
 def get_sponsor_names(name, pairs):
