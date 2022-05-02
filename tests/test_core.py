@@ -166,6 +166,12 @@ class TestCore(unittest.TestCase):
             None
         )
 
+    def test_convert_to_iso_date_nondate_value(self):
+        self.assertEqual(
+            convert_to_iso_date('200W'),
+            None
+        )
+
     def test_check_sum_orcid(self):
         orcids = {
             '0000000925158361': True,
