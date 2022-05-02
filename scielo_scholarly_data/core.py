@@ -270,7 +270,7 @@ def convert_to_iso_date(text, day='01', month='01', only_year=False):
                         month = MONTHS_DICT[month]
                         #Tenta converter a data tratada
                         text = parse('-'.join([year, month, day])).date()
-                except (ValueError, IndexError, AttributeError):
+                except (ValueError, IndexError, AttributeError, KeyError):
                     return None
             else:
                 try:
