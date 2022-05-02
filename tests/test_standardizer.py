@@ -86,7 +86,7 @@ class TestStandardizer(unittest.TestCase):
             'Agrociencia & (Uruguay)'
         )
 
-    def test_journal_title_for_visualization_remove_nonprintable_char(self):>>>>>>> main
+    def test_journal_title_for_visualization_remove_nonprintable_char(self):
         self.assertEqual(
             journal_title_for_visualization('Agrociencia (Uruguay)\n'),
             'Agrociencia (Uruguay)'
