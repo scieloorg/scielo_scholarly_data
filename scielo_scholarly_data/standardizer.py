@@ -31,8 +31,6 @@ from scielo_scholarly_data.values import (
 from scielo_scholarly_data.helpers import is_valid_issn
 from urllib.parse import urlparse
 
-from urllib.parse import urlparse
-
 
 def journal_title_for_deduplication(text: str, words_to_remove=JOURNAL_TITLE_SPECIAL_WORDS,
                                     keep_parenthesis_content=True, chars_to_remove=[]):
