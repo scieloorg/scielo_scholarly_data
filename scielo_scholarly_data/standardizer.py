@@ -25,11 +25,10 @@ from scielo_scholarly_data.values import (
     PATTERN_ORCID,
     PATTERN_PAGE_RANGE,
     PUNCTUATION_TO_DEFINE_PAGE_RANGE,
+    PUNCTUATION_TO_KEEP_IN_PERSONS_NAME_VISUALIZATION,
 )
 
 from scielo_scholarly_data.helpers import is_valid_issn
-from urllib.parse import urlparse
-
 from urllib.parse import urlparse
 
 
