@@ -13,7 +13,6 @@ from scielo_scholarly_data.core import (
 )
 
 import unittest
-from dateutil.parser import parse
 
 
 class TestCore(unittest.TestCase):
