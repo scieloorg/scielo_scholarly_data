@@ -872,6 +872,7 @@ class TestStandardizer(unittest.TestCase):
         self.assertEqual(
             book_editor_name_for_visualization('Editora da Universidade Estadual de São Paulo.,;.;'),
             'Editora da Universidade Estadual de São Paulo'
+        )
 
     def test_book_title_for_deduplication_html_entities_keeps(self):
         self.assertEqual(
