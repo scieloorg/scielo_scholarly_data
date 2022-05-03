@@ -237,6 +237,9 @@ def convert_to_iso_date(text, day='01', month='01', only_year=False):
     data-type
         Data padronizada, que pode ser apenas o ano ou a data completa.
     """
+    # Verifica primeiro se text representa um mes presente no dicionario de meses
+    if text.lower().strip() in MONTHS_DICT.keys():
+        text = MONTHS_DICT[text.lower().strip()]
 
     # Verifica se a data é composta apenas pelo ano retornando 'dia' e 'mês' da acordo com os valores recebidos como parâmetros
     if text.isdigit() and len(text) <= 4:
