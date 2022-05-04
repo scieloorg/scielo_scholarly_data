@@ -129,7 +129,8 @@ def issue_volume(text: str):
         2) Remove caracteres especiais;
         3) Remove espaços duplos;
         4) Remove pontuação no final do número;
-        5) Remove espaços nas extremidades do número.
+        5) Remove espaços nas extremidades do número;
+        6) Remove caracteres alfabéticos.
 
     Parameters
     ----------
@@ -147,7 +148,12 @@ def issue_volume(text: str):
     text = remove_double_spaces(text)
     text = remove_end_punctuation_chars(text)
     text = text.strip()
-    return text
+    result = []
+    for char in text:
+        if char.isnumeric():
+            result.append(char)
+
+    return ''.join(result)
 
 
 def issue_number(text: str):
