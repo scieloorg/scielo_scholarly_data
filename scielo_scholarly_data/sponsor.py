@@ -8,7 +8,7 @@ from operator import itemgetter
 
 model = SentenceTransformer('scielo_scholarly_data/stmodels/paraphrase-multilingual-MiniLM-L12-v2')
 
-def make_standard_sponsor(sponsor):
+def make_standard_sponsor(name, acron):
     """
     Função para montar uma lista de dicionários a partir de uma string que descreve o nome de um financiador e seu acrônimo.
 
@@ -41,19 +41,19 @@ def make_standard_sponsor(sponsor):
     """
     result = [
         {
-            "text": sponsor.split(',')[0] + " " + sponsor.split(',')[1],
-            "name": sponsor.split(',')[0],
-            "acronym": sponsor.split(',')[1]
+            "text": name + " " + acron,
+            "name": name,
+            "acronym": acron
         },
         {
-            "text": sponsor.split(',')[0],
-            "name": sponsor.split(',')[0],
-            "acronym": sponsor.split(',')[1]
+            "text": name,
+            "name": name,
+            "acronym": acron
         },
         {
-            "text": sponsor.split(',')[1],
-            "name": sponsor.split(',')[0],
-            "acronym": sponsor.split(',')[1]
+            "text": acron,
+            "name": name,
+            "acronym": acron
         }
     ]
     return result
