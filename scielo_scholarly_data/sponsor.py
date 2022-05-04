@@ -59,7 +59,7 @@ def make_standard_sponsor(name, acron):
     return result
 
 
-def search_sponsors_by_jaccard_similarity(name, sponsors):
+def search_sponsors_by_jaccard_similarity(not_standard_name, sponsors):
     """
     Procedimento para obter o nome completo e o acrônimo do financiador de uma pesquisa,
     considerando o coeficiente de similaridade de Jaccard
@@ -91,11 +91,11 @@ def search_sponsors_by_jaccard_similarity(name, sponsors):
             "score": 0.05
         }]
     """
-    name = standardizer.document_sponsors(name)
-    if len(name) > 0:
+    not_standard_name = standardizer.document_sponsors(not_standard_name)
+    if len(not_standard_name) > 0:
         result = []
         for sponsor in sponsors:
-            jaccard_index = ks.jaccard_strings(standardizer.document_sponsors(sponsor["text"]), name, k=2)
+            jaccard_index = ks.jaccard_strings(standardizer.document_sponsors(sponsor["text"]), not_standard_name, k=2)
             d = {
                 "standard_name": sponsor["name"],
                 "standard_acronym": sponsor["acronym"],
@@ -105,7 +105,7 @@ def search_sponsors_by_jaccard_similarity(name, sponsors):
         return sorted(result, key=itemgetter('score'), reverse=True)
 
 
-def search_sponsors_by_semantic_similarity(name, sponsors):
+def search_sponsors_by_semantic_similarity(not_standardize_name, sponsors):
     """
     Procedimento para obter o nome completo e o acrônimo do financiador de uma pesquisa,
     considerando a similaridade baseada em semântica textual.
@@ -138,7 +138,7 @@ def search_sponsors_by_semantic_similarity(name, sponsors):
             "score": 0.05
         }]
     """
-    query_embedding = model.encode(name, convert_to_tensor=True)
+    query_embedding = model.encode(not_standardize_name, convert_to_tensor=True)
     texts = [item["text"] for item in sponsors]
     corpus_embeddings = model.encode(texts, convert_to_tensor=True)
     search_hits = util.semantic_search(query_embedding, corpus_embeddings)
