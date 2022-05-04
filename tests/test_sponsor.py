@@ -5,7 +5,7 @@ import unittest
 class TestSponsor(unittest.TestCase):
     def test_search_sponsors_by_jaccard_similarity(self):
         standard_name = "Conselho Nacional de Desenvolvimento Científico e Tecnológico,CNPq"
-        standard_names = sponsor.make_standard_sponsor(standard_name)
+        standard_names = sponsor.make_standard_sponsor(standard_name.split(',')[0], standard_name.split(',')[1])
         name = "Conselho Nacional de Desenvolvimento Científico e Tecnológico"
         result = sponsor.search_sponsors_by_jaccard_similarity(name, standard_names)
         self.assertEqual(
@@ -26,7 +26,7 @@ class TestSponsor(unittest.TestCase):
 
     def test_search_sponsors_by_semantic_similarity(self):
         standard_name = "Conselho Nacional de Desenvolvimento Científico e Tecnológico,CNPq"
-        standard_names = sponsor.make_standard_sponsor(standard_name)
+        standard_names = sponsor.make_standard_sponsor(standard_name.split(',')[0], standard_name.split(',')[1])
         name = "Conselho Nacional de Desenvolvimento Científico e Tecnológico"
         result = sponsor.search_sponsors_by_semantic_similarity(name, standard_names)
         self.assertEqual(
