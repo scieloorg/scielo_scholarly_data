@@ -532,8 +532,8 @@ class TestStandardizer(unittest.TestCase):
         issues = {
             '&96':'96',
             '$96':'96',
-            '@96a':'96a',
-            '!96a':'96a'
+            '@96a':'96',
+            '!96a':'96'
         }
         expected_values = list(issues.values())
         obtained_values = [issue_volume(num) for num in issues]
@@ -544,8 +544,8 @@ class TestStandardizer(unittest.TestCase):
         issues = {
             '\n96':'96',
             '96\t':'96',
-            '96\aa':'96a',
-            '9\n6a':'96a'
+            '96\aa':'96',
+            '9\n6a':'96'
         }
         expected_values = list(issues.values())
         obtained_values = [issue_volume(num) for num in issues]
@@ -556,8 +556,8 @@ class TestStandardizer(unittest.TestCase):
         issues = {
             ' 96':'96',
             '96  ':'96',
-            '96 a ':'96 a',
-            ' 96 a':'96 a'
+            '96 a ':'96',
+            ' 96 a':'96'
         }
         expected_values = list(issues.values())
         obtained_values = [issue_volume(num) for num in issues]
@@ -568,8 +568,8 @@ class TestStandardizer(unittest.TestCase):
         issues = {
             '(96)':'96',
             '9(6)':'96',
-            '96(a)':'96a',
-            '(96)a':'96a'
+            '96(a)':'96',
+            '(96)a':'96'
         }
         expected_values = list(issues.values())
         obtained_values = [issue_volume(num) for num in issues]
@@ -580,8 +580,20 @@ class TestStandardizer(unittest.TestCase):
         issues = {
             '(96).':'96',
             '9(6);':'96',
-            '96(a),':'96a',
-            '(96)a .':'96a'
+            '96(a),':'96',
+            '(96)a .':'96'
+        }
+        expected_values = list(issues.values())
+        obtained_values = [issue_volume(num) for num in issues]
+
+        self.assertListEqual(expected_values, obtained_values)
+
+    def test_issue_volume_with_alpha_chars(self):
+        issues = {
+            'v. 12': '12',
+            'vol.: 12': '12',
+            '12 v.': '12',
+            'Volume  12': '12',
         }
         expected_values = list(issues.values())
         obtained_values = [issue_volume(num) for num in issues]
