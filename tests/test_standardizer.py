@@ -532,11 +532,11 @@ class TestStandardizer(unittest.TestCase):
         issues = {
             '&96':'96',
             '$96':'96',
-            '@96a':'96',
-            '!96a':'96'
+            '@96a':'96a',
+            '!96a':'96a'
         }
         expected_values = list(issues.values())
-        obtained_values = [issue_volume(num) for num in issues]
+        obtained_values = [issue_volume(num, force_integer=False) for num in issues]
 
         self.assertListEqual(expected_values, obtained_values)
 
@@ -544,11 +544,11 @@ class TestStandardizer(unittest.TestCase):
         issues = {
             '\n96':'96',
             '96\t':'96',
-            '96\aa':'96',
-            '9\n6a':'96'
+            '96\aa':'96a',
+            '9\n6a':'96a'
         }
         expected_values = list(issues.values())
-        obtained_values = [issue_volume(num) for num in issues]
+        obtained_values = [issue_volume(num, force_integer=False) for num in issues]
 
         self.assertListEqual(expected_values, obtained_values)
 
@@ -556,11 +556,11 @@ class TestStandardizer(unittest.TestCase):
         issues = {
             ' 96':'96',
             '96  ':'96',
-            '96 a ':'96',
-            ' 96 a':'96'
+            '96 a ':'96 a',
+            ' 96 a':'96 a'
         }
         expected_values = list(issues.values())
-        obtained_values = [issue_volume(num) for num in issues]
+        obtained_values = [issue_volume(num, force_integer=False) for num in issues]
 
         self.assertListEqual(expected_values, obtained_values)
 
@@ -568,11 +568,11 @@ class TestStandardizer(unittest.TestCase):
         issues = {
             '(96)':'96',
             '9(6)':'96',
-            '96(a)':'96',
-            '(96)a':'96'
+            '96(a)':'96a',
+            '(96)a':'96a'
         }
         expected_values = list(issues.values())
-        obtained_values = [issue_volume(num) for num in issues]
+        obtained_values = [issue_volume(num, force_integer=False) for num in issues]
 
         self.assertListEqual(expected_values, obtained_values)
 
@@ -580,11 +580,11 @@ class TestStandardizer(unittest.TestCase):
         issues = {
             '(96).':'96',
             '9(6);':'96',
-            '96(a),':'96',
-            '(96)a .':'96'
+            '96(a),':'96a',
+            '(96)a .':'96a'
         }
         expected_values = list(issues.values())
-        obtained_values = [issue_volume(num) for num in issues]
+        obtained_values = [issue_volume(num, force_integer=False) for num in issues]
 
         self.assertListEqual(expected_values, obtained_values)
 
@@ -597,6 +597,18 @@ class TestStandardizer(unittest.TestCase):
         }
         expected_values = list(issues.values())
         obtained_values = [issue_volume(num) for num in issues]
+
+        self.assertListEqual(expected_values, obtained_values)
+
+    def test_issue_volume_with_romans(self):
+        issues = {
+            'vol.: V': 'vol 5',
+            'vol.: XXc': 'vol 20c',
+            'XII v.': '12 v',
+            'volume  XIIv': 'volume 12v',
+        }
+        expected_values = list(issues.values())
+        obtained_values = [issue_volume(num, force_integer=False, convert_romans=True) for num in issues]
 
         self.assertListEqual(expected_values, obtained_values)
 
