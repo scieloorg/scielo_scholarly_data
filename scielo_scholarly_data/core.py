@@ -321,3 +321,38 @@ def order_name_and_surname(text, surname_first=True):
     else:
         text = ''.join([name, ' ', surname])
     return text
+
+
+def roman_to_int(roman):
+    """
+    Função para converter um número romano no correspondente indo-arábico.
+    Parameters
+    ----------
+    roman : str
+        Número romano.
+
+    Returns
+    -------
+    str
+        Número inteiro.
+
+    Fonte: adaptado de https://wiki.python.org.br/NumerosRomanos
+    """
+    roman = roman.upper()
+    nums = {'M': 1000, 'D': 500, 'C': 100, 'L': 50, 'X': 10, 'V': 5, 'I': 1}
+
+    sum = 0
+    for i in range(len(roman)):
+        try:
+            value = nums[roman[i]]
+            if i + 1 < len(roman) and nums[roman[i + 1]] > value:
+                sum -= value
+            else:
+                sum += value
+        except KeyError:
+            return
+
+    if int_to_roman(sum) == roman:
+        return sum
+    else:
+        return
