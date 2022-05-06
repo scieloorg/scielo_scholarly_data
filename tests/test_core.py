@@ -1,4 +1,5 @@
 from scielo_scholarly_data.core import (
+    check_sum_orcid,
     convert_to_iso_date,
     keep_alpha_num_space,
     remove_accents,
@@ -6,12 +7,12 @@ from scielo_scholarly_data.core import (
     remove_non_printable_chars,
     remove_parenthesis,
     remove_end_punctuation_chars,
+    remove_chars,
     remove_words,
     unescape
 )
 
 import unittest
-from dateutil.parser import parse
 
 
 class TestCore(unittest.TestCase):
@@ -77,6 +78,12 @@ class TestCore(unittest.TestCase):
         self.assertEqual(
             remove_parenthesis('This is a text with (parenthesis) to remove'),
             'This is a text with to remove'
+        )
+
+    def test_remove_chars(self):
+        self.assertEqual(
+            remove_chars('This is a text with chars to remove', [' ']),
+            'Thisisatextwithcharstoremove'
         )
 
     def test_remove_words(self):
@@ -159,6 +166,24 @@ class TestCore(unittest.TestCase):
             None
         )
 
+    def test_convert_to_iso_date_nondate_value(self):
+        self.assertEqual(
+            convert_to_iso_date('200W'),
+            None
+        )
+
+    def test_check_sum_orcid(self):
+        orcids = {
+            '0000000925158361': True,
+            '0000000955138362': False,
+            '000000071302576X': True,
+            '0000000157937897': False
+        }
+        expected_values = list(orcids.values())
+        obtained_values = [check_sum_orcid(register) for register in orcids]
+
+        self.assertListEqual(expected_values, obtained_values)
+
     def test_roman_to_int(self):
         nums = {
             'XX': '20',
@@ -182,3 +207,4 @@ class TestCore(unittest.TestCase):
         obtained_values = [str(int_to_roman(romans)) for romans in nums]
 
         self.assertListEqual(expected_values, obtained_values)
+        
