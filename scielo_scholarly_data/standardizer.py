@@ -12,6 +12,7 @@ from scielo_scholarly_data.core import (
     remove_words,
     order_name_and_surname,
     unescape,
+    roman_to_int,
 )
 
 from scielo_scholarly_data.values import (
@@ -122,7 +123,7 @@ def journal_issn(text, use_issn_validator=False):
         return text.upper()
 
 
-def issue_volume(text: str):
+def issue_volume(text: str, force_integer=True, convert_romans=False):
     """
     Procedimento que padroniza o número do volume do periódico de acordo com os seguintes métodos, por ordem:
         1) Remove caracteres non printable;
@@ -130,12 +131,17 @@ def issue_volume(text: str):
         3) Remove espaços duplos;
         4) Remove pontuação no final do número;
         5) Remove espaços nas extremidades do número;
-        6) Remove caracteres alfabéticos.
+        6) Remove caracteres alfabéticos (opcional);
+        7) Transforma números romanos em indo-arábicos (opcional).
 
     Parameters
     ----------
     text : str
         Caracteres que representam o número do volume do periódico.
+    force_integer : bool
+        Valor lógico para a manutenção de apenas caracteres numéricos, default True.
+    convert_romans : bool
+        Valor lógico para a conversão de número romano em indo-arábico, default False.
 
     Returns
     -------
@@ -148,12 +154,25 @@ def issue_volume(text: str):
     text = remove_double_spaces(text)
     text = remove_end_punctuation_chars(text)
     text = text.strip()
-    result = []
-    for char in text:
-        if char.isnumeric():
-            result.append(char)
 
-    return ''.join(result)
+    if convert_romans:
+        result = []
+        romans = ['M', 'D', 'C', 'L', 'X', 'V', 'I']
+        for char in text:
+            if char in romans:
+                result.append(char)
+        integer = str(roman_to_int(''.join(result)))
+        roman = ''.join(result)
+        text =  text.replace(roman, integer)
+
+    if force_integer:
+        result = []
+        for char in text:
+            if char.isnumeric():
+                result.append(char)
+        text = ''.join(result)
+
+    return text
 
 
 def issue_number(text: str):
