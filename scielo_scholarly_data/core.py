@@ -356,3 +356,31 @@ def roman_to_int(roman):
         return sum
     else:
         return
+
+
+def int_to_roman(integer):
+    """
+    Função para converter um número indo-arábico no correspondente romano.
+    Parameters
+    ----------
+    integer : str
+        Número romano.
+
+    Returns
+    -------
+    str
+        Número inteiro.
+
+    Fonte: adaptado de https://wiki.python.org.br/NumerosRomanos
+    """
+    if not type(integer) == int and not 0 < integer < 4000:
+        return
+    ints = (1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1)
+    nums = ('M', 'CM', 'D', 'CD', 'C', 'XC', 'L', 'XL', 'X', 'IX', 'V', 'IV', 'I')
+    result = []
+
+    for i in range(len(ints)):
+        count = int(integer / ints[i])
+        result.append(nums[i] * count)
+        integer -= ints[i] * count
+    return ''.join(result)
