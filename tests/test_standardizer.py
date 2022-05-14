@@ -12,7 +12,8 @@ from scielo_scholarly_data.standardizer import (
     journal_title_for_deduplication,
     journal_title_for_visualization,
     issue_number,
-    issue_volume
+    issue_volume,
+    InvalidRomanNumeralError
 )
 
 import unittest
@@ -567,9 +568,9 @@ class TestStandardizer(unittest.TestCase):
     def test_issue_volume_with_parenthesis(self):
         issues = {
             '(96)':'96',
-            '9(6)':'96',
-            '96(a)':'96a',
-            '(96)a':'96a'
+            '9(6)':'9 6',
+            '96(a)':'96 a',
+            '(96)a':'96 a'
         }
         expected_values = list(issues.values())
         obtained_values = [issue_volume(num, force_integer=False) for num in issues]
@@ -579,9 +580,9 @@ class TestStandardizer(unittest.TestCase):
     def test_issue_volume_remove_points_at_end(self):
         issues = {
             '(96).':'96',
-            '9(6);':'96',
-            '96(a),':'96a',
-            '(96)a .':'96a'
+            '9(6);':'9 6',
+            '96(a),':'96 a',
+            '(96)a .':'96 a'
         }
         expected_values = list(issues.values())
         obtained_values = [issue_volume(num, force_integer=False) for num in issues]
@@ -590,10 +591,16 @@ class TestStandardizer(unittest.TestCase):
 
     def test_issue_volume_with_alpha_chars(self):
         issues = {
-            'v. 12': '12',
-            'vol.: 12': '12',
-            '12 v.': '12',
-            'Volume  12': '12',
+            '& Cognition, 34': '34',
+            '&#8226;&#8226;&#8226;': None,
+            '&#8239;v.50': '50',
+            '( Suppl)78': '78',
+            '(1-2)': '1',
+            '(11)suppl.16': '11',
+            '(2)8(4)1875[1876]': '2',
+            ', 13(1)': '13',
+            ', Campinas, 13': '13',
+            'Número do volume': None,
         }
         expected_values = list(issues.values())
         obtained_values = [issue_volume(num) for num in issues]
@@ -602,15 +609,26 @@ class TestStandardizer(unittest.TestCase):
 
     def test_issue_volume_with_romans(self):
         issues = {
-            'vol.: V': 'vol 5',
-            'vol.: XXc': 'vol 20c',
-            'XII v.': '12 v',
-            'volume  XIIv': 'volume 12v',
+            'vol.: V': '5',
+            'XII v.': '12',
+            'volume  XII v': '12',
+            ', II, III, IV e IV': '2',
+            '122(16 Suppl 2)': '122',
+            'Basel), 39': '39',
+            'C 42C 42': '42',
+            'CXXVIII-CXXIX': '128',
+            'Coleção Ehila v. 34': '34',
         }
         expected_values = list(issues.values())
-        obtained_values = [issue_volume(num, force_integer=False, convert_romans=True) for num in issues]
+        obtained_values = [issue_volume(num) for num in issues]
 
         self.assertListEqual(expected_values, obtained_values)
+
+    def test_issue_volume_with_romans_return_error(self):
+        self.assertRaises(
+            InvalidRomanNumeralError,
+            issue_volume, 'vol.: XXc'
+        )
 
     def test_document_title_for_deduplication_html_entities_keeps(self):
         self.assertEqual(
