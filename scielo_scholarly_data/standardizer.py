@@ -24,9 +24,14 @@ from scielo_scholarly_data.values import (
     PUNCTUATION_TO_KEEP_IN_AUTHOR_VISUALIZATION,
     PATTERN_PAGE_RANGE,
     PUNCTUATION_TO_DEFINE_PAGE_RANGE,
+    WORDS_TO_REMOVE_VOLUME_NUMBER,
 )
 
 from scielo_scholarly_data.helpers import is_valid_issn
+
+
+class InvalidRomanNumeralError(Exception):
+    ...
 
 
 def journal_title_for_deduplication(text: str, words_to_remove=JOURNAL_TITLE_SPECIAL_WORDS, keep_parenthesis_content=True):
@@ -123,7 +128,7 @@ def journal_issn(text, use_issn_validator=False):
         return text.upper()
 
 
-def issue_volume(text: str, force_integer=True, convert_romans=False):
+def issue_volume(text: str, force_integer=True):
     """
     Procedimento que padroniza o número do volume do periódico de acordo com os seguintes métodos, por ordem:
         1) Remove caracteres non printable;
@@ -149,31 +154,35 @@ def issue_volume(text: str, force_integer=True, convert_romans=False):
         Número do volume do periódico padronizado.
     """
 
+    text = unescape(text)
     text = remove_non_printable_chars(text)
-    text = keep_alpha_num_space(text, replace_with='')
+    text = keep_alpha_num_space(text, replace_with=' ')
     text = remove_double_spaces(text)
     text = remove_end_punctuation_chars(text)
     text = text.strip()
-
-    if convert_romans:
-        result = []
-        romans = ['M', 'D', 'C', 'L', 'X', 'V', 'I']
-        for char in text:
-            if char in romans:
-                result.append(char)
-        integer = str(roman_to_int(''.join(result)))
-        roman = ''.join(result)
-        text =  text.replace(roman, integer)
+    #text = remove_words(text, WORDS_TO_REMOVE_VOLUME_NUMBER)
 
     if force_integer:
-        result = []
-        for char in text:
-            if char.isnumeric():
-                result.append(char)
-        text = ''.join(result)
+        romans = ['M', 'D', 'C', 'L', 'X', 'V', 'I']
+        for value in text.split(' '):
+            if value.isnumeric():
+                return value
+        for value in text.split(' '):
+            if value.isalpha():
+                convert_roman = True
+                for char in value:
+                    if char.upper() not in romans:
+                        convert_roman = False
+                        pass
+                if convert_roman:
+                    try:
+                        value = str(roman_to_int(value.upper()))
+                    except:
+                        raise InvalidRomanNumeralError
+                    return value
+        return
 
     return text
-
 
 def issue_number(text: str):
     """
