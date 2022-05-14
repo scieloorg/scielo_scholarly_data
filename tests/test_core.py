@@ -7,7 +7,8 @@ from scielo_scholarly_data.core import (
     remove_parenthesis,
     remove_end_punctuation_chars,
     remove_words,
-    unescape
+    unescape,
+    roman_to_int,
 )
 
 import unittest
@@ -161,24 +162,12 @@ class TestCore(unittest.TestCase):
 
     def test_roman_to_int(self):
         nums = {
-            'XX': '20',
-            'MCMXXII': '1922',
-            'MMXXII': '2022',
-            'MDCIV': '1554'
+            'XX': 20,
+            'MCMXXII': 1922,
+            'MMXXII': 2022,
+            'MDLIV': 1554,
         }
         expected_values = list(nums.values())
-        obtained_values = [str(roman_to_int(ints)) for ints in nums]
-
-        self.assertListEqual(expected_values, obtained_values)
-
-    def test_int_to_roman(self):
-        nums = {
-            '20': 'XX',
-            '1922': 'MCMXXII',
-            '2022': 'MMXXII',
-            '1554': 'MDCIV'
-        }
-        expected_values = list(nums.values())
-        obtained_values = [str(int_to_roman(romans)) for romans in nums]
+        obtained_values = [roman_to_int(ints) for ints in nums]
 
         self.assertListEqual(expected_values, obtained_values)
