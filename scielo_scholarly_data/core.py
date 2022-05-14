@@ -1,6 +1,7 @@
 import html
 import unicodedata
 import re
+import roman
 
 from dateutil.parser import parse
 from scielo_scholarly_data.values import (
@@ -323,7 +324,7 @@ def order_name_and_surname(text, surname_first=True):
     return text
 
 
-def roman_to_int(roman):
+def roman_to_int(roman_number):
     """
     Função para converter um número romano no correspondente indo-arábico.
     Parameters
@@ -333,54 +334,7 @@ def roman_to_int(roman):
 
     Returns
     -------
-    str
+    int
         Número inteiro.
-
-    Fonte: adaptado de https://wiki.python.org.br/NumerosRomanos
     """
-    roman = roman.upper()
-    nums = {'M': 1000, 'D': 500, 'C': 100, 'L': 50, 'X': 10, 'V': 5, 'I': 1}
-
-    sum = 0
-    for i in range(len(roman)):
-        try:
-            value = nums[roman[i]]
-            if i + 1 < len(roman) and nums[roman[i + 1]] > value:
-                sum -= value
-            else:
-                sum += value
-        except KeyError:
-            return
-
-    if int_to_roman(sum) == roman:
-        return sum
-    else:
-        return
-
-
-def int_to_roman(integer):
-    """
-    Função para converter um número indo-arábico no correspondente romano.
-    Parameters
-    ----------
-    integer : str
-        Número romano.
-
-    Returns
-    -------
-    str
-        Número inteiro.
-
-    Fonte: adaptado de https://wiki.python.org.br/NumerosRomanos
-    """
-    if not type(integer) == int and not 0 < integer < 4000:
-        return
-    ints = (1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1)
-    nums = ('M', 'CM', 'D', 'CD', 'C', 'XC', 'L', 'XL', 'X', 'IX', 'V', 'IV', 'I')
-    result = []
-
-    for i in range(len(ints)):
-        count = int(integer / ints[i])
-        result.append(nums[i] * count)
-        integer -= ints[i] * count
-    return ''.join(result)
+    return roman.fromRoman(roman_number)
