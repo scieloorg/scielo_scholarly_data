@@ -11,3 +11,23 @@ from scielo_scholarly_data.values import (
     MONTHS_DICT,
 )
 
+class DateMonthError(Exception):
+    ...
+
+
+class DateDayError(Exception):
+    ...
+
+
+class UnpackError(Exception):
+    ...
+
+
+class InvalidFormatError(Exception):
+    ...
+
+
+class NoneTypeError(Exception):
+    ...
+
+
