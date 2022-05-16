@@ -19,6 +19,7 @@ from scielo_scholarly_data.standardizer import (
     issue_volume,
     InvalidRomanNumeralError,
     orcid_validator,
+    ImpossibleConvertionToIntError,
 )
 
 import unittest
@@ -643,7 +644,6 @@ class TestStandardizer(unittest.TestCase):
     def test_issue_volume_with_alpha_chars(self):
         issues = {
             '& Cognition, 34': '34',
-            '&#8226;&#8226;&#8226;': None,
             '&#8239;v.50': '50',
             '( Suppl)78': '78',
             '(1-2)': '1',
@@ -651,7 +651,6 @@ class TestStandardizer(unittest.TestCase):
             '(2)8(4)1875[1876]': '2',
             ', 13(1)': '13',
             ', Campinas, 13': '13',
-            'Número do volume': None,
         }
         expected_values = list(issues.values())
         obtained_values = [issue_volume(num) for num in issues]
@@ -679,6 +678,12 @@ class TestStandardizer(unittest.TestCase):
         self.assertRaises(
             InvalidRomanNumeralError,
             issue_volume, 'vol.: XXc'
+        )
+
+    def test_issue_volume_impossible_convertion_error(self):
+        self.assertRaises(
+            ImpossibleConvertionToIntError,
+            issue_volume, '&#8226;&#8226;&#8226;'
         )
 
     def test_document_title_for_deduplication_html_entities_keeps(self):
