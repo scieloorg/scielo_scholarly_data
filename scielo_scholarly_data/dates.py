@@ -107,3 +107,48 @@ def split_date(text):
     return y, m, d
 
 
+def convert_to_iso_date(text, day='01', month='01', only_year=False):
+    """
+    Função para a padronização de datas no formato ISO YYYY-MM-DD.
+
+    Parameters
+    ----------
+    text : str
+        Data a ser padronizada.
+    day : str, default '01'
+        Valor para dia no caso de data composta somente pelo ano.
+    month : str, default '01'
+        Valor para mês no caso de data composta somente pelo ano.
+    just_year : bool, default False
+        Valor lógico para retornar a data completa ou apenas o ano
+
+    Returns
+    -------
+    data-type
+        Data padronizada, que pode ser apenas o ano ou a data completa.
+    """
+    text = standardizes_date(text)
+
+    y, m, d = split_date(text)
+
+    if m.isalpha():
+        m = months_in_full_to_int(m)
+
+    if len(y) == 2 and len(d) == 4:
+        d, y = y, d
+
+    try:
+        text = '-'.join([y, m, d])
+    except TypeError as exc:
+        raise NoneTypeError(f"{exc}: Não foi possível reconhecer a data")
+
+    try:
+        date = datetime.fromisoformat(text)
+        if only_year:
+            return date.year
+        return date.isoformat()[:10]
+    except ValueError as exc:
+        if "day" in str(exc):
+            raise DateDayError(f"{exc}: {y}-{m}-{d}")
+        if "month" in str(exc):
+            raise DateMonthError(f"{exc}: {y}-{m}-{d}")
