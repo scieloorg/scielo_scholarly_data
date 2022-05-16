@@ -97,6 +97,11 @@ standardizer.document_author_for_visualization('John Fitzgerald Kennedy')
 standardizer.document_author_for_visualization('John Fitzgerald Kennedy', surname_first=True)
 > 'Kennedy, John Fitzgerald'
 
+standardizer.book_title_for_deduplication('O MODELO DE DESENVOLVIMENTO BRASILEIRO DAS PRIMEIRAS DÉCADAS DO SÉCULO XXI: &#60; APORTES PARA O DEBATE', remove_special_char=False)
+> 'o modelo de desenvolvimento brasileiro das primeiras decadas do seculo xxi: < aportes para o debate'
+
+standardizer.book_title_for_visualization('O MODELO DE DESENVOLVIMENTO BRASILEIRO DAS PRIMEIRAS DÉCADAS DO SÉCULO XXI: &#60; APORTES PARA O DEBATE', remove_special_char=False)
+> 'O MODELO DE DESENVOLVIMENTO BRASILEIRO DAS PRIMEIRAS DÉCADAS DO SÉCULO XXI: APORTES PARA O DEBATE'
 
 from scielo_scholarly_data import core
 # Remove accents from a text
@@ -137,6 +142,9 @@ core.convert_to_iso_date('2021')
 core.convert_to_iso_date('2021', month='06', day='15')
 > datetime.date(2021, 6, 15)
 
+core.check_sum_orcid('000000021694233X')
+>True
+
 ```
 
 ## Documentation
@@ -163,6 +171,7 @@ This section aims to provide a scientific explanation about the decisions we mad
 - journal_title_for_deduplication
 - journal_title_for_visualization
 - journal_volume
+- orcid_validator
 
 
 ### Normalization processes
