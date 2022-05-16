@@ -31,3 +31,37 @@ class NoneTypeError(Exception):
     ...
 
 
+def standardizes_date(text, day='01', month='01'):
+    """
+    Função para padronizar uma data para uma string com dia, mês e ano separados por '-'.
+
+    Parameters
+    ----------
+    text: str
+        Data a ser padronizada;
+    day: str
+        Dia que será considerado quando a data original for apenas o ano;
+    month: str
+        Mês que será considerado quando a data original for apenas o ano;
+    Returns
+    -------
+    str
+        Data como uma string com dia, mês e ano separados por '-'.
+    """
+    if len(text) == 4 and text.isnumeric():
+        return '-'.join([text, month, day])
+    if len(text) == 8 and text.isnumeric():
+        return text[:4] + '-' + text[4:6] + '-' + text[6:]
+    if len(text) == 8 and not text.isnumeric():
+        text = text.replace('-','')
+        return text[:4] + '-0' + text[4:5] + '-0' + text[5:]
+    if len(text) >= 10:
+        for conector in [' de ', ' of ', ' del ']:
+            text = text.replace(conector, '-')
+        for c in ['/', '.', ' ']:
+            if '-' in text:
+                break
+            text = text.replace(c, '-')
+        return text
+
+
