@@ -37,6 +37,9 @@ from urllib.parse import urlparse
 class InvalidRomanNumeralError(Exception):
     ...
 
+class ImpossibleConvertionToIntError(Exception):
+    ...
+
 
 def journal_title_for_deduplication(text: str, words_to_remove=JOURNAL_TITLE_SPECIAL_WORDS,
                                     keep_parenthesis_content=True, chars_to_remove=[]):
@@ -186,11 +189,11 @@ def issue_volume(text: str, force_integer=True):
                         pass
                 if convert_roman:
                     try:
-                        value = str(roman_to_int(value.upper()))
+                        return str(roman_to_int(value.upper()))
                     except:
-                        raise InvalidRomanNumeralError
-                    return value
-        return
+                        raise InvalidRomanNumeralError(f"O valor {value} não é um número romano")
+
+        raise ImpossibleConvertionToIntError(f"Não foi possível converter o valor {text} para inteiro")
 
     return text
 
