@@ -83,3 +83,27 @@ def months_in_full_to_int(month):
         return MONTHS_DICT[month.lower()]
 
 
+def split_date(text):
+    """
+    Função para fatiar uma data completa em ano, mês e dia.
+
+    Parameters
+    ----------
+    text : str
+        Data a ser fatiada.
+
+    Returns
+    -------
+    tuple
+        Ano (y), mês (m) e dia (d).
+    """
+    try:
+        y, m, d = text.split('-')
+    except (ValueError, AttributeError) as exc:
+        if "unpack" in str(exc):
+            raise UnpackError(f"{exc}")
+        if "NoneType" in str(exc):
+            raise InvalidFormatError(f"{exc}")
+    return y, m, d
+
+
