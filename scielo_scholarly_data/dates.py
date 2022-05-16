@@ -65,3 +65,21 @@ def standardizes_date(text, day='01', month='01'):
         return text
 
 
+def months_in_full_to_int(month):
+    """
+    Função para converter um mês, escrito por extenso, em um valor numérico.
+
+    Parameters
+    ----------
+    month : str
+        Mês escrito por extenso.
+
+    Returns
+    -------
+    int
+        Mês numérico.
+    """
+    if month.lower() in MONTHS_DICT.keys():
+        return MONTHS_DICT[month.lower()]
+
+
