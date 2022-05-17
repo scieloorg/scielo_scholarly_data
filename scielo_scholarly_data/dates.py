@@ -1,6 +1,3 @@
-import html
-import unicodedata
-import re
 from datetime import datetime
 
 from dateutil.parser import parse
