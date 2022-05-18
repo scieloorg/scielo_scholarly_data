@@ -14,6 +14,7 @@ from scielo_scholarly_data.core import (
     remove_words,
     order_name_and_surname,
     unescape,
+    roman_to_int,
 )
 
 from scielo_scholarly_data.values import (
@@ -30,6 +31,13 @@ from scielo_scholarly_data.values import (
 
 from scielo_scholarly_data.helpers import is_valid_issn
 from urllib.parse import urlparse
+
+
+class InvalidRomanNumeralError(Exception):
+    ...
+
+class ImpossibleConvertionToIntError(Exception):
+    ...
 
 
 def journal_title_for_deduplication(text: str, words_to_remove=JOURNAL_TITLE_SPECIAL_WORDS,
@@ -132,19 +140,25 @@ def journal_issn(text, use_issn_validator=False):
         return text.upper()
 
 
-def issue_volume(text: str):
+def issue_volume(text: str, force_integer=True):
     """
     Procedimento que padroniza o número do volume do periódico de acordo com os seguintes métodos, por ordem:
         1) Remove caracteres non printable;
         2) Remove caracteres especiais;
         3) Remove espaços duplos;
         4) Remove pontuação no final do número;
-        5) Remove espaços nas extremidades do número.
+        5) Remove espaços nas extremidades do número;
+        6) Remove caracteres alfabéticos (opcional);
+        7) Transforma números romanos em indo-arábicos (opcional).
 
     Parameters
     ----------
     text : str
         Caracteres que representam o número do volume do periódico.
+    force_integer : bool
+        Valor lógico para a manutenção de apenas caracteres numéricos, default True.
+    convert_romans : bool
+        Valor lógico para a conversão de número romano em indo-arábico, default False.
 
     Returns
     -------
@@ -152,13 +166,35 @@ def issue_volume(text: str):
         Número do volume do periódico padronizado.
     """
 
+    text = unescape(text)
     text = remove_non_printable_chars(text)
-    text = keep_alpha_num_space(text, replace_with='')
+    text = keep_alpha_num_space(text, replace_with=' ')
     text = remove_double_spaces(text)
     text = remove_end_punctuation_chars(text)
     text = text.strip()
-    return text
+    #text = remove_words(text, WORDS_TO_REMOVE_VOLUME_NUMBER)
 
+    if force_integer:
+        romans = ['M', 'D', 'C', 'L', 'X', 'V', 'I']
+        for value in text.split(' '):
+            if value.isnumeric():
+                return value
+        for value in text.split(' '):
+            if value.isalpha():
+                convert_roman = True
+                for char in value:
+                    if char.upper() not in romans:
+                        convert_roman = False
+                        pass
+                if convert_roman:
+                    try:
+                        return str(roman_to_int(value.upper()))
+                    except:
+                        raise InvalidRomanNumeralError(f"O valor {value} não é um número romano")
+
+        raise ImpossibleConvertionToIntError(f"Não foi possível converter o valor {text} para inteiro")
+
+    return text
 
 def issue_number(text: str):
     """

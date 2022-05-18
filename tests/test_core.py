@@ -9,7 +9,8 @@ from scielo_scholarly_data.core import (
     remove_end_punctuation_chars,
     remove_chars,
     remove_words,
-    unescape
+    unescape,
+    roman_to_int,
 )
 
 import unittest
@@ -166,6 +167,7 @@ class TestCore(unittest.TestCase):
             None
         )
 
+
     def test_convert_to_iso_date_nondate_value(self):
         self.assertEqual(
             convert_to_iso_date('200W'),
@@ -183,3 +185,16 @@ class TestCore(unittest.TestCase):
         obtained_values = [check_sum_orcid(register) for register in orcids]
 
         self.assertListEqual(expected_values, obtained_values)
+        
+    def test_roman_to_int(self):
+        nums = {
+            'XX': 20,
+            'MCMXXII': 1922,
+            'MMXXII': 2022,
+            'MDLIV': 1554,
+        }
+        expected_values = list(nums.values())
+        obtained_values = [roman_to_int(ints) for ints in nums]
+
+        self.assertListEqual(expected_values, obtained_values)
+        
