@@ -81,7 +81,7 @@ class TestStandardizer(unittest.TestCase):
 
     def test_convert_to_iso_date_just_year_user_decision(self):
         self.assertEqual(
-            str(dates.convert_to_iso_date('2021', day='1', month='1')),
+            str(dates.convert_to_iso_date('2021', day='01', month='01')),
             '2021-01-01'
         )
 
