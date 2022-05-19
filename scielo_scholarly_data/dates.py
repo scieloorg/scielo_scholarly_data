@@ -28,7 +28,7 @@ class NoneTypeError(Exception):
     ...
 
 
-def standardizes_date(text, day='01', month='01'):
+def standardizes_date(text, day, month):
     """
     Função para padronizar uma data para uma string com dia, mês e ano separados por '-'.
 
@@ -124,7 +124,7 @@ def convert_to_iso_date(text, day='01', month='01', only_year=False):
     data-type
         Data padronizada, que pode ser apenas o ano ou a data completa.
     """
-    text = standardizes_date(text)
+    text = standardizes_date(text, day, month)
 
     y, m, d = split_date(text)
 
