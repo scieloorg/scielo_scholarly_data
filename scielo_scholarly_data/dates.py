@@ -19,15 +19,7 @@ class DateDayError(Exception):
     ...
 
 
-class UnpackError(Exception):
-    ...
-
-
 class InvalidFormatError(Exception):
-    ...
-
-
-class NoneTypeError(Exception):
     ...
 
 
