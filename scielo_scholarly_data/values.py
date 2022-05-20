@@ -49,7 +49,7 @@ PUNCTUATION_TO_KEEP_IN_PERSONS_NAME_VISUALIZATION = {
     ','
 }
 
-MONTHS_DICT = {
+TEXT_MONTH_TO_NUMERIC_MONTH = {
     'janeiro':'01',
     'jan':'01',
     'fevereiro':'02',
