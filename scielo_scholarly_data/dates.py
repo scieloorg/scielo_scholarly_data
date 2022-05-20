@@ -40,21 +40,17 @@ def standardizes_date(text, day, month):
     str
         Data como uma string com dia, mês e ano separados por '-'.
     """
-    if len(text) == 4 and text.isnumeric():
-        return '-'.join([text, month, day])
-    if len(text) == 8 and text.isnumeric():
-        return text[:4] + '-' + text[4:6] + '-' + text[6:]
-    if len(text) == 8 and not text.isnumeric():
-        text = text.replace('-','')
-        return text[:4] + '-0' + text[4:5] + '-0' + text[5:]
-    if len(text) >= 10:
-        for conector in [' de ', ' of ', ' del ']:
-            text = text.replace(conector, '-')
-        for c in ['/', '.', ' ']:
-            if '-' in text:
-                break
-            text = text.replace(c, '-')
-        return text
+    text = core.keep_alpha_num_space(text)
+    for preposition in [' de ', ' of ', ' del ']:
+        text = text.replace(preposition, ' ')
+    text = core.remove_double_spaces(text)
+    if text.isnumeric():
+        if len(text) == 4:
+            return '-'.join([text, month, day])
+        if len(text) == 8:
+            return text[:4] + '-' + text[4:6] + '-' + text[6:]
+    else:
+        return text.replace(' ', '-')
 
 
 def months_in_full_to_int(month):
