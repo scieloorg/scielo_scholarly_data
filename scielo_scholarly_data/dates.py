@@ -67,8 +67,8 @@ def months_in_full_to_int(month):
     int
         Mês numérico.
     """
-    if month.lower() in MONTHS_DICT.keys():
-        return MONTHS_DICT[month.lower()]
+    if month.lower() in TEXT_MONTH_TO_NUMERIC_MONTH.keys():
+        return TEXT_MONTH_TO_NUMERIC_MONTH[month.lower()]
 
 
 def split_date(text):
