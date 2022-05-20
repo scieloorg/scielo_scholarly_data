@@ -7,7 +7,7 @@ from scielo_scholarly_data.values import (
     PATTERN_DATE,
     PATTERN_PARENTHESIS,
     PUNCTUATION_TO_REMOVE_FROM_TITLE_VISUALIZATION,
-    MONTHS_DICT,
+    TEXT_MONTH_TO_NUMERIC_MONTH,
 )
 
 
@@ -267,7 +267,7 @@ def convert_to_iso_date(text, day='01', month='01', only_year=False):
                         # Para o caso em que o 'mês' não é um valor numérico, busca por esse valor no dicionário
                         # O dicionário considera os meses em português, espanhol e inglês.
                         month = remove_end_punctuation_chars(month)
-                        month = MONTHS_DICT[month]
+                        month = TEXT_MONTH_TO_NUMERIC_MONTH[month]
                         #Tenta converter a data tratada
                         text = parse('-'.join([year, month, day])).date()
                 except (ValueError, IndexError, AttributeError, KeyError):
