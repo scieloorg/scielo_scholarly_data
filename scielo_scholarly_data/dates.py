@@ -87,11 +87,17 @@ def split_date(text):
     """
     try:
         y, m, d = text.split('-')
+        if m.isalpha():
+            m = months_in_full_to_int(m)
+        if y.isalpha():
+            y = months_in_full_to_int(y)
+            y, m, d = d, y, m
+        m = m.zfill(2)
+        d = d.zfill(2)
+        if len(y) == 2 and len(d) == 4:
+            d, y = y, d
     except (ValueError, AttributeError) as exc:
-        if "unpack" in str(exc):
-            raise UnpackError(f"{exc}")
-        if "NoneType" in str(exc):
-            raise InvalidFormatError(f"{exc}")
+            raise InvalidFormatError(f"{exc}: Não foi possível reconhecer a data")
     return y, m, d
 
 
