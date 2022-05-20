@@ -113,7 +113,7 @@ def convert_to_iso_date(text, day='01', month='01', only_year=False):
         Valor para dia no caso de data composta somente pelo ano.
     month : str, default '01'
         Valor para mês no caso de data composta somente pelo ano.
-    just_year : bool, default False
+    only_year : bool, default False
         Valor lógico para retornar a data completa ou apenas o ano
 
     Returns
@@ -125,16 +125,10 @@ def convert_to_iso_date(text, day='01', month='01', only_year=False):
 
     y, m, d = split_date(text)
 
-    if m.isalpha():
-        m = months_in_full_to_int(m)
-
-    if len(y) == 2 and len(d) == 4:
-        d, y = y, d
-
     try:
         text = '-'.join([y, m, d])
     except TypeError as exc:
-        raise NoneTypeError(f"{exc}: Não foi possível reconhecer a data")
+        raise InvalidFormatError(f"{exc}: Não foi possível reconhecer a data")
 
     try:
         date = datetime.fromisoformat(text)
