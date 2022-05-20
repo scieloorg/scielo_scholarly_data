@@ -129,6 +129,12 @@ class TestStandardizer(unittest.TestCase):
 
     def test_convert_to_iso_invalid_full_month(self):
         self.assertRaises(
-            dates.NoneTypeError,
+            dates.InvalidFormatError,
             dates.convert_to_iso_date, '2021-jlia-30'
+        )
+
+    def test_convert_to_iso_start_with_full_month(self):
+        self.assertEqual(
+            str(dates.convert_to_iso_date('Janeiro 14, 2022')),
+            '2022-01-14'
         )
