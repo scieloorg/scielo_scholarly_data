@@ -3,6 +3,7 @@ import unicodedata
 import re
 import roman
 
+
 from dateutil.parser import parse
 from scielo_scholarly_data.values import (
     PATTERN_DATE,

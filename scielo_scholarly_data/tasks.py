@@ -2,16 +2,22 @@ import logging
 
 from celery import Celery
 
-from app.configuration import (
-    CELERY_BROKER_URL,
-    CELERY_RESULT_BACKEND_URL,
-    QUEUE_ADD_SCORE,
-    QUEUE_GET_BEST_SCORE,
+# from scielo_scholarly_data.configuration import (
+#     CELERY_BROKER_URL,
+#     CELERY_RESULT_BACKEND_URL,
+#     QUEUE_ADD_SCORE,
+#     QUEUE_GET_BEST_SCORE,
 
-)
+# )
+
+CELERY_BROKER_URL=''
+CELERY_RESULT_BACKEND_URL=''
+QUEUE_ADD_SCORE=''
+QUEUE_GET_BEST_SCORE=''
+
 
 from operator import itemgetter
-from app import std_sponsor
+from scielo_scholarly_data import std_sponsor
 
 
 app = Celery('tasks', backend=CELERY_RESULT_BACKEND_URL, broker=CELERY_BROKER_URL)
