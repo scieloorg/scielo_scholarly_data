@@ -207,7 +207,7 @@ def select_method_to_get_sponsor_name(name, standard_names, method):
         for standard_name in standard_names:
             std_name, std_acron = standard_name.split(",")
             sponsor_standardized = get_sponsor_names(
-                name[1],
+                name,
                 make_standard_sponsor(std_name, std_acron),
                 method=method,
             )
@@ -232,20 +232,23 @@ def main():
     control = 0
 
     for name in non_standard_names:
-        jaccard = select_method_to_get_sponsor_name(name, standard_names, 'jaccard')
-        semantic = select_method_to_get_sponsor_name(name, standard_names, 'semantic')
-        
+        # id, non_std_name, project_number
+        article_id, non_std_name, project_number = name
+
+        jaccard = select_method_to_get_sponsor_name(non_std_name, standard_names, 'jaccard')
+        semantic = select_method_to_get_sponsor_name(non_std_name, standard_names, 'semantic')
+
         if jaccard != None and semantic != None and jaccard["score"] >= 0.8:
             result = [
-            name[0], 
-            name[1],
-            name[2],
-            jaccard["standard_name"], 
-            jaccard["standard_acronym"], 
-            jaccard["score"], 
-            semantic["standard_name"], 
-            semantic["standard_acronym"], 
-            semantic["score"]
+                article_id,
+                non_std_name,
+                project_number,
+                jaccard["standard_name"],
+                jaccard["standard_acronym"],
+                jaccard["score"],
+                semantic["standard_name"],
+                semantic["standard_acronym"],
+                semantic["score"]
             ]
             result = tuple(result)
             sponsors_standardized.append(result)
