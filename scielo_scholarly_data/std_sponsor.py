@@ -159,7 +159,7 @@ def search_sponsors_by_semantic_similarity(name, sponsors):
     return result
 
 
-def get_sponsor_names(name, sponsors, method="jaccard"):
+def get_sponsor_names_with_score(name, sponsors, method="jaccard"):
     """
     Procedimento para obter o nome completo e o acrônimo do financiador de uma pesquisa,
     a partir da escolha de um método específico (jaccard ou semantic).

@@ -10,6 +10,7 @@ from app.configuration import (
 
 )
 
+from operator import itemgetter
 from app import std_sponsor
 
 
@@ -25,13 +26,13 @@ def _handle_result(task_name, result, get_result):
 
 ###########################################
 
-def get_sponsor_names(
+def get_sponsor_names_with_score(
         name,
         standard_name_and_acron_items,
         method,
         get_result=False,
         ):
-    res = task_get_sponsor_names.apply_async(
+    res = task_get_sponsor_names_with_score.apply_async(
         queue=QUEUE_ADD_SCORE,
         args=(
             name,
@@ -39,16 +40,16 @@ def get_sponsor_names(
             method,
         ),
     )
-    return _handle_result("task get_sponsor_names", res, get_result)
+    return _handle_result("task get_sponsor_names_with_score", res, get_result)
 
 
 @app.task()
-def task_get_sponsor_names(
+def task_get_sponsor_names_with_score(
         name,
         standard_name_and_acron_items,
         method,
         ):
-    return std_sponsor.get_sponsor_names(
+    return std_sponsor.get_sponsor_names_with_score(
         name,
         standard_name_and_acron_items,
         method,
@@ -65,7 +66,7 @@ def get_standardized_sponsor_name(name, standard_names, method, get_result=False
             method,
         ),
     )
-    return _handle_result("task get_sponsor_names", res, get_result)
+    return _handle_result("task standardized_sponsor_name", res, get_result)
 
 
 @app.task()
@@ -74,9 +75,9 @@ def task_get_standardized_sponsor_name(name, standard_names, method):
     try:
         for standard_name in standard_names:
             std_name, std_acron = standard_name.split(",")
-            sponsor_standardized = get_sponsor_names(
+            sponsor_standardized = get_sponsor_names_with_score(
                 name,
-                make_standard_sponsor(std_name, std_acron),
+                std_sponsor.make_standard_sponsor(std_name, std_acron),
                 method=method,
                 get_result=True,
             )
