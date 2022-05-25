@@ -5,7 +5,9 @@ from celery import Celery
 from app.configuration import (
     CELERY_BROKER_URL,
     CELERY_RESULT_BACKEND_URL,
-    REGISTER_ROW_QUEUE,
+    QUEUE_ADD_SCORE,
+    QUEUE_GET_BEST_SCORE,
+
 )
 
 from app import std_sponsor
@@ -27,10 +29,10 @@ def get_sponsor_names(
         name,
         standard_name_and_acron_items,
         method,
-        get_result=True,
+        get_result=False,
         ):
     res = task_get_sponsor_names.apply_async(
-        queue=REGISTER_ROW_QUEUE,
+        queue=QUEUE_ADD_SCORE,
         args=(
             name,
             standard_name_and_acron_items,
@@ -51,3 +53,37 @@ def task_get_sponsor_names(
         standard_name_and_acron_items,
         method,
     )
+
+
+##############################
+def get_standardized_sponsor_name(name, standard_names, method, get_result=False):
+    res = task_get_standardized_sponsor_name.apply_async(
+        queue=QUEUE_GET_BEST_SCORE,
+        args=(
+            name,
+            standard_name_and_acron_items,
+            method,
+        ),
+    )
+    return _handle_result("task get_sponsor_names", res, get_result)
+
+
+@app.task()
+def task_get_standardized_sponsor_name(name, standard_names, method):
+    temp = []
+    try:
+        for standard_name in standard_names:
+            std_name, std_acron = standard_name.split(",")
+            sponsor_standardized = get_sponsor_names(
+                name,
+                make_standard_sponsor(std_name, std_acron),
+                method=method,
+                get_result=True,
+            )
+            if sponsor_standardized != None:
+                temp.append(sponsor_standardized[0])
+
+        temp = sorted(temp, key=itemgetter('score'))
+        return temp[-1]
+    except:
+        return

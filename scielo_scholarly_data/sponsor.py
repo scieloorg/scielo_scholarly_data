@@ -9,26 +9,6 @@ from collections import OrderedDict
 from operator import itemgetter
 
 
-def select_method_to_get_sponsor_name(name, standard_names, method):
-    temp = []
-    try:
-        for standard_name in standard_names:
-            std_name, std_acron = standard_name.split(",")
-            sponsor_standardized = tasks.get_sponsor_names(
-                name,
-                make_standard_sponsor(std_name, std_acron),
-                method=method,
-                get_result=True,
-            )
-            if sponsor_standardized != None:
-                temp.append(sponsor_standardized[0])
-
-        temp = sorted(temp, key=itemgetter('score'))
-        return temp[-1]
-    except:
-        return
-
-
 def main():
     names = pd.read_csv('financial_support_date_pid_file_sponsor_number_run.csv', quotechar='"', encoding='latin-1', on_bad_lines='skip', sep=r'\\t', engine='python', header=None)
     sponsors = pd.read_csv('standard_sponsors.csv', sep=',', header=None, encoding='utf-8')
@@ -45,8 +25,8 @@ def main():
         # id, non_std_name, project_number
         article_id, non_std_name, project_number = name
 
-        jaccard = select_method_to_get_sponsor_name(non_std_name, standard_names, 'jaccard')
-        semantic = select_method_to_get_sponsor_name(non_std_name, standard_names, 'semantic')
+        jaccard = tasks.get_standardized_sponsor_name(non_std_name, standard_names, 'jaccard', get_result=True)
+        semantic = tasks.get_standardized_sponsor_name(non_std_name, standard_names, 'semantic', get_result=True)
 
         if jaccard != None and semantic != None and jaccard["score"] >= 0.8:
             result = [
