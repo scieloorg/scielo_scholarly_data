@@ -213,8 +213,9 @@ def select_method_to_get_sponsor_name(name, standard_names, method):
             )
             if sponsor_standardized != None:
                 temp.append(sponsor_standardized[0])
-                temp = sorted(temp, key=itemgetter('score'), reverse=True)
-        return temp[0]
+
+        temp = sorted(temp, key=itemgetter('score'))
+        return temp[-1]
     except:
         return
 
