@@ -2,13 +2,15 @@
 
 import scielo_scholarly_data.standardizer as standardizer
 import kshingle as ks
+import pandas as pd
+from pandas import DataFrame
 from sentence_transformers import SentenceTransformer, util
 from collections import OrderedDict
 from operator import itemgetter
 
 model = SentenceTransformer('scielo_scholarly_data/stmodels/paraphrase-multilingual-MiniLM-L12-v2')
 
-def make_standard_sponsor(name, acron):
+def make_standard_sponsor(sponsor):
     """
     Função para montar uma lista de dicionários a partir de uma string que descreve o nome de um financiador e seu acrônimo.
 
@@ -41,25 +43,25 @@ def make_standard_sponsor(name, acron):
     """
     result = [
         {
-            "text": name + " " + acron,
-            "name": name,
-            "acronym": acron
+        "text": sponsor.split(',')[0] + " " + sponsor.split(',')[1],
+            "name": sponsor.split(',')[0],
+            "acronym": sponsor.split(',')[1]
         },
         {
-            "text": name,
-            "name": name,
-            "acronym": acron
+            "text": sponsor.split(',')[0],
+            "name": sponsor.split(',')[0],
+            "acronym": sponsor.split(',')[1]
         },
         {
-            "text": acron,
-            "name": name,
-            "acronym": acron
+            "text": sponsor.split(',')[1],
+            "name": sponsor.split(',')[0],
+            "acronym": sponsor.split(',')[1]
         }
     ]
     return result
 
 
-def search_sponsors_by_jaccard_similarity(not_standard_name, sponsors):
+def search_sponsors_by_jaccard_similarity(name, sponsors):
     """
     Procedimento para obter o nome completo e o acrônimo do financiador de uma pesquisa,
     considerando o coeficiente de similaridade de Jaccard
@@ -91,11 +93,11 @@ def search_sponsors_by_jaccard_similarity(not_standard_name, sponsors):
             "score": 0.05
         }]
     """
-    not_standard_name = standardizer.document_sponsors(not_standard_name)
-    if len(not_standard_name) > 0:
+    name = standardizer.document_sponsors(name)
+    if len(name) > 0:
         result = []
         for sponsor in sponsors:
-            jaccard_index = ks.jaccard_strings(standardizer.document_sponsors(sponsor["text"]), not_standard_name, k=2)
+            jaccard_index = ks.jaccard_strings(standardizer.document_sponsors(sponsor["text"]), name, k=2)
             d = {
                 "standard_name": sponsor["name"],
                 "standard_acronym": sponsor["acronym"],
@@ -105,7 +107,7 @@ def search_sponsors_by_jaccard_similarity(not_standard_name, sponsors):
         return sorted(result, key=itemgetter('score'), reverse=True)
 
 
-def search_sponsors_by_semantic_similarity(not_standardize_name, sponsors):
+def search_sponsors_by_semantic_similarity(name, sponsors):
     """
     Procedimento para obter o nome completo e o acrônimo do financiador de uma pesquisa,
     considerando a similaridade baseada em semântica textual.
@@ -138,7 +140,7 @@ def search_sponsors_by_semantic_similarity(not_standardize_name, sponsors):
             "score": 0.05
         }]
     """
-    query_embedding = model.encode(not_standardize_name, convert_to_tensor=True)
+    query_embedding = model.encode(name, convert_to_tensor=True)
     texts = [item["text"] for item in sponsors]
     corpus_embeddings = model.encode(texts, convert_to_tensor=True)
     search_hits = util.semantic_search(query_embedding, corpus_embeddings)
@@ -196,3 +198,71 @@ def get_sponsor_names(name, sponsors, method="jaccard"):
         return search_sponsors_by_jaccard_similarity(name, sponsors)
     else:
         return search_sponsors_by_semantic_similarity(name, sponsors)
+        
+        
+def select_method_to_get_sponsor_name(name, standard_names, method):
+    temp = []
+    try:
+        for standard_name in standard_names:
+            sponsor_standardized = get_sponsor_names(name[1], make_standard_sponsor(str(standard_name)), method=method)
+            if sponsor_standardized != None:
+                temp.append(sponsor_standardized[0])
+                temp = sorted(temp, key=itemgetter('score'), reverse=True)
+        return temp[0]
+    except:
+        return
+    
+            
+def main():
+    names = pd.read_csv('financial_support_date_pid_file_sponsor_number_run.csv', quotechar='"', encoding='latin-1', on_bad_lines='skip', sep=r'\\t', engine='python', header=None)
+    sponsors = pd.read_csv('standard_sponsors.csv', sep=',', header=None, encoding='utf-8')
+    
+    non_standard_names = [(row[1], row[3], row[4]) for index, row in names.iterrows()]
+    standard_names = [row[0] + ',' + row[1] for index, row in sponsors.iterrows()]
+    
+    sponsors_standardized = []
+    sponsors_non_stadardized = []
+    
+    control = 0
+    
+    for name in non_standard_names:
+        jaccard = select_method_to_get_sponsor_name(name, standard_names, 'jaccard')
+        semantic = select_method_to_get_sponsor_name(name, standard_names, 'semantic')
+        
+        if jaccard != None and semantic != None and jaccard["score"] >= 0.8:
+            result = [
+            name[0], 
+            name[1],
+            name[2],
+            jaccard["standard_name"], 
+            jaccard["standard_acronym"], 
+            jaccard["score"], 
+            semantic["standard_name"], 
+            semantic["standard_acronym"], 
+            semantic["score"]
+            ]
+            result = tuple(result)
+            sponsors_standardized.append(result)
+        else:
+            sponsors_non_stadardized.append(name)
+            
+        control += 1
+        if control % 500 == 0:
+            print(f"{control/5868*100:.2f}%")
+            
+            df = pd.DataFrame(sponsors_standardized)
+            df = df.drop_duplicates()
+            df.to_csv('standardized.csv', sep=';', header=False, index=False, index_label=None, quotechar='"', line_terminator='\n', mode='a')
+            
+            df2 = pd.DataFrame(sponsors_non_stadardized)
+            df2 = df2.drop_duplicates()
+            df2.to_csv('non_standardized.csv', sep=';', header=False, index=False, index_label=None, quotechar='"', line_terminator='\n', mode='a')
+            
+            sponsors_standardized = []
+            sponsors_non_stadardized = []
+
+    
+if __name__ == '__main__':
+    main()
+
+
