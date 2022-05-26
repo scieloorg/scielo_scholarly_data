@@ -12,21 +12,18 @@ from scielo_scholarly_data import std_sponsor
 
 def get_standardized_sponsor_name(name, standard_names, method):
     temp = []
-    try:
-        for standard_name in standard_names:
-            std_name, std_acron = standard_name.split(",")
-            sponsor_standardized = get_sponsor_names_with_score(
-                name,
-                std_sponsor.make_standard_sponsor(std_name, std_acron),
-                method=method,
-            )
-            if sponsor_standardized != None:
-                temp.append(sponsor_standardized[0])
 
-        temp = sorted(temp, key=itemgetter('score'))
-        return temp[-1]
-    except:
-        return
+    for std_name, std_acron in standard_names:
+        sponsor_standardized = std_sponsor.get_sponsor_names_with_score(
+            name,
+            std_sponsor.make_standard_sponsor(std_name, std_acron),
+            method=method,
+        )
+        if sponsor_standardized != None:
+            temp.append(sponsor_standardized[0])
+
+    temp = sorted(temp, key=itemgetter('score'))
+    return temp[-1]
 
 
 def main():
@@ -34,7 +31,7 @@ def main():
     sponsors = pd.read_csv('scielo_scholarly_data/standard_sponsors.csv', sep=',', header=None, encoding='utf-8')
 
     non_standard_names = [(row[1], row[3], row[4]) for index, row in names.iterrows()]
-    standard_names = [row[0] + ',' + row[1] for index, row in sponsors.iterrows()]
+    standard_names = [(row[0], row[1]) for index, row in sponsors.iterrows()]
 
     sponsors_standardized = []
     sponsors_non_stadardized = []
