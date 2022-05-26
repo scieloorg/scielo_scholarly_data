@@ -7,6 +7,26 @@ from pandas import DataFrame
 from sentence_transformers import SentenceTransformer, util
 from collections import OrderedDict
 from operator import itemgetter
+from scielo_scholarly_data import std_sponsor
+
+
+def get_standardized_sponsor_name(name, standard_names, method):
+    temp = []
+    try:
+        for standard_name in standard_names:
+            std_name, std_acron = standard_name.split(",")
+            sponsor_standardized = get_sponsor_names_with_score(
+                name,
+                std_sponsor.make_standard_sponsor(std_name, std_acron),
+                method=method,
+            )
+            if sponsor_standardized != None:
+                temp.append(sponsor_standardized[0])
+
+        temp = sorted(temp, key=itemgetter('score'))
+        return temp[-1]
+    except:
+        return
 
 
 def main():
@@ -25,8 +45,8 @@ def main():
         # id, non_std_name, project_number
         article_id, non_std_name, project_number = name
 
-        jaccard = tasks.get_standardized_sponsor_name(non_std_name, standard_names, 'jaccard', get_result=True)
-        semantic = tasks.get_standardized_sponsor_name(non_std_name, standard_names, 'semantic', get_result=True)
+        jaccard = get_standardized_sponsor_name(non_std_name, standard_names, 'jaccard')
+        semantic = get_standardized_sponsor_name(non_std_name, standard_names, 'semantic')
 
         if jaccard != None and semantic != None and jaccard["score"] >= 0.8:
             result = [
@@ -63,5 +83,4 @@ def main():
 
 if __name__ == '__main__':
     main()
-
 
