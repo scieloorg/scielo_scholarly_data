@@ -30,8 +30,8 @@ def get_standardized_sponsor_name(name, standard_names, method):
 
 
 def main():
-    names = pd.read_csv('financial_support_date_pid_file_sponsor_number_run.csv', quotechar='"', encoding='latin-1', on_bad_lines='skip', sep=r'\\t', engine='python', header=None)
-    sponsors = pd.read_csv('standard_sponsors.csv', sep=',', header=None, encoding='utf-8')
+    names = pd.read_csv('scielo_scholarly_data/example_in.csv', quotechar='"', encoding='latin-1', on_bad_lines='skip', sep=r'\\t', engine='python', header=None)
+    sponsors = pd.read_csv('scielo_scholarly_data/standard_sponsors.csv', sep=',', header=None, encoding='utf-8')
 
     non_standard_names = [(row[1], row[3], row[4]) for index, row in names.iterrows()]
     standard_names = [row[0] + ',' + row[1] for index, row in sponsors.iterrows()]
@@ -65,20 +65,16 @@ def main():
         else:
             sponsors_non_stadardized.append(name)
 
-        control += 1
-        if control % 500 == 0:
-            print(f"{control/5868*100:.2f}%")
+        df = pd.DataFrame(sponsors_standardized)
+        df = df.drop_duplicates()
+        df.to_csv('standardized.csv', sep=';', header=False, index=False, index_label=None, quotechar='"', line_terminator='\n', mode='a')
 
-            df = pd.DataFrame(sponsors_standardized)
-            df = df.drop_duplicates()
-            df.to_csv('standardized.csv', sep=';', header=False, index=False, index_label=None, quotechar='"', line_terminator='\n', mode='a')
+        df2 = pd.DataFrame(sponsors_non_stadardized)
+        df2 = df2.drop_duplicates()
+        df2.to_csv('non_standardized.csv', sep=';', header=False, index=False, index_label=None, quotechar='"', line_terminator='\n', mode='a')
 
-            df2 = pd.DataFrame(sponsors_non_stadardized)
-            df2 = df2.drop_duplicates()
-            df2.to_csv('non_standardized.csv', sep=';', header=False, index=False, index_label=None, quotechar='"', line_terminator='\n', mode='a')
-
-            sponsors_standardized = []
-            sponsors_non_stadardized = []
+        sponsors_standardized = []
+        sponsors_non_stadardized = []
 
 
 if __name__ == '__main__':
