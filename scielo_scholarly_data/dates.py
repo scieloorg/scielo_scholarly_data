@@ -134,7 +134,7 @@ def _standardizes_date(text, day, month):
         return text.replace(' ', '-')
 
 
-def months_in_full_to_int(month):
+def _months_in_full_to_int(month):
     """
     Função para converter um mês, escrito por extenso, em um valor numérico.
 
