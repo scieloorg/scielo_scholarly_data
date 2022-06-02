@@ -202,9 +202,9 @@ def convert_to_iso_date(text, day='01', month='01', only_year=False):
     data-type
         Data padronizada, que pode ser apenas o ano ou a data completa.
     """
-    text = standardizes_date(text, day, month)
+    text = _standardizes_date(text, day, month)
 
-    y, m, d = split_date(text)
+    y, m, d = _split_date(text)
 
     try:
         text = '-'.join([y, m, d])
