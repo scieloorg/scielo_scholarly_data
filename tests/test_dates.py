@@ -138,3 +138,9 @@ class TestStandardizer(unittest.TestCase):
             str(dates.convert_to_iso_date('Janeiro 14, 2022')),
             '2022-01-14'
         )
+
+    def test_convert_to_iso_with_two_digits_year(self):
+        self.assertRaises(
+            dates.InvalidStringError,
+            dates.convert_to_iso_date, '01.03.21'
+        )
