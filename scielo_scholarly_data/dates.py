@@ -105,7 +105,7 @@ class InvalidFormatError(Exception):
     ...
 
 
-def standardizes_date(text, day, month):
+def _standardizes_date(text, day, month):
     """
     Função para padronizar uma data para uma string com dia, mês e ano separados por '-'.
 
