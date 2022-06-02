@@ -88,6 +88,11 @@ WORDS_TO_REMOVE_IN_DATE_STANDARDIZATION = [
 
 ]
 
+
+class InvalidStringError(Exception):
+    ...
+
+
 class DateMonthError(Exception):
     ...
 
