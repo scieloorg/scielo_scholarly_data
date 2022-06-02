@@ -221,3 +221,5 @@ def convert_to_iso_date(text, day='01', month='01', only_year=False):
             raise DateDayError(f"{exc}: {y}-{m}-{d}")
         if "month" in str(exc):
             raise DateMonthError(f"{exc}: {y}-{m}-{d}")
+        else:
+            raise InvalidStringError(f"{exc}: {y}-{m}-{d}")
