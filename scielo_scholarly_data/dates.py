@@ -152,7 +152,7 @@ def _months_in_full_to_int(month):
         return TEXT_MONTH_TO_NUMERIC_MONTH[month.lower()]
 
 
-def split_date(text):
+def _split_date(text):
     """
     Função para fatiar uma data completa em ano, mês e dia.
 
