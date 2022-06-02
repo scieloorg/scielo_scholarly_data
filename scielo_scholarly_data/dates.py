@@ -123,8 +123,7 @@ def _standardizes_date(text, day, month):
         Data como uma string com dia, mês e ano separados por '-'.
     """
     text = core.keep_alpha_num_space(text)
-    for preposition in [' de ', ' of ', ' del ']:
-        text = text.replace(preposition, ' ')
+    text = core.remove_words(text, WORDS_TO_REMOVE_IN_DATE_STANDARDIZATION)
     text = core.remove_double_spaces(text)
     if text.isnumeric():
         if len(text) == 4:
