@@ -121,3 +121,31 @@ PUNCTUATION_TO_DEFINE_PAGE_RANGE = {
     ',',
     '.'
 }
+
+WORDS_TO_REMOVE_IN_DATE_STANDARDIZATION = [
+    'de',
+    'of',
+    'del',
+    'el',
+    'st',
+    'th',
+    'in',
+    'accedido',
+    'acceded',
+    'accesado',
+    'accesed',
+    'acces',
+    'acceso',
+    'accessed',
+    'acessado',
+    'acesso',
+    'citado',
+    'cited',
+    'consultado',
+    'recuperado',
+    'the last access',
+    'year',
+    'month',
+    'day',
+
+]
