@@ -1,5 +1,4 @@
 from datetime import datetime
-from dateutil.parser import parse
 from scielo_scholarly_data import core
 
 TEXT_MONTH_TO_NUMERIC_MONTH = {
