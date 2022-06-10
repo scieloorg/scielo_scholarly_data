@@ -1,6 +1,5 @@
 from scielo_scholarly_data.core import (
     check_sum_orcid,
-    convert_to_iso_date,
     keep_alpha_num_space,
     remove_accents,
     remove_double_spaces,
@@ -10,6 +9,10 @@ from scielo_scholarly_data.core import (
     remove_chars,
     remove_words,
     unescape
+)
+
+from scielo_scholarly_data.dates import (
+    convert_to_iso_date,
 )
 
 import unittest
