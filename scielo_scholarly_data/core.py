@@ -2,12 +2,10 @@ import html
 import unicodedata
 import re
 
-from dateutil.parser import parse
 from scielo_scholarly_data.values import (
     PATTERN_DATE,
     PATTERN_PARENTHESIS,
     PUNCTUATION_TO_REMOVE_FROM_TITLE_VISUALIZATION,
-    TEXT_MONTH_TO_NUMERIC_MONTH,
 )
 
 
