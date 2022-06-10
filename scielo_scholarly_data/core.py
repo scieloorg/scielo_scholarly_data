@@ -3,12 +3,10 @@ import unicodedata
 import re
 import roman
 
-from dateutil.parser import parse
 from scielo_scholarly_data.values import (
     PATTERN_DATE,
     PATTERN_PARENTHESIS,
     PUNCTUATION_TO_REMOVE_FROM_TITLE_VISUALIZATION,
-    MONTHS_DICT,
 )
 
 
@@ -216,72 +214,6 @@ def remove_chars(text, chars_to_remove):
         if c not in chars_to_remove:
             text_aux.append(c)
     return ''.join(text_aux)
-
-
-def convert_to_iso_date(text, day='01', month='01', only_year=False):
-    """
-    Função para a padronização de datas no formato ISO YYYY-MM-DD.
-
-    Parameters
-    ----------
-    text : str
-        Data a ser padronizada.
-    day : str, default '01'
-        Valor para dia no caso de data composta somente pelo ano.
-    month : str, default '01'
-        Valor para mês no caso de data composta somente pelo ano.
-    just_year : bool, default False
-        Valor lógico para retornar a data completa ou apenas o ano
-
-    Returns
-    -------
-    data-type
-        Data padronizada, que pode ser apenas o ano ou a data completa.
-    """
-
-    # Verifica se a data é composta apenas pelo ano retornando 'dia' e 'mês' da acordo com os valores recebidos como parâmetros
-    if text.isdigit() and len(text) <= 4:
-        try:
-            text = parse('-'.join([text, month, day])).date()
-        except ValueError:
-            return None
-    else:
-        try:
-            #Tenta converter a data sem nenhum tratamento prévio
-            text = parse(text).date()
-        except ValueError:
-            text = keep_alpha_num_space(text, replace_with='')
-            text = text.replace(' ', '')
-            text = text.lower()
-            if not text.isdigit():
-                try:
-                    #Tenta separar 'dia', 'mês' e 'ano' a partir da posição em text
-                    d = re.match(PATTERN_DATE, text)
-                    month = d.groups()[1]
-                    if len(d.groups()[0]) > 2:
-                        year = d.groups()[0]
-                        day = d.groups()[2]
-                    else:
-                        year = d.groups()[2]
-                        day = d.groups()[0]
-                    if not month.isdigit():
-                        # Para o caso em que o 'mês' não é um valor numérico, busca por esse valor no dicionário
-                        # O dicionário considera os meses em português, espanhol e inglês.
-                        month = remove_end_punctuation_chars(month)
-                        month = MONTHS_DICT[month]
-                        #Tenta converter a data tratada
-                        text = parse('-'.join([year, month, day])).date()
-                except (ValueError, IndexError, AttributeError, KeyError):
-                    return None
-            else:
-                try:
-                    text = parse(text).date()
-                except ValueError:
-                    return None
-    if only_year:
-        return text.year
-    else:
-        return text
 
 
 def remove_words(text, words_to_remove=[]):

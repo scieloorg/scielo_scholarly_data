@@ -8,7 +8,7 @@ install_requirements=[
 
 setup(
     name='scielo-scholarly-data',
-    version='0.1.3',
+    version='0.1.4',
     description="The SciELO Scholarly Data Standardizer, Normalizer and Deduplicator Tools",
     author="SciELO",
     author_email="scielo-dev@googlegroups.com",

@@ -1,6 +1,5 @@
 from scielo_scholarly_data.core import (
     check_sum_orcid,
-    convert_to_iso_date,
     keep_alpha_num_space,
     remove_accents,
     remove_double_spaces,
@@ -11,6 +10,10 @@ from scielo_scholarly_data.core import (
     remove_words,
     unescape,
     roman_to_int,
+)
+
+from scielo_scholarly_data.dates import (
+    convert_to_iso_date,
 )
 
 import unittest
@@ -91,87 +94,6 @@ class TestCore(unittest.TestCase):
         self.assertEqual(
             remove_words('21 de setembro de 2021', words_to_remove=['de']),
             '21 setembro 2021'
-        )
-
-    def test_convert_to_iso_date_without_separators(self):
-        self.assertEqual(
-            str(convert_to_iso_date('20210921')),
-            '2021-09-21'
-        )
-
-    def test_convert_to_iso_date_with_separators(self):
-        test_date = '2021-09-21'
-        dates = {
-            '2021-09-21': test_date,
-            '2021/09/21': test_date,
-            '2021.09.21': test_date,
-            '2021 09 21': test_date
-        }
-        expected_values = list(dates.values())
-        obtained_values = [str(convert_to_iso_date(dt)) for dt in dates]
-
-        self.assertListEqual(expected_values, obtained_values)
-
-    def test_convert_to_iso_date_with_separators_different_orderings(self):
-        test_date = '2021-09-21'
-        dates = {
-            '21-09-2021': test_date,
-            '21/09/2021': test_date,
-            '21.09.2021': test_date,
-            '21 09 2021': test_date
-        }
-        expected_values = list(dates.values())
-        obtained_values = [str(convert_to_iso_date(dt)) for dt in dates]
-
-        self.assertListEqual(expected_values, obtained_values)
-
-    def test_convert_to_iso_date_just_year_received(self):
-        self.assertEqual(
-            str(convert_to_iso_date('2021')),
-            '2021-01-01'
-        )
-
-    def test_convert_to_iso_date_just_year_delivered(self):
-        self.assertEqual(
-            str(convert_to_iso_date('2021-06-15', only_year=True )),
-            '2021'
-        )
-
-    def test_convert_to_iso_date_just_year_user_decision(self):
-        self.assertEqual(
-            str(convert_to_iso_date('2021', day='1', month='1')),
-            '2021-01-01'
-        )
-
-    def test_convert_to_iso_date_invalid_month(self):
-        self.assertEqual(
-            convert_to_iso_date('2021-13-09'),
-            None
-        )
-
-    def test_convert_to_iso_date_invalid_day(self):
-        self.assertEqual(
-            convert_to_iso_date('2021-12-35'),
-            None
-        )
-
-    def test_convert_to_iso_date_invalid_date(self):
-        self.assertEqual(
-            convert_to_iso_date('2021-02-31'),
-            None
-        )
-
-    def test_convert_to_iso_date_re_unmatch(self):
-        self.assertEqual(
-            convert_to_iso_date('abc-01-01'),
-            None
-        )
-
-
-    def test_convert_to_iso_date_nondate_value(self):
-        self.assertEqual(
-            convert_to_iso_date('200W'),
-            None
         )
 
     def test_check_sum_orcid(self):
